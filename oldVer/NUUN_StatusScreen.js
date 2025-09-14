@@ -6,547 +6,895 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  */
+
 /*:
- * @target MZ
- * @plugindesc ステータス画面表示拡張
- * @author NUUN
- * @version 1.3.7
- * 
- * @help
- * ステータス画面に追加能力値、特殊能力値、属性有効度、ステート有効度、独自のパラメータを表示させます。
- * 
- * デフォルト設定では１ページ目に基本能力値、装備
- * ２ページ目に追加能力値、特殊能力値
- * ３ページ目に属性有効度、ステート有効度となっています。
- * 
- * 追加パラメータ
- * 0:命中 1:回避 2:会心 3:会心回避 4:魔法回避 5:魔法反射 6:反撃 7:HP再生 8:MP再生 9:TP再生
- * 上記の数値以外を記入することで独自のパラメータを表示できます。なお「XparamEval」に記入している場合は評価式が優先されます。
- * 
- * 特殊パラメータ
- * 0:狙われ率 1:防御効果率 2:回復効果率 3:薬の知識 4:MP消費率 5:TPチャージ率 6:物理ダメージ率 7:魔法ダメージ率 8:床ダメージ率 9:経験獲得値率
- * 上記の数値以外を記入することで独自のパラメータを表示できます。なお「SparamEval」に記入している場合は評価式が優先されます。
- * 
- * 独自のパラメータ
- * this._actor 表示中のアクターのゲームデータ
- * actor 表示中のアクターのデータベース
- * 
- * キーボード操作
- * QWキー　キャラ切り替え
- * ←→キー　ページ切り替え
- * 
- * タッチ操作
- * <>ボタン　キャラ切り替え
- * ΛVボタン　ページ切り替え
- * 
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2021/2/28 Ver.1.3.7
- * 「背景サイズをUIに合わせる」をfalseに設定時UIの左上基準に表示されてしまう問題を修正。
- * 2021/2/27 Ver.1.3.6
- * ステート有効度のステート無効化が反映されていなかった問題を修正。
- * 2021/2/23 Ver.1.3.5
- * プロフィール欄を表示させない機能を追加。
- * 2021/2/21 Ver.1.3.4
- * 追加パラメータ、特殊パラメータ、独自パラメータに任意の単位を付けられるように変更。
- * 2021/2/20 Ver.1.3.3
- * 追加パラメータ、特殊パラメータに任意のパラメータを追加できる機能を追加。
- * 2021/2/17 Ver.1.3.2
- * アクター立ち絵の拡大率が100以外の時に画像X座標がずれいてた問題を修正。
- * 2021/2/16 Ver.1.3.1
- * Scene_Base.prototype.isBottomButtonModeで設定を変更した際、ウィンドウがずれる問題を修正。
- * アクター立ち絵の拡大率が100以外の時に画像座標が下基準になっていなかったのを修正。
- * 2021/1/24 Ver.1.3.0
- * 独自パラメータを表示できる機能を追加。
- * 2021/1/9 Ver.1.2.0
- * 各項目の設定方法を変更。
- * 2020/12/28 Ver.1.1.2
- * 立ち絵の座標処理を修正。
- * 2020/12/8 Ver.1.1.1
- * 最大レベル時の次のレベルまでの経験値表示のゲージMAXで100％で表示するように修正。
- * 2020/12/7 Ver.1.1.0
- * 次のレベルまでの経験値表示を百分率表示に出来るよう対応。
- * 2020/11/26 Ver.1.0.7
- * 特殊パラメータでSparamIdを3に設定し、SparamNameを空欄の状態でステータス画面を開くと
- * 本来「薬の知識」が出るところ「回復効果率」と表示されてしまう問題を修正。
- * 2020/11/23 Ver.1.0.6
- * 立ち絵を表示位置を左、中央、右から選択し配置出来る機能を追加。
- * 2020/11/22 Ver.1.0.5
- * 背景画像を指定できる機能を追加。
- * 2020/11/19 Ver.1.0.4
- * 解像度とUIのサイズが違う場合に、ステータス詳細項目がウィンドウ外にずれる問題や、他のステータス項目と
- * 表示が被る問題を修正。
- * 2020/11/18 Ver.1.0.3
- * ステータス詳細項目が画面からはみ出た際、項目名が正常に表示されない問題を修正。
- * 一部処理を変更。
- * 2020/11/18 Ver.1.0.2
- * 表示外の少数点を四捨五入か切り捨てで丸める機能を追加。
- * 2020/11/17 Ver.1.0.1 
- * 追加能力値、特殊能力値、属性有効度、ステート有効度の表示できる小数点の桁数を指定できる機能を追加。
- * ページの切り替えをタッチ操作でも行えるように対応。
- * 2020/11/16 Ver.1.0.0
- * 初版
- * 
- * @param Window
- * @text ウィンドウ設定
- * 
- * @param ContentWidth
- * @text 項目の表示横幅
- * @desc ページ内の項目の表示横幅。(0で自動調整)
- * @type number
- * @default 0
- * @min 0
- * @max 9999
- * @parent Window
- * 
- * @param ProfileShow
- * @text プロフィールの表示
- * @desc 画面下のプロフィールを表示します。
- * @type boolean
- * @default true
- * @parent Window
- * 
- * @param BackShow
- * @text ステータス項目背景表示
- * @desc ステータス項目の背景画像の表示を設定します。
- * @type boolean
- * @default true
- * @parent Window
- * 
- * @param Decimal
- * @text 小数点桁数
- * @desc 表示出来る小数点桁数。
- * @type number
- * @default 2
- * @min 0
- * @max 99
- * @parent Window
- * 
- * @param DecimalMode
- * @text 端数処理四捨五入
- * @desc 表示外小数点を四捨五入で丸める。（falseで切り捨て）
- * @type boolean
- * @default true
- * @parent Window
- * 
- * @param ExpPercent
- * @text 経験値百分率表示
- * @desc 経験値を百分率で表示
- * @type boolean
- * @default false
- * @parent Window
- * 
- * @param BackGroundImg
- * @desc 背景画像ファイル名を指定します。
- * @text 背景画像
- * @type file
- * @dir img/pictures
- * @parent Window
- * 
- * @param BackUiWidth
- * @text 背景サイズをUIに合わせる
- * @desc 背景サイズをUIに合わせる。
- * @type boolean
- * @default true
- * @parent Window
- * 
- * @param Pages
- * @text ページ設定
- * 
- * @param 2Pages
- * @text ２ページ目設定
- * @parent Pages
- * 
- * @param Page2Left
- * @desc 左側に表示する項目。
- * @text 左側表示項目
- * @type select
- * @option なし
- * @value -1
- * @option 追加能力値
- * @value 2
- * @option 特殊能力値
- * @value 3
- * @option 属性有効度
- * @value 4
- * @option ステート有効度
- * @value 5
- * @option 独自パラメータ１
- * @value 10
- * @option 独自パラメータ２
- * @value 11
- * @parent 2Pages
- * @default 2
- * 
- * @param Page2Right
- * @desc 右側に表示する項目。
- * @text 右側表示項目
- * @type select
- * @option なし
- * @value -1
- * @option 追加能力値
- * @value 2
- * @option 特殊能力値
- * @value 3
- * @option 属性有効度
- * @value 4
- * @option ステート有効度
- * @value 5
- * @option 独自パラメータ１
- * @value 10
- * @option 独自パラメータ２
- * @value 11
- * @parent 2Pages
- * @default 3
- * 
- * @param 3Pages
- * @text ３ページ目設定
- * @parent Pages
- * 
- * @param Page3Left
- * @desc 左側に表示する項目。
- * @text 左側表示項目
- * @type select
- * @option なし
- * @value -1
- * @option 追加能力値
- * @value 2
- * @option 特殊能力値
- * @value 3
- * @option 属性有効度
- * @value 4
- * @option ステート有効度
- * @value 5
- * @option 独自パラメータ１
- * @value 10
- * @option 独自パラメータ２
- * @value 11
- * @parent 3Pages
- * @default 4
- * 
- * @param Page3Right
- * @desc 右側に表示する項目。
- * @text 右側表示項目
- * @type select
- * @option なし
- * @value -1
- * @option 追加能力値
- * @value 2
- * @option 特殊能力値
- * @value 3
- * @option 属性有効度
- * @value 4
- * @option ステート有効度
- * @value 5
- * @option 独自パラメータ１
- * @value 10
- * @option 独自パラメータ２
- * @value 11
- * @parent 3Pages
- * @default 5
- * 
- * @param 4Pages
- * @text ４ページ目設定
- * @parent Pages
- * 
- * @param Page4Left
- * @desc 左側に表示する項目。
- * @text 左側表示項目
- * @type select
- * @option なし
- * @value -1
- * @option 追加能力値
- * @value 2
- * @option 特殊能力値
- * @value 3
- * @option 属性有効度
- * @value 4
- * @option ステート有効度
- * @value 5
- * @option 独自パラメータ１
- * @value 10
- * @option 独自パラメータ２
- * @value 11
- * @parent 4Pages
- * @default -1
- * 
- * @param Page4Right
- * @desc 右側に表示する項目。
- * @text 右側表示項目
- * @type select
- * @option なし
- * @value -1
- * @option 追加能力値
- * @value 2
- * @option 特殊能力値
- * @value 3
- * @option 属性有効度
- * @value 4
- * @option ステート有効度
- * @value 5
- * @option 独自パラメータ１
- * @value 10
- * @option 独自パラメータ２
- * @value 11
- * @parent 4Pages
- * @default -1
- * 
- * @param DateName
- * @text 名称設定 
- * 
- * @param ParamName
- * @text 能力値の名称
- * @desc 能力値の名称を設定します。
- * @type string
- * @default 能力値
- * @parent DateName
- * 
- * @param EquipsName
- * @text 装備の名称
- * @desc 装備の名称を設定します。
- * @type string
- * @default 装備
- * @parent DateName
- * 
- * @param XParamName
- * @text 追加能力値の名称
- * @desc 追加能力値の名称を設定します。
- * @type string
- * @default 追加能力値
- * @parent DateName
- * 
- * @param SParamName
- * @text 特殊能力値の名称
- * @desc 特殊能力値の名称を設定します。
- * @type string
- * @default 特殊能力値
- * @parent DateName
- * 
- * @param ElementName
- * @text 属性有効度の名称
- * @desc 属性有効度の名称を設定します。
- * @type string
- * @default 属性有効度
- * @parent DateName
- * 
- * @param StateName
- * @text ステート有効度の名称
- * @desc ステート有効度の名称を設定します。
- * @type string
- * @default ステート有効度
- * @parent DateName
- * 
- * @param ActorImg
- * @text 立ち絵設定
- * 
- * @param ActorsImgList
- * @text 画像設定
- * @desc アクターの画像設定
- * @default []
- * @type struct<actorImgList>[]
- * @parent ActorImg
- * 
- * @param actorPosition
- * @text 立ち絵表示位置
- * @desc 立ち絵の表示位置を指定します
- * @type select
- * @option 左
- * @value 0
- * @option 中央
- * @value 1
- * @option 右
- * @value 2
- * @default 2
- * @parent ActorImg
- * 
- * @param ParamDate
- * @text パラメータ設定
- * 
- * @param Xparam
- * @type struct<XparamData>[]
- * @text 追加能力値
- * @default ["{\"XparamName\":\"\",\"XparamId\":\"0\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"1\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"2\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"3\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"4\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"5\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"6\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"7\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"8\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"9\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}"]
- * @parent ParamDate
- * 
- * @param Sparam
- * @type struct<SparamData>[]
- * @text 特殊能力値
- * @default ["{\"SparamName\":\"\",\"SparamId\":\"0\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"1\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"2\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"3\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"4\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"5\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"6\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"7\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"8\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"9\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}"]
- * @parent ParamDate
- * 
- * @param ElementResist
- * @type struct<ElementData>[]
- * @text 属性耐性
- * @default ["{\"ElementNo\":\"1\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"2\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"3\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"4\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"5\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"6\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"7\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"8\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"9\",\"ElementIconId\":\"\"}"]
- * @parent ParamDate
- * 
- * @param StateResist
- * @type struct<StateData>[]
- * @text 状態耐性
- * @default ["{\"StateNo\":\"4\"}","{\"StateNo\":\"5\"}","{\"StateNo\":\"6\"}","{\"StateNo\":\"7\"}","{\"StateNo\":\"8\"}","{\"StateNo\":\"9\"}","{\"StateNo\":\"10\"}","{\"StateNo\":\"12\"}","{\"StateNo\":\"13\"}"]
- * @parent ParamDate
- * 
- * @param StateResistText
- * @text 有効度ステート名表示
- * @desc ステート有効度のステートアイコンをステート名で表示させます。
- * @type boolean
- * @default false
- * @parent ParamDate
- * 
- * @param OriginalParam1
- * @type struct<OriginalParamData>[]
- * @text 独自表示項目1
- * @default
- * @parent ParamDate
- * 
- * @param OriginalParam1Name
- * @desc 独自パラメータ１の名称。
- * @text 独自パラメータ１名称
- * @type string
- * @parent ParamDate
- * 
- * @param OriginalParam2
- * @type struct<OriginalParamData>[]
- * @text 独自表示項目2
- * @default
- * @parent ParamDate
- * 
- * @param OriginalParam2Name
- * @desc 独自パラメータ２の名称。
- * @text 独自パラメータ２名称
- * @type string
- * @parent ParamDate
- * 
- * @param GaugeWidth
- * @text ゲージ横幅
- * @desc HP,MP,TPゲージの横幅を指定します。
- * @type number
- * @default 200
- * @min 0
- * @max 9999
- * @parent ParamDate
- */
-/*~struct~actorImgList:
- * 
- * @param actorId
- * @text アクター
- * @desc アクターを指定します。
- * @type actor
- * 
- * @param ActorImg
- * @text アクター画像
- * @desc アクターの画像を表示します。
- * @type file
- * @dir img/pictures
- * 
- * @param Actor_X
- * @desc 画像の表示位置X座標。
- * @text 画像表示位置X座標
- * @type number
- * @default 0
- * @min -9999
- * @max 9999
- * 
- * @param Actor_Y
- * @desc 画像の表示位置Y座標。
- * @text 画像表示位置Y座標
- * @type number
- * @default 0
- * @min -9999
- * @max 9999
- * 
- * @param Actor_Scale
- * @desc 画像の拡大率。
- * @text 画像拡大率
- * @type number
- * @default 100
- * @min 0
- * @max 999
- *  
- */
-/*~struct~XparamData:
- *
- * @param XparamName
- * @desc 追加能力値の設定します。
- * @type string
- *
- * @param XparamId
- * @desc 0:命中 1:回避 2:会心 3:会心回避 4:魔法回避 5:魔法反射 6:反撃 7:HP再生 8:MP再生 9:TP再生
- * @type number
- * 
- * @param XparamEval
- * @desc 追加パラメータを評価式で表示します。
- * @text 追加パラメータ評価式
- * @type string
- * @default
- * 
- * @param XparamUnit
- * @desc 単位を設定します。
- * @text 単位
- * @type string
- * @default  %
- */
-/*~struct~SparamData:
- *
- * @param SparamName
- * @desc 特殊能力値の用語を設定します。
- * @type string
- *
- * @param SparamId
- * @desc 0:狙われ 1:防御効果 2:回復効果 3:薬知識 4:MP消費 5:TPチャージ 6:物理ダメージ 7:魔法ダメージ 8:床ダメージ 9:経験獲得
- * @type number
- * 
- * @param SparamEval
- * @desc パラメータを評価式で表示します。
- * @text 特殊パラメータ評価式
- * @type string
- * @default
- * 
- * @param SparamUnit
- * @desc 単位を設定します。
- * @text 単位
- * @type string
- * @default  %
- */
-/*~struct~ElementData:
- *
- * @param ElementNo
- * @desc 表示する属性番号を指定します。
- * @type number
- *
- * @param ElementIconId
- * @desc アイコンのIDを指定します。
- * @type number
- */
-/*~struct~StateData:
- *
- * @param StateNo
- * @desc 表示するステートを指定します。
- * @type state
- *
- */
-/*~struct~OriginalParamData:
- *
- * @param paramName
- * @desc 表示する名称。
- * @text 名称
- * @type string
- * 
- * @param paramValue
- * @desc 表示する評価式。
- * @text パラメータ
- * @type string
- * 
- * @param paramUnit
- * @desc 単位を設定します。
- * @text 単位
- * @type string
- * @default
- *
- */
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Status screen display expansion
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Displays bonus stats, special stats, attribute effectiveness, state
+effectiveness, and custom parameters on the status screen.
+
+By default, basic stats and equipment are displayed on the first page.
+Bonus stats and special stats are displayed on the second page.
+Attribute effectiveness and state effectiveness are displayed on the third
+page.
+
+Additional Parameters
+0: Hit Rate
+1: Evade
+2: Critical Hit
+3: Critical Hit Evade
+4: Magic Evade
+5: Magic Reflect
+6: Counterattack
+7: HP Regeneration
+8: MP Regeneration
+9: TP Regeneration
+You can display custom parameters by entering values other than those listed
+above. Note that if values are entered in "XparamEval," the evaluation formula
+will take precedence.
+
+Special Parameters
+0: Target Rate
+1: Defense Effectiveness Rate
+2: Recovery Effectiveness Rate
+3: Medicine Knowledge
+4: MP Consumption Rate
+5: TP Charge Rate
+6: Physical Damage Rate
+7: Magic Damage Rate
+8: Floor Damage Rate
+9: Experience Gain Rate
+You can display custom parameters by entering values other than those listed
+above. Note that if values are entered in "SparamEval," the evaluation formula
+will take precedence.
+
+Custom Parameters
+this._actor Game data for the currently displayed actor
+actor Database for the currently displayed actor
+
+Keyboard Controls
+QW Key: Switch characters
+←→ Key: Switch pages
+
+Touch Controls
+<> Button: Switch characters
+ΛV Button: Switch pages
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+2021/2/28 Ver.1.3.7
+Fixed an issue where background size was displayed relative to the top left of
+the UI when "Fit background size to UI" was set to false.
+2021/2/27 Ver.1.3.6
+Fixed an issue where disabled states were not reflected in the State Validity
+setting.
+2021/2/23 Ver.1.3.5
+Added a feature to hide the profile section.
+2021/2/21 Ver.1.3.4
+Added the ability to assign custom units to additional parameters, special
+parameters, and custom parameters.
+February 20, 2021 Ver. 1.3.3
+Added the ability to add custom parameters to additional parameters and
+special parameters.
+February 17, 2021 Ver. 1.3.2
+Fixed an issue where the image X coordinate was misaligned when the actor
+portrait magnification was set to a value other than 100.
+February 16, 2021 Ver. 1.3.1
+Fixed an issue where the window would shift when changing the setting in
+Scene_Base.prototype.isBottomButtonMode.
+Fixed an issue where the image coordinates were not based on the bottom when
+the actor portrait magnification was set to a value other than 100.
+January 24, 2021 Ver. 1.3.0
+Added the ability to display custom parameters.
+January 9, 2021 Ver. 1.2.0
+Changed the setting method for each item.
+December 28, 2020 Ver. 1.1.2
+Fixed the handling of character portrait coordinates.
+December 8, 2020 Ver. 1.1.1
+Fixed the EXP gauge for the next level to display 100% when it's at maximum
+level.
+December 7, 2020 Ver. 1.1.0
+Added the ability to display EXP as a percentage.
+November 26, 2020 Ver. 1.0.7
+Fixed an issue where, when opening the status screen with SparamId set to 3
+and SparamName left blank in the special parameters, it would display
+"Recovery Effect Rate" instead of "Medicine Knowledge."
+November 23, 2020 Ver. 1.0.6
+Added the ability to position character portraits by selecting left, center,
+or right.
+November 22, 2020 Ver. 1.0.5
+Added the ability to specify a background image.
+November 19, 2020 Ver. 1.0.4
+Fixed an issue where status details items would shift outside the window or
+overlap with other status items when the resolution and UI size were
+different.
+November 18, 2020 Ver. 1.0.3
+Fixed an issue where item names would not display correctly when status
+details items extended beyond the screen.
+Some processing changes were made.
+November 18, 2020 Ver. 1.0.2
+Added a feature to round off or truncate decimal points that are not
+displayed.
+November 17, 2020 Ver. 1.0.1
+Added a feature to specify the number of decimal points to display for
+additional ability scores, special ability scores, attribute effectiveness,
+and state effectiveness.
+Added support for switching pages via touch.
+November 16, 2020 Ver. 1.0.0
+First version
+
+@param Window
+@text Window Settings
+
+@param ContentWidth
+@text Item display width
+@desc Display width of items on the page. (0 for automatic adjustment)
+@type number
+@default 0
+@min 0
+@max 9999
+@parent Window
+
+@param ProfileShow
+@text View profile
+@desc View your profile at the bottom of the screen.
+@type boolean
+@default true
+@parent Window
+
+@param BackShow
+@text Status item background display
+@desc Sets the display of the background image for the status item.
+@type boolean
+@default true
+@parent Window
+
+@param Decimal
+@text Decimal places
+@desc The number of decimal points that can be displayed.
+@type number
+@default 2
+@min 0
+@max 99
+@parent Window
+
+@param DecimalMode
+@text Rounding off
+@desc Round off the decimal point outside the display (false to truncate).
+@type boolean
+@default true
+@parent Window
+
+@param ExpPercent
+@text Experience percentage display
+@desc Experience points displayed as a percentage
+@type boolean
+@default false
+@parent Window
+
+@param BackGroundImg
+@text background image
+@desc Specifies the background image file name.
+@type file
+@dir img/pictures
+@parent Window
+
+@param BackUiWidth
+@text Match background size to UI
+@desc Adjust the background size to fit the UI.
+@type boolean
+@default true
+@parent Window
+
+@param Pages
+@text Page Setup
+
+@param 2Pages
+@text Second page settings
+@parent Pages
+
+@param Page2Left
+@text Left side display item
+@desc Items to display on the left.
+@type select
+@default 2
+@parent 2Pages
+@option none
+@value -1
+@option Additional Stats
+@value 2
+@option Special Ability Score
+@value 3
+@option Attribute Effectiveness
+@value 4
+@option State Validity
+@value 5
+@option Unique parameter 1
+@value 10
+@option Unique parameter 2
+@value 11
+
+@param Page2Right
+@text Items displayed on the right side
+@desc Items to display on the right.
+@type select
+@default 3
+@parent 2Pages
+@option none
+@value -1
+@option Additional Stats
+@value 2
+@option Special Ability Score
+@value 3
+@option Attribute Effectiveness
+@value 4
+@option State Validity
+@value 5
+@option Unique parameter 1
+@value 10
+@option Unique parameter 2
+@value 11
+
+@param 3Pages
+@text Third page settings
+@parent Pages
+
+@param Page3Left
+@text Left side display item
+@desc Items to display on the left.
+@type select
+@default 4
+@parent 3Pages
+@option none
+@value -1
+@option Additional Stats
+@value 2
+@option Special Ability Score
+@value 3
+@option Attribute Effectiveness
+@value 4
+@option State Validity
+@value 5
+@option Unique parameter 1
+@value 10
+@option Unique parameter 2
+@value 11
+
+@param Page3Right
+@text Items displayed on the right side
+@desc Items to display on the right.
+@type select
+@default 5
+@parent 3Pages
+@option none
+@value -1
+@option Additional Stats
+@value 2
+@option Special Ability Score
+@value 3
+@option Attribute Effectiveness
+@value 4
+@option State Validity
+@value 5
+@option Unique parameter 1
+@value 10
+@option Unique parameter 2
+@value 11
+
+@param 4Pages
+@text 4th page settings
+@parent Pages
+
+@param Page4Left
+@text Left side display item
+@desc Items to display on the left.
+@type select
+@default -1
+@parent 4Pages
+@option none
+@value -1
+@option Additional Stats
+@value 2
+@option Special Ability Score
+@value 3
+@option Attribute Effectiveness
+@value 4
+@option State Validity
+@value 5
+@option Unique parameter 1
+@value 10
+@option Unique parameter 2
+@value 11
+
+@param Page4Right
+@text Items displayed on the right side
+@desc Items to display on the right.
+@type select
+@default -1
+@parent 4Pages
+@option none
+@value -1
+@option Additional Stats
+@value 2
+@option Special Ability Score
+@value 3
+@option Attribute Effectiveness
+@value 4
+@option State Validity
+@value 5
+@option Unique parameter 1
+@value 10
+@option Unique parameter 2
+@value 11
+
+@param DateName
+@text Naming
+
+@param ParamName
+@text Ability score name
+@desc Set the name of the ability score.
+@type string
+@default 能力値
+@parent DateName
+
+@param EquipsName
+@text Equipment name
+@desc Set the name of the equipment.
+@type string
+@default 装備
+@parent DateName
+
+@param XParamName
+@text Name of additional ability score
+@desc Set the name of the additional ability score.
+@type string
+@default 追加能力値
+@parent DateName
+
+@param SParamName
+@text Special Ability Score Name
+@desc Set the name of the special ability value.
+@type string
+@default 特殊能力値
+@parent DateName
+
+@param ElementName
+@text Attribute Efficiency Name
+@desc Set the name of the attribute validity.
+@type string
+@default 属性有効度
+@parent DateName
+
+@param StateName
+@text State Availability Name
+@desc Set the name of the state validity.
+@type string
+@default ステート有効度
+@parent DateName
+
+@param ActorImg
+@text Character image settings
+
+@param ActorsImgList
+@text Image Settings
+@desc Actor Image Settings
+@type struct<actorImgList>[]
+@default []
+@parent ActorImg
+
+@param actorPosition
+@text Character image display position
+@desc Specify the display position of the standing image
+@type select
+@default 2
+@parent ActorImg
+@option left
+@value 0
+@option center
+@value 1
+@option right
+@value 2
+
+@param ParamDate
+@text Parameter Settings
+
+@param Xparam
+@text Additional Stats
+@type struct<XparamData>[]
+@default ["{\"XparamName\":\"\",\"XparamId\":\"0\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"1\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"2\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"3\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"4\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"5\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"6\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"7\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"8\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"9\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}"]
+@parent ParamDate
+
+@param Sparam
+@text Special Ability Score
+@type struct<SparamData>[]
+@default ["{\"SparamName\":\"\",\"SparamId\":\"0\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"1\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"2\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"3\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"4\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"5\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"6\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"7\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"8\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"9\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}"]
+@parent ParamDate
+
+@param ElementResist
+@text Attribute resistance
+@type struct<ElementData>[]
+@default ["{\"ElementNo\":\"1\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"2\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"3\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"4\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"5\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"6\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"7\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"8\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"9\",\"ElementIconId\":\"\"}"]
+@parent ParamDate
+
+@param StateResist
+@text Status Resistance
+@type struct<StateData>[]
+@default ["{\"StateNo\":\"4\"}","{\"StateNo\":\"5\"}","{\"StateNo\":\"6\"}","{\"StateNo\":\"7\"}","{\"StateNo\":\"8\"}","{\"StateNo\":\"9\"}","{\"StateNo\":\"10\"}","{\"StateNo\":\"12\"}","{\"StateNo\":\"13\"}"]
+@parent ParamDate
+
+@param StateResistText
+@text Availability state name display
+@desc Displays the state icon for state availability by state name.
+@type boolean
+@default false
+@parent ParamDate
+
+@param OriginalParam1
+@text Unique display item 1
+@type struct<OriginalParamData>[]
+@parent ParamDate
+
+@param OriginalParam1Name
+@text Unique parameter 1 name
+@desc The name of the unique parameter 1.
+@type string
+@parent ParamDate
+
+@param OriginalParam2
+@text Unique display item 2
+@type struct<OriginalParamData>[]
+@parent ParamDate
+
+@param OriginalParam2Name
+@text Unique parameter 2 name
+@desc The name of the unique parameter 2.
+@type string
+@parent ParamDate
+
+@param GaugeWidth
+@text Gauge width
+@desc Specifies the width of the HP, MP, and TP gauges.
+@type number
+@default 200
+@min 0
+@max 9999
+@parent ParamDate
+*/
+
+/*:ja
+@target MZ
+@plugindesc ステータス画面表示拡張
+@author NUUN
+@version 1.3.7
+
+@help
+ステータス画面に追加能力値、特殊能力値、属性有効度、ステート有効度、独自のパラメータを表示させます。
+
+デフォルト設定では１ページ目に基本能力値、装備
+２ページ目に追加能力値、特殊能力値
+３ページ目に属性有効度、ステート有効度となっています。
+
+追加パラメータ
+0:命中 1:回避 2:会心 3:会心回避 4:魔法回避 5:魔法反射 6:反撃 7:HP再生 8:MP再生 9:TP再生
+上記の数値以外を記入することで独自のパラメータを表示できます。なお「XparamEval」に記入している場合は評価式が優先されます。
+
+特殊パラメータ
+0:狙われ率 1:防御効果率 2:回復効果率 3:薬の知識 4:MP消費率 5:TPチャージ率 6:物理ダメージ率 7:魔法ダメージ率 8:床ダメージ率 9:経験獲得値率
+上記の数値以外を記入することで独自のパラメータを表示できます。なお「SparamEval」に記入している場合は評価式が優先されます。
+
+独自のパラメータ
+this._actor 表示中のアクターのゲームデータ
+actor 表示中のアクターのデータベース
+
+キーボード操作
+QWキー　キャラ切り替え
+←→キー　ページ切り替え
+
+タッチ操作
+<>ボタン　キャラ切り替え
+ΛVボタン　ページ切り替え
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2021/2/28 Ver.1.3.7
+「背景サイズをUIに合わせる」をfalseに設定時UIの左上基準に表示されてしまう問題を修正。
+2021/2/27 Ver.1.3.6
+ステート有効度のステート無効化が反映されていなかった問題を修正。
+2021/2/23 Ver.1.3.5
+プロフィール欄を表示させない機能を追加。
+2021/2/21 Ver.1.3.4
+追加パラメータ、特殊パラメータ、独自パラメータに任意の単位を付けられるように変更。
+2021/2/20 Ver.1.3.3
+追加パラメータ、特殊パラメータに任意のパラメータを追加できる機能を追加。
+2021/2/17 Ver.1.3.2
+アクター立ち絵の拡大率が100以外の時に画像X座標がずれいてた問題を修正。
+2021/2/16 Ver.1.3.1
+Scene_Base.prototype.isBottomButtonModeで設定を変更した際、ウィンドウがずれる問題を修正。
+アクター立ち絵の拡大率が100以外の時に画像座標が下基準になっていなかったのを修正。
+2021/1/24 Ver.1.3.0
+独自パラメータを表示できる機能を追加。
+2021/1/9 Ver.1.2.0
+各項目の設定方法を変更。
+2020/12/28 Ver.1.1.2
+立ち絵の座標処理を修正。
+2020/12/8 Ver.1.1.1
+最大レベル時の次のレベルまでの経験値表示のゲージMAXで100％で表示するように修正。
+2020/12/7 Ver.1.1.0
+次のレベルまでの経験値表示を百分率表示に出来るよう対応。
+2020/11/26 Ver.1.0.7
+特殊パラメータでSparamIdを3に設定し、SparamNameを空欄の状態でステータス画面を開くと
+本来「薬の知識」が出るところ「回復効果率」と表示されてしまう問題を修正。
+2020/11/23 Ver.1.0.6
+立ち絵を表示位置を左、中央、右から選択し配置出来る機能を追加。
+2020/11/22 Ver.1.0.5
+背景画像を指定できる機能を追加。
+2020/11/19 Ver.1.0.4
+解像度とUIのサイズが違う場合に、ステータス詳細項目がウィンドウ外にずれる問題や、他のステータス項目と
+表示が被る問題を修正。
+2020/11/18 Ver.1.0.3
+ステータス詳細項目が画面からはみ出た際、項目名が正常に表示されない問題を修正。
+一部処理を変更。
+2020/11/18 Ver.1.0.2
+表示外の少数点を四捨五入か切り捨てで丸める機能を追加。
+2020/11/17 Ver.1.0.1 
+追加能力値、特殊能力値、属性有効度、ステート有効度の表示できる小数点の桁数を指定できる機能を追加。
+ページの切り替えをタッチ操作でも行えるように対応。
+2020/11/16 Ver.1.0.0
+初版
+
+@param Window
+@text ウィンドウ設定
+
+@param ContentWidth
+@text 項目の表示横幅
+@desc ページ内の項目の表示横幅。(0で自動調整)
+@type number
+@default 0
+@min 0
+@max 9999
+@parent Window
+
+@param ProfileShow
+@text プロフィールの表示
+@desc 画面下のプロフィールを表示します。
+@type boolean
+@default true
+@parent Window
+
+@param BackShow
+@text ステータス項目背景表示
+@desc ステータス項目の背景画像の表示を設定します。
+@type boolean
+@default true
+@parent Window
+
+@param Decimal
+@text 小数点桁数
+@desc 表示出来る小数点桁数。
+@type number
+@default 2
+@min 0
+@max 99
+@parent Window
+
+@param DecimalMode
+@text 端数処理四捨五入
+@desc 表示外小数点を四捨五入で丸める。（falseで切り捨て）
+@type boolean
+@default true
+@parent Window
+
+@param ExpPercent
+@text 経験値百分率表示
+@desc 経験値を百分率で表示
+@type boolean
+@default false
+@parent Window
+
+@param BackGroundImg
+@desc 背景画像ファイル名を指定します。
+@text 背景画像
+@type file
+@dir img/pictures
+@parent Window
+
+@param BackUiWidth
+@text 背景サイズをUIに合わせる
+@desc 背景サイズをUIに合わせる。
+@type boolean
+@default true
+@parent Window
+
+@param Pages
+@text ページ設定
+
+@param 2Pages
+@text ２ページ目設定
+@parent Pages
+
+@param Page2Left
+@desc 左側に表示する項目。
+@text 左側表示項目
+@type select
+@option なし
+@value -1
+@option 追加能力値
+@value 2
+@option 特殊能力値
+@value 3
+@option 属性有効度
+@value 4
+@option ステート有効度
+@value 5
+@option 独自パラメータ１
+@value 10
+@option 独自パラメータ２
+@value 11
+@parent 2Pages
+@default 2
+
+@param Page2Right
+@desc 右側に表示する項目。
+@text 右側表示項目
+@type select
+@option なし
+@value -1
+@option 追加能力値
+@value 2
+@option 特殊能力値
+@value 3
+@option 属性有効度
+@value 4
+@option ステート有効度
+@value 5
+@option 独自パラメータ１
+@value 10
+@option 独自パラメータ２
+@value 11
+@parent 2Pages
+@default 3
+
+@param 3Pages
+@text ３ページ目設定
+@parent Pages
+
+@param Page3Left
+@desc 左側に表示する項目。
+@text 左側表示項目
+@type select
+@option なし
+@value -1
+@option 追加能力値
+@value 2
+@option 特殊能力値
+@value 3
+@option 属性有効度
+@value 4
+@option ステート有効度
+@value 5
+@option 独自パラメータ１
+@value 10
+@option 独自パラメータ２
+@value 11
+@parent 3Pages
+@default 4
+
+@param Page3Right
+@desc 右側に表示する項目。
+@text 右側表示項目
+@type select
+@option なし
+@value -1
+@option 追加能力値
+@value 2
+@option 特殊能力値
+@value 3
+@option 属性有効度
+@value 4
+@option ステート有効度
+@value 5
+@option 独自パラメータ１
+@value 10
+@option 独自パラメータ２
+@value 11
+@parent 3Pages
+@default 5
+
+@param 4Pages
+@text ４ページ目設定
+@parent Pages
+
+@param Page4Left
+@desc 左側に表示する項目。
+@text 左側表示項目
+@type select
+@option なし
+@value -1
+@option 追加能力値
+@value 2
+@option 特殊能力値
+@value 3
+@option 属性有効度
+@value 4
+@option ステート有効度
+@value 5
+@option 独自パラメータ１
+@value 10
+@option 独自パラメータ２
+@value 11
+@parent 4Pages
+@default -1
+
+@param Page4Right
+@desc 右側に表示する項目。
+@text 右側表示項目
+@type select
+@option なし
+@value -1
+@option 追加能力値
+@value 2
+@option 特殊能力値
+@value 3
+@option 属性有効度
+@value 4
+@option ステート有効度
+@value 5
+@option 独自パラメータ１
+@value 10
+@option 独自パラメータ２
+@value 11
+@parent 4Pages
+@default -1
+
+@param DateName
+@text 名称設定 
+
+@param ParamName
+@text 能力値の名称
+@desc 能力値の名称を設定します。
+@type string
+@default 能力値
+@parent DateName
+
+@param EquipsName
+@text 装備の名称
+@desc 装備の名称を設定します。
+@type string
+@default 装備
+@parent DateName
+
+@param XParamName
+@text 追加能力値の名称
+@desc 追加能力値の名称を設定します。
+@type string
+@default 追加能力値
+@parent DateName
+
+@param SParamName
+@text 特殊能力値の名称
+@desc 特殊能力値の名称を設定します。
+@type string
+@default 特殊能力値
+@parent DateName
+
+@param ElementName
+@text 属性有効度の名称
+@desc 属性有効度の名称を設定します。
+@type string
+@default 属性有効度
+@parent DateName
+
+@param StateName
+@text ステート有効度の名称
+@desc ステート有効度の名称を設定します。
+@type string
+@default ステート有効度
+@parent DateName
+
+@param ActorImg
+@text 立ち絵設定
+
+@param ActorsImgList
+@text 画像設定
+@desc アクターの画像設定
+@default []
+@type struct<actorImgList>[]
+@parent ActorImg
+
+@param actorPosition
+@text 立ち絵表示位置
+@desc 立ち絵の表示位置を指定します
+@type select
+@option 左
+@value 0
+@option 中央
+@value 1
+@option 右
+@value 2
+@default 2
+@parent ActorImg
+
+@param ParamDate
+@text パラメータ設定
+
+@param Xparam
+@type struct<XparamData>[]
+@text 追加能力値
+@default ["{\"XparamName\":\"\",\"XparamId\":\"0\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"1\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"2\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"3\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"4\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"5\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"6\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"7\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"8\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}","{\"XparamName\":\"\",\"XparamId\":\"9\",\"XparamEval\":\"\",\"XparamUnit\":\"%\"}"]
+@parent ParamDate
+
+@param Sparam
+@type struct<SparamData>[]
+@text 特殊能力値
+@default ["{\"SparamName\":\"\",\"SparamId\":\"0\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"1\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"2\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"3\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"4\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"5\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"6\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"7\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"8\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}","{\"SparamName\":\"\",\"SparamId\":\"9\",\"SparamEval\":\"\",\"SparamUnit\":\"%\"}"]
+@parent ParamDate
+
+@param ElementResist
+@type struct<ElementData>[]
+@text 属性耐性
+@default ["{\"ElementNo\":\"1\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"2\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"3\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"4\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"5\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"6\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"7\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"8\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"9\",\"ElementIconId\":\"\"}"]
+@parent ParamDate
+
+@param StateResist
+@type struct<StateData>[]
+@text 状態耐性
+@default ["{\"StateNo\":\"4\"}","{\"StateNo\":\"5\"}","{\"StateNo\":\"6\"}","{\"StateNo\":\"7\"}","{\"StateNo\":\"8\"}","{\"StateNo\":\"9\"}","{\"StateNo\":\"10\"}","{\"StateNo\":\"12\"}","{\"StateNo\":\"13\"}"]
+@parent ParamDate
+
+@param StateResistText
+@text 有効度ステート名表示
+@desc ステート有効度のステートアイコンをステート名で表示させます。
+@type boolean
+@default false
+@parent ParamDate
+
+@param OriginalParam1
+@type struct<OriginalParamData>[]
+@text 独自表示項目1
+@default
+@parent ParamDate
+
+@param OriginalParam1Name
+@desc 独自パラメータ１の名称。
+@text 独自パラメータ１名称
+@type string
+@parent ParamDate
+
+@param OriginalParam2
+@type struct<OriginalParamData>[]
+@text 独自表示項目2
+@default
+@parent ParamDate
+
+@param OriginalParam2Name
+@desc 独自パラメータ２の名称。
+@text 独自パラメータ２名称
+@type string
+@parent ParamDate
+
+@param GaugeWidth
+@text ゲージ横幅
+@desc HP,MP,TPゲージの横幅を指定します。
+@type number
+@default 200
+@min 0
+@max 9999
+@parent ParamDate
+*/
 
 var Imported = Imported || {};
 Imported.NUUN_StatusScreen = true;
@@ -580,13 +928,11 @@ function maxPages() {
   return maxPages;
 };
 
-
 const _Scene_Status_initialize = Scene_Status.prototype.initialize;
 Scene_Status.prototype.initialize = function() {
   _Scene_Status_initialize.call(this);
   this._pageMode = 0;
 };
-
 
 Scene_Status.prototype.create = function() {
   Scene_MenuBase.prototype.create.call(this);
@@ -776,7 +1122,6 @@ Scene_Status.prototype.contentsWindowRefresh = function() {
   this._rightContentWindow.x = (Graphics.width - Graphics.boxWidth) / 2 + this._leftContentWindow.width;
 };
 
-
 const _Scene_Status_update = Scene_Status.prototype.update;
 Scene_Status.prototype.update = function() {
   _Scene_Status_update.call(this);
@@ -796,7 +1141,6 @@ Scene_Status.prototype.update = function() {
 		this.updateContentsPagedown();
   }
 };
-
 
 Window_StatusBase.prototype.statusParamDecimal = function(val) {
   if (param.DecimalMode) {
@@ -953,7 +1297,6 @@ Window_Basic.prototype.refresh = function() {
   }
 };
 
-
 function Window_Content() {
   this.initialize(...arguments);
 }
@@ -991,8 +1334,6 @@ Window_Content.prototype.maxCols = function() {
   }
   return 2;
 };
-
-
 
 Window_Content.prototype.refresh = function() {
   this.pageRefresh();
@@ -1239,12 +1580,10 @@ Window_Content.prototype.OriginalParam2 = function(rect) {
 
 Window_Content.prototype.drawElementRadarChart = function(rect) {
 
-  
 };
 
 Window_Content.prototype.drawStateRadarChart = function(rect) {
 
-  
 };
 
 const _Window_Content_drawItemBackground = Window_Content.prototype.drawItemBackground;
@@ -1254,13 +1593,11 @@ Window_Content.prototype.drawItemBackground = function(index) {
   }
 };
 
-
 const _Window_Content_drawBackgroundRect  = Window_Content.prototype.drawBackgroundRect ;
 Window_Content.prototype.drawBackgroundRect = function(rect) {
   rect.y += this.lineHeight();
   _Window_Content_drawBackgroundRect.call(this, rect);
 };
-
 
 function Window_LeftContent() {
   this.initialize(...arguments);
@@ -1306,7 +1643,6 @@ Window_LeftContent.prototype.pageRefresh = function() {
   }
 };
 
-
 function Window_RightContent() {
   this.initialize(...arguments);
 }
@@ -1351,7 +1687,6 @@ Window_RightContent.prototype.pageRefresh = function() {
   }
 };
 
-
 function Sprite_StatusGauge() {
   this.initialize(...arguments);
 }
@@ -1366,7 +1701,6 @@ Sprite_StatusGauge.prototype.initialize = function() {
 Sprite_StatusGauge.prototype.bitmapWidth = function() {
   return param.GaugeWidth;
 };
-
 
 function Sprite_StatusExpGauge() {
   this.initialize(...arguments);
