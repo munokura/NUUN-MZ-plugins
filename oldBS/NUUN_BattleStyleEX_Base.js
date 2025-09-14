@@ -6,218 +6,498 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  * 
- */ 
-/*:
- * @target MZ
- * @plugindesc バトルスタイル拡張ベース
- * @author NUUN
- * @version 2.6.15
- * @base NUUN_Base
- * @orderAfter NUUN_Base
- * @orderAfter NUUN_BattleStyleEX
- *            
- * @help バトルスタイル拡張プラグインのベースプラグインです。単体では動作しません。
- * 
- * 更新履歴
- * 2022/4/17 Ver 2.6.15
- * 残りHPでリストの一番上の設定しか適用されない問題を修正。
- * 2022/4/17 Ver 2.6.14
- * 立ち絵、顔グラ変化条件に残りHPを追加。
- * 2022/3/12 Ver 2.6.13
- * アクター加入、離脱時の処理を修正。
- * 2022/2/3 Ver 2.6.12
- * アクターコマンドの座標をマイナスに設定したときに、座標設定が適用されないもん問題を修正。
- * 2022/1/17 Ver 2.6.11
- * 戦闘開始時に立ち絵画像が表示されない問題を修正。
- * 2021/12/30 Ver 2.6.10
- * スピードスターバトルとの併用パッチによる処理の追加。
- * 2021/12/26 Ver 2.6.9
- * メンバーが増減したときにステータス、エフェクトの表示位置がおかしくなる問題を修正。
- * エフェクトの表示位置をアクターステータス背景とステータスの間に表示するように修正。
- * 2021/12/12 Ver 2.6.8
- * 一部関数が重複していたため修正。
- * 2021/12/11 Ver 2.6.7
- * 立ち絵、顔グラ表示EXで設定した勝利時の画像が戦闘終了後でも残ってしまう問題を修正。
- * 2021/12/11 Ver 2.6.6
- * 立ち絵、顔グラEXの新仕様に対応。
- * 2021/12/4 Ver 2.6.5
- * メッセージウィンドウ表示時のアクターステータスの不透明度を手動設定に変更。
- * メッセージウィンドウ表示時にアクターステータスの表示非表示にする機能を追加。
- * 2021/10/24 Ver 2.6.4
- * ゲージの幅が正常に取得できていなかった問題を修正。
- * 2021/10/24 Ver 2.6.3
- * メッセージウィンドウが上に表示された場合はアクターステータスウィンドウを表示したままにするように修正。
- * 2021/10/16 Ver 2.6.2
- * エフェクトのプライマリーを変更。
- * 2021/10/3 Ver 2.6.1
- * ステータスとアクター画像の間に背景画像を表示できる機能を追加。
- * 2021/9/29 Ver 2.6.0
- * アクター画像の表示範囲を指定できる機能を追加。
- * 2021/9/23 Ver 2.5.8
- * アクターコマンドの表示モードが中間、上部、アクターウィンドウの上を指定したときにアクターコマンドの背景画像のY座標調整が機能していなかった問題を修正。
- * 2021/9/19 Ver 2.5.7
- * ゲージの表示処理を変更。
- * 2021/9/16 Ver 2.5.6
- * コアスクリプトVer.1.3.3でゲージの高さがおかしくなる問題を修正。
- * 2021/9/13 Ver 2.5.5
- * コマンドスキルプラグインでのコマンド化したスキルを選択し、エネミー対象でキャンセルした場合にコマンドが表示されなくなる
- * 問題を修正。
- * 2021/9/11 Ver 2.5.4
- * 全てのモードにおいてアクターコマンドを可変に表示できるように変更。
- * 2021/9/8 Ver 2.5.3
- * リングステートプラグインと併用するとステートアイコンの表示が正常に表示されない問題を修正。
- * 2021/7/23 Ver 2.5.2
- * 可変コマンド時にコマンドが表示されない問題を修正。
- * 2021/7/17 Ver 2.5.1
- * ポップアップ機能個別プラグイン化により処理を削除。
- * 2021/7/14 Ver 2.5.0
- * アクターコマンドモードにSVアクターの上、左、右に表示させる機能を追加。
- * 2021/7/14 Ver 2.4.11
- * スリップダメージ時にアクター画像がシェイクしてしまう問題を修正。
- * 2021/7/12 Ver 2.4.10
- * 復活時にアクター画像が反映されない問題を修正。
- * 2021/7/12 Ver 2.4.9
- * 立ち絵表示EX修正に関する処理の修正。
- * 2021/7/9 Ver 2.4.8
- * 回復した時の顔グラがダメージ時の顔グラが反映されてしまう問題を修正。
- * 2021/7/7 Ver 2.4.7
- * 対象選択時にヘルプウィンドウを表示したままにする機能を追加。
- * 2021/7/6 Ver 2.4.6
- * 戦闘開始前にダメージを受けるとアクターの震えが止まらなくなる問題を修正。
- * 2021/7/5 Ver 2.4.5
- * アクターステータスウィンドウのカーソル背景画像が表示されない問題を修正。
- * アイテム、スキル、敵選択のカーソル背景画像が表示されない問題を修正。
- * 2021/6/27 Ver 2.4.4
- * 戦闘中ではない時にアイテム、スキル画面を開くと項目の背景が表示されない問題を修正。
- * 2021/6/27 Ver 2.4.3
- * アクターコマンドの背景画像を設定していない時で、コマンドの表示を各アクターの上に設定するとエラーが出る問題を修正。
- * 2021/6/26 Ver 2.4.2
- * パーティ、アクターコマンドの背景画像を指定していないとエラーが出る問題を修正。
- * 2021/6/26 Ver 2.4.1
- * アイテム、スキル、モンスター対象選択ウィンドウ、ヘルプウィンドウ、メッセージウィンドウのウィンドウを表示しない機能及び背景画像を設定できる機能を追加。
- * 2021/6/20 Ver 2.4.0
- * アクターのダメージ時にアクター画像をシェイクする機能、行動時にズームする機能を追加しました。
- * パーティコマンド、アクターコマンドの背景を非表示にする機能を追加。
- * 2021/6/13 Ver 2.3.2
- * 疑似3Dバトル暫定競合対策。
- * 2021/6/6 Ver 2.3.1
- * アクター画像に回復をしたときの画像を追加。
- * 2021/6/5 Ver 2.3.0
- * アクター画像表示処理を大幅に修正。
- * 顔グラの0番が反映されなかった問題を修正。
- * 2021/5/21 Ver 2.2.3
- * 選択時ウィンドウ不透明度を0に設定すると不透明度が反映されない問題を修正。
- * 2021/4/20 Ver 2.2.2
- * 一部のプラグインパラメータでfalseに設定したときに設定が反映されない問題を修正。
- * 2021/4/11 Ver 2.2.1
- * ポップアップの表示間隔、解除時の不透明度を指定できる機能を追加。
- * 2021/4/5 Ver 2.2.0
- * ステート、バフをポップアップする機能を追加。
- * 2021/4/4 Ver 2.1.0
- * バトルスタイルレイアウトを選択できる機能を追加。
- * 顔グラを表示させない機能を追加。
- * 2021/3/28 Ver 2.0.10
- * NUUN_ActorPictureを導入してないとエラーが出る問題を修正。
- * 2021/3/27 Ver 2.0.9
- * 特定の条件でエラーが出る問題を修正。
- * 2021/3/27 Ver 2.0.8
- * フロントビュー時のエフェクト処理を改修。
- * 2021/3/26 Ver 2.0.7
- * 立ち絵表示EXに対応。
- * 2021/3/22 Ver 2.0.6
- * プラグインコマンドにアクターウィンドウを非表示にする機能を追加。
- * プラグインコマンドにアクターウィンドウを不透明化にする機能を追加。
- * モンスターの出現メッセージをカットする機能を追加。
- * 2021/3/21 Ver 2.0.5
- * 戦闘開始時に立ち絵が切り替わらない問題を修正。
- * 2021/3/21 Ver 2.0.4
- * 立ち絵画像を取得できない問題を修正。
- * 2021/3/20 Ver 2.0.3
- * アクション開始時にパーティコマンドが一瞬表示される問題を修正。
- * リザルトプラグインの表示中はアクターステータスウィンドウを非表示に対応。
- * 2021/1/24 Ver 2.0.2
- * フロントビューでアクター側に「戦闘行動結果ポップアッププラグイン」が適用されるように対応。
- * 2021/1/17 Ver 2.0.1
- * ゲージの縦幅を指定できる機能を追加。
- * 2021/1/17 Ver 2.0.0
- * ベースプラグインとレイアウト設定用のプラグインを別々に分割。
- * 2021/1/12 Ver.1.5.2
- * アクターコマンドの設定によっては、コマンドが画面の端から見切れる問題を修正。
- * 2021/1/11 Ver.1.5.1
- * アクターステータス背景画像が指定されてない時に、アクター背景を表示するに設定しても背景が表示されない問題を修正。
- * 2021/1/11 Ver.1.5.0
- * アクターステータスに任意の背景画像を表示できる機能を追加。
- * 2021/1/10 Ver.1.4.2
- * アクターウィンドウ座標変更許可をtrueにした場合でもウィンドウを中央に配置できるように変更。
- * 特定の条件でアニメーションがずれる問題を修正。
- * 2021/1/2 Ver.1.4.1
- * NUUN_IconSideBySide対応
- * 2020/12/31 Ver.1.4.0
- * アクターウィンドウを自由に配置できる機能を追加。
- * アクターの配置をある程度設定できるように機能を追加。
- * フロントビューでエフェクトを表示させない機能を追加。
- * スキル、アイテム、エネミー選択画面の不透明度を個別に無効化できる機能を追加。
- * 各ゲージ長を個別に設定可能に変更。
- * 2020/12/29 Ver.1.3.4.1
- * ステート変化IDの説明が古いバージョンの記述法のままだったのを修正。
- * 2020/12/29 Ver.1.3.4
- * パーティコマンドを「アクターウィンドウの上」で表示された時、表示されない問題を修正。
- * 2020/12/28 Ver.1.3.3
- * 特定の条件下でアクター画像、顔グラがぼやけて表示される不具合を修正。
- * 被ステート時のグラフィックがステートのモーションが通常の時に、画像の変更が反映されない不具合を修正。
- * 被ステート時のグラフィックが変更後に別の被ステート時のグラフィックが変更されるときに正常に表示されない不具合を修正。
- * 2020/12/25 Ver.1.3.2
- * イベントコマンドでアニメーションを表示させるとエラーが出る不具合を修正。
- * 2020/12/23 Ver.1.3.1
- * アクター行動選択時に表示される背景画像の表示とアクター対象選択時に表示される背景画像を非表示に出来るように機能を追加。
- * 2020/12/21 Ver.1.3.0
- * 戦闘不能時のグラフィックを設定してない時に、戦闘不能時のアクター画像（顔グラ）を表示したままにするか選択できるようにしました。（従来の方法でも可能）
- * パーティコマンドの表示位置、行数、列数を指定できるように変更。
- * アクターコマンドに上、中間、アクターウィンドウの上に表示できる機能を追加。
- * アクターコマンドの表示位置、行数、列数を指定できるように変更。
- * エネミー出現、リザルト、敗北、逃走メッセージを画面上側か画面下側に表示を選択できる機能を追加。
- * メッセージウインドウを下側にも表示可能に修正。メッセージウィンドウが下側に表示された場合でも「選択時ウィンドウ不透明度」が適用されます。
- * 2020/12/19 Ver.1.2.0.1
- * アクターウィンドウ表示を非表示に設定しても表示してしまう不具合を修正。
- * 2020/12/19 Ver.1.2.0
- * アクター選択時にアクター画像（顔グラ）を点滅させる機能を追加。
- * 2020/12/17 Ver.1.1.3
- * メッセージウィンドウを下に表示（アクターウィンドウの前面）させないように修正。
- * （メッセージウィンドウを下に表示で設定した場合、バトル中のみ自動的に上に表示されます）Ver.1.3.0で下側にも表示できるようになりました。
- * 2020/12/16 Ver.1.1.2
- * エネミー、アイテム、スキル選択画面を表示している時のアクターウィンドウに不透明度を指定できる機能を追加。
- * 2020/12/9 Ver.1.1.1
- * 名前を非表示にできる機能を追加。
- * 2020/12/9 Ver.1.1.0
- * アクターステータスウィンドウの表示処理を見直し。
- * アクターステータスウィンドウに背景画像を指定出来る機能を追加。
- * 2020/12/8 Ver.1.0.2
- * 戦闘開始時に戦闘不能のアクター画像が一瞬表示されないように修正。
- * 2020/12/7 Ver.1.0.1
- * バトラーアニメーションに勝利、詠唱時の画像を変更する機能を追加。
- * 2020/12/6 Ver.1.0.0
- * 初版
- * 
- * @command ActorStatusWindowVisible
- * @desc アクターステータスの表示を切り替えます。
- * @text アクターステータス表示切替
- * 
- * @arg WindowVisible
- * @type boolean
- * @default false
- * @text 表示切替
- * @desc 表示の切り替えをします。(trueで表示)
- * 
- * @command ActorStatusWindowOpacity
- * @desc アクターステータスを不透明化します。
- * @text アクターステータス不透明化表示
- * 
- * @arg WindowOpacity
- * @type boolean
- * @default false
- * @text 不透明度表示
- * @desc ONのアクターステータスが不透明化します。(trueで不透明化)
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Battle Style Expansion Base
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+This is the base plugin for the Battle Style Extension Plugin. It does not
+work on its own.
+
+Update History
+2022/4/17 Ver 2.6.15
+Fixed an issue where only the top setting in the list for remaining HP was
+applied.
+2022/4/17 Ver 2.6.14
+Added remaining HP to the conditions for character portrait and face graphics
+changes.
+2022/3/12 Ver 2.6.13
+Fixed processing for actor joining and leaving.
+2022/2/3 Ver 2.6.12
+Fixed an issue where coordinate settings were not applied when actor command
+coordinates were set to negative values.
+2022/1/17 Ver 2.6.11
+Fixed an issue where character portrait images were not displayed at the start
+of battle.
+2021/12/30 Ver 2.6.10
+Added processing for use with Speed Star Battle patch.
+December 26, 2021, Ver. 2.6.9
+Fixed an issue where the display position of status and effects would become
+incorrect when the number of members increased or decreased.
+Fixed the display position of effects so that they are now displayed between
+the actor status background and the status.
+December 12, 2021, Ver. 2.6.8
+Fixed a function duplication issue.
+December 11, 2021, Ver. 2.6.7
+Fixed an issue where the victory image set in the Standing Picture and Face
+Graphics Display EX remained even after the battle ended.
+December 11, 2021, Ver. 2.6.6
+Supports new specifications for Standing Picture and Face Graphics EX.
+December 4, 2021, Ver. 2.6.5
+Changed the opacity of actor status when the message window is displayed to
+manual setting.
+Added a function to display or hide actor status when the message window is
+displayed.
+October 24, 2021, Ver. 2.6.4
+Fixed an issue where the gauge width was not being obtained correctly.
+October 24, 2021 Version 2.6.3
+Fixed the issue so that the actor status window remains visible when a message
+window is displayed on top.
+October 16, 2021 Version 2.6.2
+Changed the primary effect.
+October 3, 2021 Version 2.6.1
+Added a feature to display a background image between the status and actor
+image.
+September 29, 2021 Version 2.6.0
+Added a feature to specify the display range of the actor image.
+September 23, 2021 Version 2.5.8
+Fixed an issue where the Y coordinate adjustment of the actor command
+background image was not working when the actor command display mode was set
+to middle, top, or above the actor window.
+September 19, 2021 Version 2.5.7
+Changed the gauge display processing.
+September 16, 2021 Version 2.5.6
+Fixed an issue where the gauge height was incorrect in Core Script Version
+1.3.3.
+September 13, 2021 Ver. 2.5.5
+Fixed an issue where commands would not display when selecting a commanded
+skill in the Command Skill Plugin and canceling it on an enemy.
+September 11, 2021 Ver. 2.5.4
+Changed actor commands to be displayed variably in all modes.
+September 8, 2021 Ver. 2.5.3
+Fixed an issue where state icons would not display correctly when used in
+conjunction with the Ring State Plugin.
+July 23, 2021 Ver. 2.5.2
+Fixed an issue where commands would not display when using variable commands.
+July 17, 2021 Ver. 2.5.1
+Made the popup function a separate plugin and removed the process.
+July 14, 2021 Ver. 2.5.0
+Added a feature to display SV actors above, to the left, or right of the SV
+actor in Actor Command Mode.
+July 14, 2021 Ver. 2.4.11
+Fixed an issue where actor images would shake when taking slip damage.
+July 12, 2021 Ver. 2.4.10
+Fixed an issue where actor images would not be displayed upon revival.
+July 12, 2021 Ver. 2.4.9
+Fixed a processing issue related to the EX character portrait display
+correction.
+July 9, 2021 Ver. 2.4.8
+Fixed an issue where the facial graphics when recovered would reflect the
+facial graphics when damaged.
+July 7, 2021 Ver. 2.4.7
+Added a feature to keep the help window displayed when selecting a target.
+July 6, 2021 Ver. 2.4.6
+Fixed an issue where actors would continue to shake if they took damage before
+the start of combat.
+July 5, 2021 Ver. 2.4.5
+Fixed an issue where the cursor background image in the Actor Status window
+would not display.
+Fixed an issue where the cursor background image for item, skill, and enemy
+selection would not display.
+June 27, 2021 Ver. 2.4.4
+Fixed an issue where the item or skill screen background would not display
+when opened outside of combat. 2021/6/27 Ver 2.4.3
+Fixed an issue where an error would occur when setting the actor command to
+display above each actor when a background image had not been set.
+2021/6/26 Ver 2.4.2
+Fixed an issue where an error would occur when a background image had not been
+set for the party or actor command.
+2021/6/26 Ver 2.4.1
+Added the ability to hide the item, skill, monster target selection window,
+help window, and message window, as well as the ability to set background
+images.
+2021/6/20 Ver 2.4.0
+Added the ability to shake the actor image when the actor takes damage and
+zoom when acting.
+Added the ability to hide the background for party commands and actor
+commands.
+2021/6/13 Ver 2.3.2
+Temporary conflict fix for pseudo-3D battles.
+2021/6/6 Ver 2.3.1
+Added an image for when an actor recovers to the actor image.
+June 5, 2021 Ver. 2.3.0
+Major revisions to actor image display processing.
+Fixed an issue where face graphics number 0 were not reflected.
+May 21, 2021 Ver. 2.2.3
+Fixed an issue where opacity was not reflected when window opacity was set to
+0 during selection.
+April 20, 2021 Ver. 2.2.2
+Fixed an issue where some plugin parameters were not reflected when set to
+false.
+April 11, 2021 Ver. 2.2.1
+Added the ability to specify the popup display interval and opacity when
+dismissed.
+April 5, 2021 Ver. 2.2.0
+Added the ability to display state and buff popups.
+April 4, 2021 Ver. 2.1.0
+Added the ability to select battle style layouts.
+Added the ability to hide face graphics.
+March 28, 2021 Ver. 2.0.10
+Fixed an issue where an error would occur if NUUN_ActorPicture was not
+installed.
+March 27, 2021 Ver. 2.0.9
+Fixed an issue that caused an error under certain conditions.
+March 27, 2021 Ver. 2.0.8
+Improved effect processing in front view.
+March 26, 2021 Ver. 2.0.7
+Supports Standing Anime Display EX.
+March 22, 2021 Ver. 2.0.6
+Added a plugin command to hide the actor window.
+Added a plugin command to make the actor window opaque.
+Added a function to cut monster appearance messages.
+March 21, 2021 Ver. 2.0.5
+Fixed an issue where standing anime images would not change at the start of
+battle.
+March 21, 2021 Ver. 2.0.4
+Fixed an issue where standing anime images could not be obtained.
+March 20, 2021 Ver. 2.0.3
+Fixed an issue where party commands would briefly appear when starting an
+action.
+Added support for hiding the actor status window while the result plugin is
+displayed.
+2021/1/24 Ver. 2.0.2
+The "Battle Action Result Popup Plugin" is now applied to the actor side in
+front view.
+2021/1/17 Ver. 2.0.1
+Added a feature to specify the vertical width of the gauge.
+2021/1/17 Ver. 2.0.0
+Separated the base plugin and layout setting plugin.
+2021/1/12 Ver. 1.5.2
+Fixed an issue where actor commands would be cut off from the edge of the
+screen depending on the settings.
+2021/1/11 Ver. 1.5.1
+Fixed an issue where the actor status background would not be displayed even
+when it was set to display when no background image was specified.
+2021/1/11 Ver. 1.5.0
+Added a feature to display a custom background image for the actor status.
+January 10, 2021 Ver. 1.4.2
+Now allows the actor window to be centered even when the Actor Window
+Coordinate Change Allowed setting is true.
+Fixed an issue where animations would be misaligned under certain conditions.
+January 2, 2021 Ver. 1.4.1
+NUUN_IconSideBySide support.
+December 31, 2020 Ver. 1.4.0
+Added the ability to freely position the actor window.
+Added a feature to allow for some control over actor placement.
+Added the ability to hide effects in front view.
+Added the ability to individually disable opacity for the skill, item, and
+enemy selection screens.
+Changed the length of each gauge to be individually configurable.
+December 29, 2020 Ver. 1.3.4.1
+Fixed an issue where the state change ID description was still using the older
+version's notation.
+December 29, 2020 Ver. 1.3.4
+Fixed an issue where party commands would not display when displayed "above
+the actor window."
+December 28, 2020 Ver. 1.3.3
+Fixed an issue where actor images and facial graphics would appear blurry
+under certain conditions.
+Fixed an issue where image changes would not be reflected when the
+state-affected graphics were set to normal motion.
+Fixed an issue where graphics would not display correctly when a
+state-affected graphic was changed after another state-affected graphic was
+changed.
+December 25, 2020 Ver. 1.3.2
+Fixed an issue where an error would occur when displaying animations using
+event commands.
+December 23, 2020 Ver. 1.3.1
+Added a feature to enable the display of the background image displayed when
+selecting an actor's action and the background image displayed when selecting
+an actor target.
+December 21, 2020 Ver. 1.3.0
+You can now choose whether to keep actor images (facial graphics) displayed
+when an actor is KO'd when no graphics have been set. (This is still possible
+using the previous method.)
+You can now specify the display position, number of rows, and number of
+columns for party commands.
+Added the ability to display actor commands at the top, middle, or above the
+actor window.
+Modified the ability to specify the display position, number of rows, and
+number of columns for actor commands.
+Added the ability to choose whether enemy appearance, result, defeat, and
+escape messages are displayed at the top or bottom of the screen.
+Fixed the ability to display message windows at the bottom. The "Window
+Opacity on Selection" setting is still applied even when the message window is
+displayed at the bottom.
+2020/12/19 Ver.1.2.0.1
+Fixed an issue where the actor window would still display even when set to
+hidden.
+2020/12/19 Ver.1.2.0
+Added a feature to flash the actor image (face graphic) when selecting an
+actor.
+2020/12/17 Ver.1.1.3
+Fixed the ability to prevent the message window from displaying at the bottom
+(in front of the actor window).
+(If the message window is set to display at the bottom, it will automatically
+display at the top during battle only.) Ver.1.3.0 now allows it to be
+displayed at the bottom as well.
+December 16, 2020 Ver. 1.1.2
+Added the ability to specify opacity for the Actor window when displaying the
+enemy, item, or skill selection screen.
+December 9, 2020 Ver. 1.1.1
+Added the ability to hide names.
+December 9, 2020 Ver. 1.1.0
+Revised the display process for the Actor Status window.
+Added the ability to specify a background image for the Actor Status window.
+December 8, 2020 Ver. 1.0.2
+Fixed the issue so that the image of an incapacitated actor no longer appears
+briefly at the start of battle.
+December 7, 2020 Ver. 1.0.1
+Added the ability to change the image when winning or casting a spell in the
+Battler animation.
+December 6, 2020 Ver. 1.0.0
+First version
+
+@command ActorStatusWindowVisible
+@text Actor status display switch
+@desc Toggles the display of actor status.
+@arg WindowVisible
+@text Display Switching
+@desc Toggles display. (Displays when set to true)
+@type boolean
+@default false
+
+@command ActorStatusWindowOpacity
+@text Actor status opacity display
+@desc Makes actor status opaque.
+@arg WindowOpacity
+@text Opacity display
+@desc ON actor status becomes opaque. (true makes it opaque)
+@type boolean
+@default false
+*/
+
+/*:ja
+@target MZ
+@plugindesc バトルスタイル拡張ベース
+@author NUUN
+@version 2.6.15
+@base NUUN_Base
+@orderAfter NUUN_Base
+@orderAfter NUUN_BattleStyleEX
+
+@help バトルスタイル拡張プラグインのベースプラグインです。単体では動作しません。
+
+更新履歴
+2022/4/17 Ver 2.6.15
+残りHPでリストの一番上の設定しか適用されない問題を修正。
+2022/4/17 Ver 2.6.14
+立ち絵、顔グラ変化条件に残りHPを追加。
+2022/3/12 Ver 2.6.13
+アクター加入、離脱時の処理を修正。
+2022/2/3 Ver 2.6.12
+アクターコマンドの座標をマイナスに設定したときに、座標設定が適用されないもん問題を修正。
+2022/1/17 Ver 2.6.11
+戦闘開始時に立ち絵画像が表示されない問題を修正。
+2021/12/30 Ver 2.6.10
+スピードスターバトルとの併用パッチによる処理の追加。
+2021/12/26 Ver 2.6.9
+メンバーが増減したときにステータス、エフェクトの表示位置がおかしくなる問題を修正。
+エフェクトの表示位置をアクターステータス背景とステータスの間に表示するように修正。
+2021/12/12 Ver 2.6.8
+一部関数が重複していたため修正。
+2021/12/11 Ver 2.6.7
+立ち絵、顔グラ表示EXで設定した勝利時の画像が戦闘終了後でも残ってしまう問題を修正。
+2021/12/11 Ver 2.6.6
+立ち絵、顔グラEXの新仕様に対応。
+2021/12/4 Ver 2.6.5
+メッセージウィンドウ表示時のアクターステータスの不透明度を手動設定に変更。
+メッセージウィンドウ表示時にアクターステータスの表示非表示にする機能を追加。
+2021/10/24 Ver 2.6.4
+ゲージの幅が正常に取得できていなかった問題を修正。
+2021/10/24 Ver 2.6.3
+メッセージウィンドウが上に表示された場合はアクターステータスウィンドウを表示したままにするように修正。
+2021/10/16 Ver 2.6.2
+エフェクトのプライマリーを変更。
+2021/10/3 Ver 2.6.1
+ステータスとアクター画像の間に背景画像を表示できる機能を追加。
+2021/9/29 Ver 2.6.0
+アクター画像の表示範囲を指定できる機能を追加。
+2021/9/23 Ver 2.5.8
+アクターコマンドの表示モードが中間、上部、アクターウィンドウの上を指定したときにアクターコマンドの背景画像のY座標調整が機能していなかった問題を修正。
+2021/9/19 Ver 2.5.7
+ゲージの表示処理を変更。
+2021/9/16 Ver 2.5.6
+コアスクリプトVer.1.3.3でゲージの高さがおかしくなる問題を修正。
+2021/9/13 Ver 2.5.5
+コマンドスキルプラグインでのコマンド化したスキルを選択し、エネミー対象でキャンセルした場合にコマンドが表示されなくなる
+問題を修正。
+2021/9/11 Ver 2.5.4
+全てのモードにおいてアクターコマンドを可変に表示できるように変更。
+2021/9/8 Ver 2.5.3
+リングステートプラグインと併用するとステートアイコンの表示が正常に表示されない問題を修正。
+2021/7/23 Ver 2.5.2
+可変コマンド時にコマンドが表示されない問題を修正。
+2021/7/17 Ver 2.5.1
+ポップアップ機能個別プラグイン化により処理を削除。
+2021/7/14 Ver 2.5.0
+アクターコマンドモードにSVアクターの上、左、右に表示させる機能を追加。
+2021/7/14 Ver 2.4.11
+スリップダメージ時にアクター画像がシェイクしてしまう問題を修正。
+2021/7/12 Ver 2.4.10
+復活時にアクター画像が反映されない問題を修正。
+2021/7/12 Ver 2.4.9
+立ち絵表示EX修正に関する処理の修正。
+2021/7/9 Ver 2.4.8
+回復した時の顔グラがダメージ時の顔グラが反映されてしまう問題を修正。
+2021/7/7 Ver 2.4.7
+対象選択時にヘルプウィンドウを表示したままにする機能を追加。
+2021/7/6 Ver 2.4.6
+戦闘開始前にダメージを受けるとアクターの震えが止まらなくなる問題を修正。
+2021/7/5 Ver 2.4.5
+アクターステータスウィンドウのカーソル背景画像が表示されない問題を修正。
+アイテム、スキル、敵選択のカーソル背景画像が表示されない問題を修正。
+2021/6/27 Ver 2.4.4
+戦闘中ではない時にアイテム、スキル画面を開くと項目の背景が表示されない問題を修正。
+2021/6/27 Ver 2.4.3
+アクターコマンドの背景画像を設定していない時で、コマンドの表示を各アクターの上に設定するとエラーが出る問題を修正。
+2021/6/26 Ver 2.4.2
+パーティ、アクターコマンドの背景画像を指定していないとエラーが出る問題を修正。
+2021/6/26 Ver 2.4.1
+アイテム、スキル、モンスター対象選択ウィンドウ、ヘルプウィンドウ、メッセージウィンドウのウィンドウを表示しない機能及び背景画像を設定できる機能を追加。
+2021/6/20 Ver 2.4.0
+アクターのダメージ時にアクター画像をシェイクする機能、行動時にズームする機能を追加しました。
+パーティコマンド、アクターコマンドの背景を非表示にする機能を追加。
+2021/6/13 Ver 2.3.2
+疑似3Dバトル暫定競合対策。
+2021/6/6 Ver 2.3.1
+アクター画像に回復をしたときの画像を追加。
+2021/6/5 Ver 2.3.0
+アクター画像表示処理を大幅に修正。
+顔グラの0番が反映されなかった問題を修正。
+2021/5/21 Ver 2.2.3
+選択時ウィンドウ不透明度を0に設定すると不透明度が反映されない問題を修正。
+2021/4/20 Ver 2.2.2
+一部のプラグインパラメータでfalseに設定したときに設定が反映されない問題を修正。
+2021/4/11 Ver 2.2.1
+ポップアップの表示間隔、解除時の不透明度を指定できる機能を追加。
+2021/4/5 Ver 2.2.0
+ステート、バフをポップアップする機能を追加。
+2021/4/4 Ver 2.1.0
+バトルスタイルレイアウトを選択できる機能を追加。
+顔グラを表示させない機能を追加。
+2021/3/28 Ver 2.0.10
+NUUN_ActorPictureを導入してないとエラーが出る問題を修正。
+2021/3/27 Ver 2.0.9
+特定の条件でエラーが出る問題を修正。
+2021/3/27 Ver 2.0.8
+フロントビュー時のエフェクト処理を改修。
+2021/3/26 Ver 2.0.7
+立ち絵表示EXに対応。
+2021/3/22 Ver 2.0.6
+プラグインコマンドにアクターウィンドウを非表示にする機能を追加。
+プラグインコマンドにアクターウィンドウを不透明化にする機能を追加。
+モンスターの出現メッセージをカットする機能を追加。
+2021/3/21 Ver 2.0.5
+戦闘開始時に立ち絵が切り替わらない問題を修正。
+2021/3/21 Ver 2.0.4
+立ち絵画像を取得できない問題を修正。
+2021/3/20 Ver 2.0.3
+アクション開始時にパーティコマンドが一瞬表示される問題を修正。
+リザルトプラグインの表示中はアクターステータスウィンドウを非表示に対応。
+2021/1/24 Ver 2.0.2
+フロントビューでアクター側に「戦闘行動結果ポップアッププラグイン」が適用されるように対応。
+2021/1/17 Ver 2.0.1
+ゲージの縦幅を指定できる機能を追加。
+2021/1/17 Ver 2.0.0
+ベースプラグインとレイアウト設定用のプラグインを別々に分割。
+2021/1/12 Ver.1.5.2
+アクターコマンドの設定によっては、コマンドが画面の端から見切れる問題を修正。
+2021/1/11 Ver.1.5.1
+アクターステータス背景画像が指定されてない時に、アクター背景を表示するに設定しても背景が表示されない問題を修正。
+2021/1/11 Ver.1.5.0
+アクターステータスに任意の背景画像を表示できる機能を追加。
+2021/1/10 Ver.1.4.2
+アクターウィンドウ座標変更許可をtrueにした場合でもウィンドウを中央に配置できるように変更。
+特定の条件でアニメーションがずれる問題を修正。
+2021/1/2 Ver.1.4.1
+NUUN_IconSideBySide対応
+2020/12/31 Ver.1.4.0
+アクターウィンドウを自由に配置できる機能を追加。
+アクターの配置をある程度設定できるように機能を追加。
+フロントビューでエフェクトを表示させない機能を追加。
+スキル、アイテム、エネミー選択画面の不透明度を個別に無効化できる機能を追加。
+各ゲージ長を個別に設定可能に変更。
+2020/12/29 Ver.1.3.4.1
+ステート変化IDの説明が古いバージョンの記述法のままだったのを修正。
+2020/12/29 Ver.1.3.4
+パーティコマンドを「アクターウィンドウの上」で表示された時、表示されない問題を修正。
+2020/12/28 Ver.1.3.3
+特定の条件下でアクター画像、顔グラがぼやけて表示される不具合を修正。
+被ステート時のグラフィックがステートのモーションが通常の時に、画像の変更が反映されない不具合を修正。
+被ステート時のグラフィックが変更後に別の被ステート時のグラフィックが変更されるときに正常に表示されない不具合を修正。
+2020/12/25 Ver.1.3.2
+イベントコマンドでアニメーションを表示させるとエラーが出る不具合を修正。
+2020/12/23 Ver.1.3.1
+アクター行動選択時に表示される背景画像の表示とアクター対象選択時に表示される背景画像を非表示に出来るように機能を追加。
+2020/12/21 Ver.1.3.0
+戦闘不能時のグラフィックを設定してない時に、戦闘不能時のアクター画像（顔グラ）を表示したままにするか選択できるようにしました。（従来の方法でも可能）
+パーティコマンドの表示位置、行数、列数を指定できるように変更。
+アクターコマンドに上、中間、アクターウィンドウの上に表示できる機能を追加。
+アクターコマンドの表示位置、行数、列数を指定できるように変更。
+エネミー出現、リザルト、敗北、逃走メッセージを画面上側か画面下側に表示を選択できる機能を追加。
+メッセージウインドウを下側にも表示可能に修正。メッセージウィンドウが下側に表示された場合でも「選択時ウィンドウ不透明度」が適用されます。
+2020/12/19 Ver.1.2.0.1
+アクターウィンドウ表示を非表示に設定しても表示してしまう不具合を修正。
+2020/12/19 Ver.1.2.0
+アクター選択時にアクター画像（顔グラ）を点滅させる機能を追加。
+2020/12/17 Ver.1.1.3
+メッセージウィンドウを下に表示（アクターウィンドウの前面）させないように修正。
+（メッセージウィンドウを下に表示で設定した場合、バトル中のみ自動的に上に表示されます）Ver.1.3.0で下側にも表示できるようになりました。
+2020/12/16 Ver.1.1.2
+エネミー、アイテム、スキル選択画面を表示している時のアクターウィンドウに不透明度を指定できる機能を追加。
+2020/12/9 Ver.1.1.1
+名前を非表示にできる機能を追加。
+2020/12/9 Ver.1.1.0
+アクターステータスウィンドウの表示処理を見直し。
+アクターステータスウィンドウに背景画像を指定出来る機能を追加。
+2020/12/8 Ver.1.0.2
+戦闘開始時に戦闘不能のアクター画像が一瞬表示されないように修正。
+2020/12/7 Ver.1.0.1
+バトラーアニメーションに勝利、詠唱時の画像を変更する機能を追加。
+2020/12/6 Ver.1.0.0
+初版
+
+@command ActorStatusWindowVisible
+@desc アクターステータスの表示を切り替えます。
+@text アクターステータス表示切替
+
+@arg WindowVisible
+@type boolean
+@default false
+@text 表示切替
+@desc 表示の切り替えをします。(trueで表示)
+
+@command ActorStatusWindowOpacity
+@desc アクターステータスを不透明化します。
+@text アクターステータス不透明化表示
+
+@arg WindowOpacity
+@type boolean
+@default false
+@text 不透明度表示
+@desc ONのアクターステータスが不透明化します。(trueで不透明化)
+*/
 var Imported = Imported || {};
 Imported.NUUN_BattleStyleEX_Base = true;
 
@@ -1227,7 +1507,6 @@ Window_ActorCommand.prototype.close = function() {
   this._commandOpen = false;
 };
 
-
 const _Window_ItemList_drawItemBackground = Window_ItemList.prototype.drawItemBackground;
 Window_ItemList.prototype.drawItemBackground = function(index) {
   if (!$gameParty.inBattle() || ($gameParty.inBattle() && param.SelectCursorBackShow)) {
@@ -1284,7 +1563,7 @@ Window_BattleStatus.prototype.drawItemBackground = function(index) {
   } else if((param.WindowShow && param.cursorBackShow) || param.cursorBackShow) {
     this.drawBackgroundRect(rect);
   }
-  
+
 };
 
 Window_BattleStatus.prototype.open = function() {
@@ -1819,7 +2098,6 @@ Window_BattleActorImges.prototype.close = function() {
   Window_Base.prototype.close.call(this);
   this._actorImgBaseSprite.hide();
 };
-
 
 //Window_BattleActorStatus
 function Window_BattleActorStatus() {
@@ -2697,7 +2975,6 @@ Sprite_ActorImges.prototype.updateSelectionEffect = function() {
   }
 };
 
-
 Sprite_ActorImges.prototype.updateActorGraphic = function() {
   const actor = this._battler;
   if (actor) {
@@ -2779,7 +3056,6 @@ Sprite_ActorImges.prototype.getImgId = function(actor) {
   }
 };
 
-
 Sprite_ActorImges.prototype.setDeadUpdateCount = function() {
   if (param.imgDeathHide) {
     this._updateCount = this.setDeadDuration();
@@ -2840,7 +3116,6 @@ Sprite_BattleHpGauge.prototype.gaugeHeight = function() {
   return param.HPGaugeHeight;
 };
 
-
 function Sprite_BattleMpGauge() {
   this.initialize(...arguments);
 }
@@ -2862,7 +3137,6 @@ Sprite_BattleMpGauge.prototype.gaugeHeight = function() {
   return param.MPGaugeHeight;
 };
 
-
 function Sprite_BattleTpGauge() {
   this.initialize(...arguments);
 }
@@ -2883,7 +3157,6 @@ Sprite_BattleTpGauge.prototype.gaugeHeight = function() {
   return param.TPGaugeHeight;
 };
 
-
 function Sprite_BattleTpbGauge() {
   this.initialize(...arguments);
 }
@@ -2903,8 +3176,6 @@ Sprite_BattleTpbGauge.prototype.bitmapWidth = function() {
 Sprite_BattleTpbGauge.prototype.gaugeHeight = function() {
   return param.TPBGaugeHeight;
 };
-
-
 
 function Sprite_BattleGauge() {
   this.initialize(...arguments);
@@ -3081,7 +3352,6 @@ Spriteset_Battle.prototype.updateBackground = function() {
   this._backgroundSprite.y = Graphics.height - this._backgroundSprite.bitmap.height;
   this._backgroundVisible = true;
 };
-
 
 const _Spriteset_Battle_createBattleField = Spriteset_Battle.prototype.createBattleField;
 Spriteset_Battle.prototype.createBattleField = function() {
