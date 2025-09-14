@@ -5,83 +5,73 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
- */ 
- /*:
- * @target MZ
- * @plugindesc アクターコマンド任意表示順
- * @author NUUN
- * @version 1.0.0
- * @base NUUN_Base
- * @orderAfter NUUN_Base
- * 
- * @help
- * アクターコマンドのコマンドの表示を任意の順番で表示できます。
- * 
- * このプラグインを配置する場所により動作が異なります。
- * 下のほうに配置することにより全てのコマンドの表示順を設定できます。他プラグインによるコマンド追加を行う場合は「Commandkey」
- * に該当する文字列を記入してください。
- * 他プラグインのアクターコマンド追加をこのプラグインで設定せずに追加する場合は、このプラグインの下に配置してください。
- * 
- * 仕様
- * コマンドリストが設定されていない場合はデフォルトのコマンドリストが表示されます。
- * 
- * 更新履歴
- * 2022/2/26 Ver.1.0.0
- * 初版
- * 
- * @param ActorCommand
- * @text アクターのコマンドリスト
- * @desc アクターのコマンドの設定。
- * @default 
- * @type struct<ActorCommandSetting>[]
  */
-/*~struct~ActorCommandSetting:
- * 
- * @param ActorId
- * @desc アクター
- * @text アクター
- * @type actor
- * 
- * @param ActorCommandData
- * @text コマンドリスト
- * @desc コマンドの設定。
- * @default 
- * @type struct<ActorCommandList>[]
- * 
- */
-/*~struct~ActorCommandList:
- * @param CommandName
- * @text コマンド名
- * @desc コマンド名を設定します。
- * @type string
- * 
- * @param Commandkey
- * @text 表示コマンドキー
- * @desc 適用、除外するクラスを指定します。無指定の場合は全てのコマンドで反映されます。
- * @type combo[]
- * @option 'attack'
- * @option 'skill'
- * @option 'guard'
- * @option 'item'
- * @option 'escape'
- * @option 'formation'
- * @default
- * 
- * @param CommandEval
- * @type combo[]
- * @option $gameSwitches.value(0);//スイッチ
- * @default 
- * @text コマンド使用条件。
- * @desc コマンドが使用できる条件。スキル以外で設定できます。コマンド処理評価式で定義している場合は処理しません。
- * 
- * @param CommandFuncEval
- * @type combo[]
- * @option this.addCommand(TextManager.formation, "formation", $gameParty.useFormation());//メンバー変更画面(戦闘)
- * @default []
- * @text コマンド処理評価式
- * @desc コマンドを処理する評価式を定義します。
- * 
- */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Actor Command Arbitrary Display Order
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+You can display actor commands in any order.
+
+This plugin's behavior varies depending on where you place it.
+Placing it at the bottom allows you to set the display order for all commands.
+If you are adding commands from another plugin, enter the corresponding string
+in "Commandkey."
+
+If you are adding actor commands from another plugin without configuring them
+with this plugin, place them below this plugin.
+
+Specifications
+If no command list is set, the default command list will be displayed.
+
+Update History
+February 26, 2022 Ver. 1.0.0
+First Edition
+
+@param ActorCommand
+@text Actor Command List
+@desc Setting the actor's commands.
+@type struct<ActorCommandSetting>[]
+*/
+
+/*:ja
+@target MZ
+@plugindesc アクターコマンド任意表示順
+@author NUUN
+@version 1.0.0
+@base NUUN_Base
+@orderAfter NUUN_Base
+
+@help
+アクターコマンドのコマンドの表示を任意の順番で表示できます。
+
+このプラグインを配置する場所により動作が異なります。
+下のほうに配置することにより全てのコマンドの表示順を設定できます。他プラグインによるコマンド追加を行う場合は「Commandkey」
+に該当する文字列を記入してください。
+他プラグインのアクターコマンド追加をこのプラグインで設定せずに追加する場合は、このプラグインの下に配置してください。
+
+仕様
+コマンドリストが設定されていない場合はデフォルトのコマンドリストが表示されます。
+
+更新履歴
+2022/2/26 Ver.1.0.0
+初版
+
+@param ActorCommand
+@text アクターのコマンドリスト
+@desc アクターのコマンドの設定。
+@default 
+@type struct<ActorCommandSetting>[]
+*/
 
 var Imported = Imported || {};
 Imported.NUUN_ActorCommandCustomize = true;
