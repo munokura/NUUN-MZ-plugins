@@ -5,431 +5,859 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
- */ 
-/*:
- * @target MZ
- * @plugindesc TPBタイムライン
- * @author NUUN
- * @version 1.1.9
- * 
- * @help
- * 戦闘画面にTPBタイムラインを表示します。
- * バトラーが移動する方向は、上から下、下から上、左から右、右から左の4パターンから選択できます。
- * 
- * アクター、敵キャラのメモ欄
- * <TimeLineImg:[img]> 画像タイプを画像に指定したときに表示する画像ファイル名を設定します。未指定の場合はキャラチップが表示されます。
- * [img]:イメージファイル(拡張子なし)
- * 
- * 敵キャラのメモ欄
- * <TpbTimeLineCharacter:[img], [index]> 画像タイプをキャラチップに指定したときに表示する画像ファイル名を設定します。未指定の場合はモンスター画像で表示されます。
- * [img]:characters直下のイメージファイル(拡張子なし)
- * [index]:インデックス
- * 
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2025/6/14 Ver.1.1.9
- * サポートアクターVer.2に対応。
- * 2023/7/17 Ver.1.1.8
- * キャストアイコンが表示されない問題を修正。
- * 2023/7/15 Ver.1.1.7
- * 競合対策表示モードを追加。
- * 2023/2/25 Ver.1.1.6
- * バトラーが増えた時の処理を修正。
- * 2023/1/29 Ver.1.1.5
- * 逃走に失敗するとタイムラインからに大きくはみ出る問題を修正。
- * 2023/1/8 Ver.1.1.4
- * 横方向のタイムラインのアンカーを修正。
- * 2022/12/25 Ver.1.1.3
- * フレーム設定の説明を修正。
- * 2022/11/2 Ver.1.1.2
- * 同一敵が複数いるときに表示されるアルファベットの表示をON、OFFする機能を追加。
- * 2022/10/28 Ver.1.1.1
- * 対象選択時のアクターまたは敵のアイコンをフラッシュするように修正。
- * 2022/10/27 Ver.1.1.0
- * タイムラインの動作処理を修正。
- * 2022/7/10 Ver.1.0.1
- * 敵の画像設定を画像に指定すると戦闘開始時にエラーが出る問題を修正。
- * タイムラインの画面上の基本位置を設定する機能を追加。
- * 2022/7/9 Ver.1.0.0
- * 初版
- * 
- * 
- * @param Setting
- * @text 基本設定
- * @default ////////////////////////////////
- * 
- * @param TPBTimeLineImg
- * @desc タイムライン画像。
- * @text タイムライン画像
- * @type file
- * @dir img/
- * @default 
- * @parent Setting
- * 
- * @param TPBTimeLine_X
- * @desc タイムラインのX座標を指定します。
- * @text タイムラインX座標
- * @type number
- * @default 60
- * @max 9999
- * @min -9999
- * @parent Setting
- * 
- * @param TPBTimeLine_Y
- * @desc タイムラインのY座標を指定します。
- * @text タイムラインY座標
- * @type number
- * @default 20
- * @max 9999
- * @min -9999
- * @parent Setting
- * 
- * @param TPBTimeLineLength
- * @desc タイムラインの長さを指定します。
- * @text タイムライン長
- * @type number
- * @default 300
- * @max 9999
- * @min 0
- * @parent Setting
- * 
- * @param TimeLineDirection
- * @text タイムライン方向
- * @desc タイムライン上のバトラーを動かす方向を指定します。
- * @type select
- * @option 上から下
- * @value 'down'
- * @option 下から上
- * @value 'up'
- * @option 左から右
- * @value 'right'
- * @option 右から左
- * @value 'left'
- * @default 'up'
- * @parent Setting
- * 
- * @param TPBTimeLineBattlerHeight
- * @desc バトラーの表示高さを指定します。
- * @text バトラー表示高さ
- * @type number
- * @default 48
- * @max 9999
- * @min 0
- * @parent Setting
- * 
- * @param TimeLinePosition
- * @text タイムライン基本位置
- * @desc タイムラインの画面上に表示する基本位置を指定します。
- * @type select
- * @option 左
- * @value 'left'
- * @option 右
- * @value 'right'
- * @option 中央
- * @value 'center'
- * @default 'left'
- * @parent Setting
- * 
- * @param BattlerStatusShow
- * @text バトラーステータス非表示
- * @desc バトラーステータスの元のTPBゲージを表示しません。
- * @type boolean
- * @default true
- * @parent Setting
- * 
- * @param TPBTimeLineActionImg
- * @desc アクション部分の画像。(手前に表示されます)
- * @text アクション画像
- * @type file
- * @dir img/
- * @default 
- * @parent Setting
- * 
- * @param TPBTimeLineActionImg_X
- * @desc アクション部分画像のX座標を指定します。
- * @text アクション画像X座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent Setting
- * 
- * @param TPBTimeLineActionImg_Y
- * @desc アクション部分画像のY座標を指定します。
- * @text アクション画像Y座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent Setting
- * 
- * @param CastIconSetting
- * @text キャスト時のアイコン設定
- * @default ////////////////////////////////
- * 
- * @param CastIconId
- * @desc キャストタイム中に表示するアイコンIDを指定します。0に指定した場合はスキル、アイテムのアイコンが表示されます。
- * @text キャストタイムアイコンID
- * @type icon
- * @default 0
- * @parent CastIconSetting
- * 
- * @param CastIconScale
- * @desc キャストタイム中に表示するアイコンの拡大率(百分率)を指定します。
- * @text キャストタイムアイコン拡大率
- * @type number
- * @default 50
- * @parent CastIconSetting
- * 
- * @param FlameSetting
- * @text 移動フレーム設定
- * @default ////////////////////////////////
- * 
- * 
- * @param ActionDuration
- * @desc アクションの指定座標に移動するフレーム数。
- * @text アクション移動フレーム数
- * @type number
- * @default 60
- * @max 9999
- * @min 0
- * @parent Setting
- * 
- * @param ActionReturnDuration
- * @desc 初期位置の座標に戻る時の移動フレーム数。
- * @text 初期位置移動フレーム数
- * @type number
- * @default 3
- * @max 9999
- * @min 0
- * @parent Setting
- * 
- * @param ActionResetDuration
- * @desc アクション終了後チャージ完了時の座標に戻る時の移動フレーム数。
- * @text アクション終了後移動フレーム数
- * @type number
- * @default 6
- * @max 9999
- * @min 0
- * @parent Setting
- * 
- * @param ActorSetting
- * @text アクター設定
- * @default ////////////////////////////////
- * 
- * @param TimeLineActorImgMode
- * @text 表示アクター画像タイプ
- * @desc 表示するアクターの画像タイプを指定します。
- * @type select
- * @option キャラチップ
- * @value 'chip'
- * @option 画像
- * @value 'imges'
- * @default 'chip'
- * @parent ActorSetting
- * 
- * @param ActorImgDirekutoriy
- * @desc アクター表示画像のimgファイル直下のディレクトリを指定します。例:pictures またはpictures/sub
- * @text アクター表示画像ディレクトリファイル
- * @type string
- * @default pictures
- * @parent ActorSetting
- * 
- * @param TPBTimeLineActor_X
- * @desc タイムライン上アクターのX座標を指定します。(タイムラインX座標からの相対)
- * @text タイムラインアクターX座標
- * @type number
- * @default -30
- * @max 9999
- * @min -9999
- * @parent ActorSetting
- * 
- * @param TPBTimeLineActor_Y
- * @desc タイムライン上アクターのY座標を指定します。(タイムラインY座標からの相対)
- * @text タイムラインアクターY座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent ActorSetting
- * 
- * @param ActorCastTimeSetting
- * @text キャストタイム時設定
- * @default ////////////////////////////////
- * @parent ActorSetting
- * 
- * @param TPBTimeLineActorCastTimeImg
- * @desc キャストタイム時の画像。(アクター背後されます)
- * @text キャストタイム時画像
- * @type file
- * @dir img/
- * @default 
- * @parent ActorCastTimeSetting
- * 
- * @param ActorChargedSetting
- * @text チャージ完了時設定
- * @default ////////////////////////////////
- * @parent ActorSetting
- * 
- * @param ActorCharged
- * @desc チャージ完了時の座標を指定します。
- * @text チャージ完了時座標
- * @type number
- * @default 60
- * @max 9999
- * @min -9999
- * @parent ActorChargedSetting
- * 
- * @param ActorActionSetting
- * @text アクション時設定
- * @default ////////////////////////////////
- * @parent ActorSetting
- * 
- * @param TPBTimeLineActionActor_X
- * @desc アクション時のX座標を指定します。(タイムラインX座標からの相対)
- * @text アクション時X座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent ActorActionSetting
- * 
- * @param TPBTimeLineActionActor_Y
- * @desc アクション時のY座標を指定します。(タイムラインY座標からの相対)
- * @text アクション時Y座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent ActorActionSetting
- * 
- * 
- * @param EnemySetting
- * @text 敵キャラ設定
- * @default ////////////////////////////////
- * 
- * @param TimeLineEnemyImgMode
- * @text 表示敵キャラ画像タイプ
- * @desc 表示する敵キャラの画像タイプを指定します。
- * @type select
- * @option モンスター画像
- * @value 'enemy'
- * @option キャラチップ
- * @value 'chip'
- * @option 画像
- * @value 'imges'
- * @default 'enemy'
- * @parent EnemySetting
- * 
- * @param EnemyImgDirekutoriy
- * @desc 表示敵キャラ画像タイプが画像の時の敵キャラ表示画像のimgファイル直下のディレクトリを指定します。例:pictures またはpictures/sub
- * @text 敵キャラ表示画像ディレクトリファイル
- * @type string
- * @default pictures
- * @parent EnemySetting
- * 
- * @param TPBTimeLineEnemy_X
- * @desc タイムライン上敵キャラのX座標を指定します。
- * @text タイムライン敵キャラX座標
- * @type number
- * @default 30
- * @max 9999
- * @min -9999
- * @parent EnemySetting
- * 
- * @param TPBTimeLineEnemy_Y
- * @desc タイムライン上敵キャラのY座標を指定します。
- * @text タイムライン敵キャラY座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent EnemySetting
- * 
- * @param EnemyLetterShow
- * @text 敵アルファベット表示
- * @desc 同一敵が複数いるときに表示されるアルファベットを表示します。
- * @type boolean
- * @default true
- * @parent EnemySetting
- * 
- * @param EnemyCastTimeSetting
- * @text キャストタイム時設定
- * @default ////////////////////////////////
- * @parent ActorSetting
- * 
- * @param TPBTimeLineEnemyCastTimeImg
- * @desc キャストタイム時の画像。(敵キャラ画像背後されます)
- * @text キャストタイム時画像
- * @type file
- * @dir img/
- * @default 
- * @parent EnemyCastTimeSetting
- * 
- * @param EnemyChargedSetting
- * @text チャージ完了時時設定
- * @default ////////////////////////////////
- * @parent EnemySetting
- * 
- * @param EnemyCharged
- * @desc チャージ完了時の座標を指定します。
- * @text チャージ完了時座標
- * @type number
- * @default 60
- * @max 9999
- * @min -9999
- * @parent EnemySetting
- * 
- * @param EnemyActionSetting
- * @text アクション時設定
- * @default ////////////////////////////////
- * @parent EnemySetting
- * 
- * @param TPBTimeLineActionEnemy_X
- * @desc アクション時のX座標を指定します。(タイムラインX座標からの相対)
- * @text アクション時X座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent EnemyActionSetting
- * 
- * @param TPBTimeLineActionEnemy_Y
- * @desc アクション時のY座標を指定します。(タイムラインY座標からの相対)
- * @text アクション時Y座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent EnemyActionSetting
- * 
- * @param Anti-conflictSettings
- * @text 競合対策設定
- * @default ////////////////////////////////
- * 
- * @param TimeLineDisplayMode
- * @text タイムライン表示モード
- * @desc タイムラインの表示モードを指定します。
- * @type select
- * @option Sprite
- * @value 'Sprite'
- * @option Scene_Battle
- * @value 'Scene_Battle'
- * @default 'Sprite'
- * @parent Anti-conflictSettings
- * 
- * @param ShowSupportActor
- * @desc タイムラインにサポートアクターを表示します。(Ver.2.0.0以降)
- * @text サポートアクター表示
- * @type boolean
- * @default false
- * @parent Anti-conflictSettings
- * 
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc TPB Timeline
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Displays the TPB timeline on the battle screen.
+You can choose the battler's movement direction from four options:
+top-to-bottom, bottom-to-top, left-to-right, or right-to-left.
+
+Actor and Enemy Character Memo Field
+<TimeLineImg:[img]> Specifies the image file name to display when the image
+type is set to image. If left unspecified, a character chip will be displayed.
+[img]: Image file (no extension)
+
+Enemy Character Memo Field
+<TpbTimeLineCharacter:[img], [index]> Specifies the image file name to display
+when the character chip type is set to image. If left unspecified, a monster
+image will be displayed.
+[img]: Image file directly under characters (no extension)
+[index]: Index
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+June 14, 2025 Ver. 1.1.9
+Supports Supported Actors Ver. 2.
+July 17, 2023 Ver. 1.1.8
+Fixed an issue where the cast icon was not displayed.
+July 15, 2023 Ver. 1.1.7
+Added a conflict prevention display mode.
+February 25, 2023 Ver. 1.1.6
+Fixed processing when an additional battler is added.
+January 29, 2023 Ver. 1.1.5
+Fixed an issue where a failed escape would cause the character to extend too
+far beyond the timeline.
+January 8, 2023 Ver. 1.1.4
+Fixed the horizontal timeline anchor.
+December 25, 2022 Ver. 1.1.3
+Fixed the frame setting description.
+November 2, 2022 Ver. 1.1.2
+Added a feature to turn on/off the alphabet that appears when there are
+multiple identical enemies.
+October 28, 2022 Ver. 1.1.1
+Fixed the flashing of actor or enemy icons when selecting a target.
+October 27, 2022 Ver. 1.1.0
+Fixed timeline behavior.
+July 10, 2022 Ver. 1.0.1
+Fixed an issue that caused an error to occur at the start of battle when
+setting the enemy image to an image.
+Added a feature to set the timeline's base position on the screen.
+July 9, 2022 Ver. 1.0.0
+First release
+
+@param Setting
+@text Basic settings
+@default ////////////////////////////////
+
+@param TPBTimeLineImg
+@text Timeline Images
+@desc Timeline image.
+@type file
+@dir img/
+@parent Setting
+
+@param TPBTimeLine_X
+@text Timeline X coordinate
+@desc Specifies the X coordinate of the timeline.
+@type number
+@default 60
+@min -9999
+@max 9999
+@parent Setting
+
+@param TPBTimeLine_Y
+@text Timeline Y coordinate
+@desc Specifies the Y coordinate of the timeline.
+@type number
+@default 20
+@min -9999
+@max 9999
+@parent Setting
+
+@param TPBTimeLineLength
+@text Timeline Length
+@desc Specifies the length of the timeline.
+@type number
+@default 300
+@min 0
+@max 9999
+@parent Setting
+
+@param TimeLineDirection
+@text Timeline Direction
+@desc Specifies the direction in which the battler moves on the timeline.
+@type select
+@default 'up'
+@option Top to bottom
+@value 'down'
+@option bottom to top
+@value 'up'
+@option Left to right
+@value 'right'
+@option Right to left
+@value 'left'
+@parent Setting
+
+@param TPBTimeLineBattlerHeight
+@text Butler Display Height
+@desc Specifies the display height of the butler.
+@type number
+@default 48
+@min 0
+@max 9999
+@parent Setting
+
+@param TimeLinePosition
+@text Timeline base position
+@desc Specifies the base position on the timeline screen.
+@type select
+@default 'left'
+@option left
+@value 'left'
+@option right
+@value 'right'
+@option center
+@value 'center'
+@parent Setting
+
+@param BattlerStatusShow
+@text Hide Butler Status
+@desc Does not display the original TPB gauge for Butler status.
+@type boolean
+@default true
+@parent Setting
+
+@param TPBTimeLineActionImg
+@text Action Images
+@desc Image of the action part (shown in the foreground)
+@type file
+@dir img/
+@parent Setting
+
+@param TPBTimeLineActionImg_X
+@text Action image X coordinate
+@desc Specifies the X coordinate of the action part image.
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent Setting
+
+@param TPBTimeLineActionImg_Y
+@text Action image Y coordinate
+@desc Specifies the Y coordinate of the action part image.
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent Setting
+
+@param CastIconSetting
+@text Cast icon settings
+@default ////////////////////////////////
+
+@param CastIconId
+@text Cast Time Icon ID
+@desc Specifies the icon ID to display during cast time. If set to 0, skill and item icons will be displayed.
+@type icon
+@default 0
+@parent CastIconSetting
+
+@param CastIconScale
+@text Cast Time Icon Magnification
+@desc Specifies the magnification (percentage) of the icon displayed during casting time.
+@type number
+@default 50
+@parent CastIconSetting
+
+@param FlameSetting
+@text Moving Frame Settings
+@default ////////////////////////////////
+
+@param ActionDuration
+@text Action movement frames
+@desc The number of frames to move to the specified coordinates of the action.
+@type number
+@default 60
+@min 0
+@max 9999
+@parent Setting
+
+@param ActionReturnDuration
+@text Number of frames to move the initial position
+@desc The number of frames to move when returning to the initial position coordinates.
+@type number
+@default 3
+@min 0
+@max 9999
+@parent Setting
+
+@param ActionResetDuration
+@text Number of frames moved after the action ends
+@desc The number of frames of movement when returning to the coordinates at the time of charge completion after the action is completed.
+@type number
+@default 6
+@min 0
+@max 9999
+@parent Setting
+
+@param ActorSetting
+@text Actor Settings
+@default ////////////////////////////////
+
+@param TimeLineActorImgMode
+@text Display Actor Image Type
+@desc Specifies the image type of the actor to display.
+@type select
+@default 'chip'
+@option Character chip
+@value 'chip'
+@option image
+@value 'imges'
+@parent ActorSetting
+
+@param ActorImgDirekutoriy
+@text Actor display image directory file
+@desc Specify the directory directly under the img file for the actor display image. Example: pictures or pictures/sub
+@type string
+@default pictures
+@parent ActorSetting
+
+@param TPBTimeLineActor_X
+@text Timeline actor X coordinate
+@desc Specifies the actor's X coordinate on the timeline (relative to the timeline X coordinate).
+@type number
+@default -30
+@min -9999
+@max 9999
+@parent ActorSetting
+
+@param TPBTimeLineActor_Y
+@text Timeline Actor Y Coordinate
+@desc Specifies the actor's Y coordinate on the timeline (relative to the timeline Y coordinate).
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent ActorSetting
+
+@param ActorCastTimeSetting
+@text Cast Time Settings
+@default ////////////////////////////////
+@parent ActorSetting
+
+@param TPBTimeLineActorCastTimeImg
+@text Cast time image
+@desc Image taken during casting time (behind the actor)
+@type file
+@dir img/
+@parent ActorCastTimeSetting
+
+@param ActorChargedSetting
+@text Charge completion setting
+@default ////////////////////////////////
+@parent ActorSetting
+
+@param ActorCharged
+@text Coordinates when charging is complete
+@desc Specify the coordinates when charging is complete.
+@type number
+@default 60
+@min -9999
+@max 9999
+@parent ActorChargedSetting
+
+@param ActorActionSetting
+@text Action Settings
+@default ////////////////////////////////
+@parent ActorSetting
+
+@param TPBTimeLineActionActor_X
+@text X coordinate during action
+@desc Specifies the X coordinate at the time of the action (relative to the timeline X coordinate).
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent ActorActionSetting
+
+@param TPBTimeLineActionActor_Y
+@text Y coordinate during action
+@desc Specifies the Y coordinate at the time of the action (relative to the timeline Y coordinate).
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent ActorActionSetting
+
+@param EnemySetting
+@text Enemy character settings
+@default ////////////////////////////////
+
+@param TimeLineEnemyImgMode
+@text Display enemy character image type
+@desc Specifies the image type of the enemy character to display.
+@type select
+@default 'enemy'
+@option Monster Images
+@value 'enemy'
+@option Character chip
+@value 'chip'
+@option image
+@value 'imges'
+@parent EnemySetting
+
+@param EnemyImgDirekutoriy
+@text Enemy character display image directory file
+@desc When the display enemy character image type is Image, specify the directory directly under the img file for the enemy character display image. Example: pictures or pictures/sub
+@type string
+@default pictures
+@parent EnemySetting
+
+@param TPBTimeLineEnemy_X
+@text Timeline enemy character X coordinate
+@desc Specifies the X coordinate of the enemy character on the timeline.
+@type number
+@default 30
+@min -9999
+@max 9999
+@parent EnemySetting
+
+@param TPBTimeLineEnemy_Y
+@text Timeline enemy character Y coordinate
+@desc Specifies the Y coordinate of the enemy character on the timeline.
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent EnemySetting
+
+@param EnemyLetterShow
+@text Enemy alphabet display
+@desc Displays the alphabet that appears when there are multiple identical enemies.
+@type boolean
+@default true
+@parent EnemySetting
+
+@param EnemyCastTimeSetting
+@text Cast Time Settings
+@default ////////////////////////////////
+@parent ActorSetting
+
+@param TPBTimeLineEnemyCastTimeImg
+@text Cast time image
+@desc Image at cast time. (Enemy character image is behind)
+@type file
+@dir img/
+@parent EnemyCastTimeSetting
+
+@param EnemyChargedSetting
+@text Charge completion time setting
+@default ////////////////////////////////
+@parent EnemySetting
+
+@param EnemyCharged
+@text Coordinates when charging is complete
+@desc Specify the coordinates when charging is complete.
+@type number
+@default 60
+@min -9999
+@max 9999
+@parent EnemySetting
+
+@param EnemyActionSetting
+@text Action Settings
+@default ////////////////////////////////
+@parent EnemySetting
+
+@param TPBTimeLineActionEnemy_X
+@text X coordinate during action
+@desc Specifies the X coordinate at the time of the action (relative to the timeline X coordinate).
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent EnemyActionSetting
+
+@param TPBTimeLineActionEnemy_Y
+@text Y coordinate during action
+@desc Specifies the Y coordinate at the time of the action (relative to the timeline Y coordinate).
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent EnemyActionSetting
+
+@param Anti-conflictSettings
+@text Conflict prevention settings
+@default ////////////////////////////////
+
+@param TimeLineDisplayMode
+@text Timeline display mode
+@desc Specifies the timeline display mode.
+@type select
+@default 'Sprite'
+@option Sprite
+@value 'Sprite'
+@option Scene_Battle
+@value 'Scene_Battle'
+@parent Anti-conflictSettings
+
+@param ShowSupportActor
+@text Supporting Actor Display
+@desc Displays supporting actors on the timeline. (Ver.2.0.0 and later)
+@type boolean
+@default false
+@parent Anti-conflictSettings
+*/
+
+/*:ja
+@target MZ
+@plugindesc TPBタイムライン
+@author NUUN
+@version 1.1.9
+
+@help
+戦闘画面にTPBタイムラインを表示します。
+バトラーが移動する方向は、上から下、下から上、左から右、右から左の4パターンから選択できます。
+
+アクター、敵キャラのメモ欄
+<TimeLineImg:[img]> 画像タイプを画像に指定したときに表示する画像ファイル名を設定します。未指定の場合はキャラチップが表示されます。
+[img]:イメージファイル(拡張子なし)
+
+敵キャラのメモ欄
+<TpbTimeLineCharacter:[img], [index]> 画像タイプをキャラチップに指定したときに表示する画像ファイル名を設定します。未指定の場合はモンスター画像で表示されます。
+[img]:characters直下のイメージファイル(拡張子なし)
+[index]:インデックス
+
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2025/6/14 Ver.1.1.9
+サポートアクターVer.2に対応。
+2023/7/17 Ver.1.1.8
+キャストアイコンが表示されない問題を修正。
+2023/7/15 Ver.1.1.7
+競合対策表示モードを追加。
+2023/2/25 Ver.1.1.6
+バトラーが増えた時の処理を修正。
+2023/1/29 Ver.1.1.5
+逃走に失敗するとタイムラインからに大きくはみ出る問題を修正。
+2023/1/8 Ver.1.1.4
+横方向のタイムラインのアンカーを修正。
+2022/12/25 Ver.1.1.3
+フレーム設定の説明を修正。
+2022/11/2 Ver.1.1.2
+同一敵が複数いるときに表示されるアルファベットの表示をON、OFFする機能を追加。
+2022/10/28 Ver.1.1.1
+対象選択時のアクターまたは敵のアイコンをフラッシュするように修正。
+2022/10/27 Ver.1.1.0
+タイムラインの動作処理を修正。
+2022/7/10 Ver.1.0.1
+敵の画像設定を画像に指定すると戦闘開始時にエラーが出る問題を修正。
+タイムラインの画面上の基本位置を設定する機能を追加。
+2022/7/9 Ver.1.0.0
+初版
+
+
+@param Setting
+@text 基本設定
+@default ////////////////////////////////
+
+@param TPBTimeLineImg
+@desc タイムライン画像。
+@text タイムライン画像
+@type file
+@dir img/
+@default 
+@parent Setting
+
+@param TPBTimeLine_X
+@desc タイムラインのX座標を指定します。
+@text タイムラインX座標
+@type number
+@default 60
+@max 9999
+@min -9999
+@parent Setting
+
+@param TPBTimeLine_Y
+@desc タイムラインのY座標を指定します。
+@text タイムラインY座標
+@type number
+@default 20
+@max 9999
+@min -9999
+@parent Setting
+
+@param TPBTimeLineLength
+@desc タイムラインの長さを指定します。
+@text タイムライン長
+@type number
+@default 300
+@max 9999
+@min 0
+@parent Setting
+
+@param TimeLineDirection
+@text タイムライン方向
+@desc タイムライン上のバトラーを動かす方向を指定します。
+@type select
+@option 上から下
+@value 'down'
+@option 下から上
+@value 'up'
+@option 左から右
+@value 'right'
+@option 右から左
+@value 'left'
+@default 'up'
+@parent Setting
+
+@param TPBTimeLineBattlerHeight
+@desc バトラーの表示高さを指定します。
+@text バトラー表示高さ
+@type number
+@default 48
+@max 9999
+@min 0
+@parent Setting
+
+@param TimeLinePosition
+@text タイムライン基本位置
+@desc タイムラインの画面上に表示する基本位置を指定します。
+@type select
+@option 左
+@value 'left'
+@option 右
+@value 'right'
+@option 中央
+@value 'center'
+@default 'left'
+@parent Setting
+
+@param BattlerStatusShow
+@text バトラーステータス非表示
+@desc バトラーステータスの元のTPBゲージを表示しません。
+@type boolean
+@default true
+@parent Setting
+
+@param TPBTimeLineActionImg
+@desc アクション部分の画像。(手前に表示されます)
+@text アクション画像
+@type file
+@dir img/
+@default 
+@parent Setting
+
+@param TPBTimeLineActionImg_X
+@desc アクション部分画像のX座標を指定します。
+@text アクション画像X座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent Setting
+
+@param TPBTimeLineActionImg_Y
+@desc アクション部分画像のY座標を指定します。
+@text アクション画像Y座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent Setting
+
+@param CastIconSetting
+@text キャスト時のアイコン設定
+@default ////////////////////////////////
+
+@param CastIconId
+@desc キャストタイム中に表示するアイコンIDを指定します。0に指定した場合はスキル、アイテムのアイコンが表示されます。
+@text キャストタイムアイコンID
+@type icon
+@default 0
+@parent CastIconSetting
+
+@param CastIconScale
+@desc キャストタイム中に表示するアイコンの拡大率(百分率)を指定します。
+@text キャストタイムアイコン拡大率
+@type number
+@default 50
+@parent CastIconSetting
+
+@param FlameSetting
+@text 移動フレーム設定
+@default ////////////////////////////////
+
+
+@param ActionDuration
+@desc アクションの指定座標に移動するフレーム数。
+@text アクション移動フレーム数
+@type number
+@default 60
+@max 9999
+@min 0
+@parent Setting
+
+@param ActionReturnDuration
+@desc 初期位置の座標に戻る時の移動フレーム数。
+@text 初期位置移動フレーム数
+@type number
+@default 3
+@max 9999
+@min 0
+@parent Setting
+
+@param ActionResetDuration
+@desc アクション終了後チャージ完了時の座標に戻る時の移動フレーム数。
+@text アクション終了後移動フレーム数
+@type number
+@default 6
+@max 9999
+@min 0
+@parent Setting
+
+@param ActorSetting
+@text アクター設定
+@default ////////////////////////////////
+
+@param TimeLineActorImgMode
+@text 表示アクター画像タイプ
+@desc 表示するアクターの画像タイプを指定します。
+@type select
+@option キャラチップ
+@value 'chip'
+@option 画像
+@value 'imges'
+@default 'chip'
+@parent ActorSetting
+
+@param ActorImgDirekutoriy
+@desc アクター表示画像のimgファイル直下のディレクトリを指定します。例:pictures またはpictures/sub
+@text アクター表示画像ディレクトリファイル
+@type string
+@default pictures
+@parent ActorSetting
+
+@param TPBTimeLineActor_X
+@desc タイムライン上アクターのX座標を指定します。(タイムラインX座標からの相対)
+@text タイムラインアクターX座標
+@type number
+@default -30
+@max 9999
+@min -9999
+@parent ActorSetting
+
+@param TPBTimeLineActor_Y
+@desc タイムライン上アクターのY座標を指定します。(タイムラインY座標からの相対)
+@text タイムラインアクターY座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent ActorSetting
+
+@param ActorCastTimeSetting
+@text キャストタイム時設定
+@default ////////////////////////////////
+@parent ActorSetting
+
+@param TPBTimeLineActorCastTimeImg
+@desc キャストタイム時の画像。(アクター背後されます)
+@text キャストタイム時画像
+@type file
+@dir img/
+@default 
+@parent ActorCastTimeSetting
+
+@param ActorChargedSetting
+@text チャージ完了時設定
+@default ////////////////////////////////
+@parent ActorSetting
+
+@param ActorCharged
+@desc チャージ完了時の座標を指定します。
+@text チャージ完了時座標
+@type number
+@default 60
+@max 9999
+@min -9999
+@parent ActorChargedSetting
+
+@param ActorActionSetting
+@text アクション時設定
+@default ////////////////////////////////
+@parent ActorSetting
+
+@param TPBTimeLineActionActor_X
+@desc アクション時のX座標を指定します。(タイムラインX座標からの相対)
+@text アクション時X座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent ActorActionSetting
+
+@param TPBTimeLineActionActor_Y
+@desc アクション時のY座標を指定します。(タイムラインY座標からの相対)
+@text アクション時Y座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent ActorActionSetting
+
+
+@param EnemySetting
+@text 敵キャラ設定
+@default ////////////////////////////////
+
+@param TimeLineEnemyImgMode
+@text 表示敵キャラ画像タイプ
+@desc 表示する敵キャラの画像タイプを指定します。
+@type select
+@option モンスター画像
+@value 'enemy'
+@option キャラチップ
+@value 'chip'
+@option 画像
+@value 'imges'
+@default 'enemy'
+@parent EnemySetting
+
+@param EnemyImgDirekutoriy
+@desc 表示敵キャラ画像タイプが画像の時の敵キャラ表示画像のimgファイル直下のディレクトリを指定します。例:pictures またはpictures/sub
+@text 敵キャラ表示画像ディレクトリファイル
+@type string
+@default pictures
+@parent EnemySetting
+
+@param TPBTimeLineEnemy_X
+@desc タイムライン上敵キャラのX座標を指定します。
+@text タイムライン敵キャラX座標
+@type number
+@default 30
+@max 9999
+@min -9999
+@parent EnemySetting
+
+@param TPBTimeLineEnemy_Y
+@desc タイムライン上敵キャラのY座標を指定します。
+@text タイムライン敵キャラY座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent EnemySetting
+
+@param EnemyLetterShow
+@text 敵アルファベット表示
+@desc 同一敵が複数いるときに表示されるアルファベットを表示します。
+@type boolean
+@default true
+@parent EnemySetting
+
+@param EnemyCastTimeSetting
+@text キャストタイム時設定
+@default ////////////////////////////////
+@parent ActorSetting
+
+@param TPBTimeLineEnemyCastTimeImg
+@desc キャストタイム時の画像。(敵キャラ画像背後されます)
+@text キャストタイム時画像
+@type file
+@dir img/
+@default 
+@parent EnemyCastTimeSetting
+
+@param EnemyChargedSetting
+@text チャージ完了時時設定
+@default ////////////////////////////////
+@parent EnemySetting
+
+@param EnemyCharged
+@desc チャージ完了時の座標を指定します。
+@text チャージ完了時座標
+@type number
+@default 60
+@max 9999
+@min -9999
+@parent EnemySetting
+
+@param EnemyActionSetting
+@text アクション時設定
+@default ////////////////////////////////
+@parent EnemySetting
+
+@param TPBTimeLineActionEnemy_X
+@desc アクション時のX座標を指定します。(タイムラインX座標からの相対)
+@text アクション時X座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent EnemyActionSetting
+
+@param TPBTimeLineActionEnemy_Y
+@desc アクション時のY座標を指定します。(タイムラインY座標からの相対)
+@text アクション時Y座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent EnemyActionSetting
+
+@param Anti-conflictSettings
+@text 競合対策設定
+@default ////////////////////////////////
+
+@param TimeLineDisplayMode
+@text タイムライン表示モード
+@desc タイムラインの表示モードを指定します。
+@type select
+@option Sprite
+@value 'Sprite'
+@option Scene_Battle
+@value 'Scene_Battle'
+@default 'Sprite'
+@parent Anti-conflictSettings
+
+@param ShowSupportActor
+@desc タイムラインにサポートアクターを表示します。(Ver.2.0.0以降)
+@text サポートアクター表示
+@type boolean
+@default false
+@parent Anti-conflictSettings
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_NUUN_TPBTimeLine = true;
 

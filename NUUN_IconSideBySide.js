@@ -16,29 +16,58 @@
  * 表示する横幅を指定できるように変更。
  * 2021/1/2 Ver.1.0.0
  * 初版
- */ 
-/*:
- * @target MZ
- * @plugindesc  戦闘時アクターステート横並び表示
- * @author NUUN
- * @orderAfter NUUN_BattleStyleEX_Base
- * 
- * 
- * @help
- * 戦闘中のアクターのステート表示を横並びに表示させます。
- * バトルスタイル拡張プラグインと併用する場合はVer.2.0.2以降対応。
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 
- * @param StateIconWidth_X
- * @desc ステートアイコンの表示する横幅を指定します。
- * @text 横幅
- * @type number
- * @default 0
- * @min 0
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Display actor states side by side during battle
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Displays the states of actors in battle side by side.
+When used in conjunction with the Battle Style Extension Plugin, this plugin
+is compatible with version 2.0.2 or later.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+@param StateIconWidth_X
+@text Width
+@desc Specifies the width of the state icon to be displayed.
+@type number
+@default 0
+@min 0
+*/
+
+/*:ja
+@target MZ
+@plugindesc  戦闘時アクターステート横並び表示
+@author NUUN
+@orderAfter NUUN_BattleStyleEX_Base
+
+
+@help
+戦闘中のアクターのステート表示を横並びに表示させます。
+バトルスタイル拡張プラグインと併用する場合はVer.2.0.2以降対応。
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+
+@param StateIconWidth_X
+@desc ステートアイコンの表示する横幅を指定します。
+@text 横幅
+@type number
+@default 0
+@min 0
+*/
 
 var Imported = Imported || {};
 Imported.NUUN_IconSideBySide = true;

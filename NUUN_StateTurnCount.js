@@ -5,35 +5,70 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
- */ 
-/*:
- * @target MZ
- * @plugindesc ステート経過ターンカウント
- * @author NUUN
- * @version 1.1.1
- * 
- * @help
- * ステートの現在の経過ターンを取得できるようにします。
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2022/2/16 Ver.1.1.1
- * ゲームをロードした後にエラーが出る問題を修正。
- * ステートを付与したときにエラーが出る問題を修正。
- * 2022/1/21 Ver.1.1.0
- * バフの経過ターン処理を追加。
- * 2022/1/16 Ver.1.0.0
- * 初版
- * 
- * @param StateTurnReset
- * @desc ステートを再度付与際にターンをリセットする。
- * @text 付与ターンリセット
- * @type boolean
- * @default false
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc State elapsed turn count
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Allows you to obtain the current elapsed turn of a state.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+February 16, 2022 Ver. 1.1.1
+Fixed an issue where an error would occur after loading the game.
+Fixed an issue where an error would occur when applying a state.
+January 21, 2022 Ver. 1.1.0
+Added processing of elapsed turns for buffs.
+January 16, 2022 Ver. 1.0.0
+First release
+
+@param StateTurnReset
+@text Grant turn reset
+@desc Resets the turn when re-applying a state.
+@type boolean
+@default false
+*/
+
+/*:ja
+@target MZ
+@plugindesc ステート経過ターンカウント
+@author NUUN
+@version 1.1.1
+
+@help
+ステートの現在の経過ターンを取得できるようにします。
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2022/2/16 Ver.1.1.1
+ゲームをロードした後にエラーが出る問題を修正。
+ステートを付与したときにエラーが出る問題を修正。
+2022/1/21 Ver.1.1.0
+バフの経過ターン処理を追加。
+2022/1/16 Ver.1.0.0
+初版
+
+@param StateTurnReset
+@desc ステートを再度付与際にターンをリセットする。
+@text 付与ターンリセット
+@type boolean
+@default false
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_StateTurnCount = true;
 

@@ -6,32 +6,65 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  * 
- */ 
-/*:
- * @target MZ
- * @plugindesc 回復効果反転特徴
- * @author NUUN
- * @version 1.0.0
- * 
- * @help
- * 回復効果を受けるとダメージを受ける特徴を設定できます。
- * 回復効果率によってダメージ量も変わります。
- * 特徴を有するメモ欄
- * <RecoveryReversal> 回復効果を受けるとダメージを受けます。
- * <HPRecoveryReversal> HP回復効果を受けるとダメージを受けます。
- * <MPRecoveryReversal> MP回復効果を受けるとダメージを受けます。
- * 
- * アイテム、スキルのメモ欄
- * <NoRecoveryReversal> 回復効果反転特徴の影響を無視します。
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2021/8/7 Ver.1.0.0
- * 初版
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Recovery effect reversal feature
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+You can set the damage taken when receiving a recovery effect.
+The amount of damage also varies depending on the recovery effect rate.
+Feature-related memo field
+<RecoveryReversal> Takes damage when receiving a recovery effect.
+<HPRecoveryReversal> Takes damage when receiving an HP recovery effect.
+<MPRecoveryReversal> Takes damage when receiving an MP recovery effect.
+
+Item and skill memo field
+<NoRecoveryReversal> Ignores the effects of the recovery effect reversal
+feature.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+August 7, 2021 Ver. 1.0.0
+First Edition
+*/
+
+/*:ja
+@target MZ
+@plugindesc 回復効果反転特徴
+@author NUUN
+@version 1.0.0
+
+@help
+回復効果を受けるとダメージを受ける特徴を設定できます。
+回復効果率によってダメージ量も変わります。
+特徴を有するメモ欄
+<RecoveryReversal> 回復効果を受けるとダメージを受けます。
+<HPRecoveryReversal> HP回復効果を受けるとダメージを受けます。
+<MPRecoveryReversal> MP回復効果を受けるとダメージを受けます。
+
+アイテム、スキルのメモ欄
+<NoRecoveryReversal> 回復効果反転特徴の影響を無視します。
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2021/8/7 Ver.1.0.0
+初版
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_RecoveryReversal = true;
 

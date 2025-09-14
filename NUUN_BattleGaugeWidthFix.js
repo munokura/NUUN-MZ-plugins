@@ -6,27 +6,57 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  */
+
 /*:
- * @target MZ
- * @plugindesc バトルステータスゲージ幅修正
- * @author NUUN
- * @version 1.0.0
- * 
- * @help
- * コアスクリプトではゲージ幅は128で固定されている関係で、画面サイズや戦闘メンバー数によっては
- * ゲージやアクター名がはみ出て表示されてしまいます。
- * このプラグインでは表示範囲内に収まるようにゲージ幅を修正します。
- * 
- * バトルスタイル拡張導入の場合は、ゲージ幅補正機能が備わっておりますのでこのプラグインは必要ございません。
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2022/8/27 Ver.1.0.0
- * 初版
- * 
- */
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Battle status gauge width correction
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+In the core script, the gauge width is fixed at 128, so depending on the
+screen size and number of battle members,
+the gauge and actor names may extend beyond the display area.
+This plugin corrects the gauge width so that it fits within the display area.
+
+If you are using the Battle Style Expansion, this plugin is not necessary as
+the gauge width correction function is already included.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+August 27, 2022 Ver. 1.0.0
+First Edition
+*/
+
+/*:ja
+@target MZ
+@plugindesc バトルステータスゲージ幅修正
+@author NUUN
+@version 1.0.0
+
+@help
+コアスクリプトではゲージ幅は128で固定されている関係で、画面サイズや戦闘メンバー数によっては
+ゲージやアクター名がはみ出て表示されてしまいます。
+このプラグインでは表示範囲内に収まるようにゲージ幅を修正します。
+
+バトルスタイル拡張導入の場合は、ゲージ幅補正機能が備わっておりますのでこのプラグインは必要ございません。
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2022/8/27 Ver.1.0.0
+初版
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_BattleGaugeWidthFix = true;
 

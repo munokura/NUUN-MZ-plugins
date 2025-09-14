@@ -6,204 +6,413 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  * 
- */ 
-/*:
- * @target MZ
- * @plugindesc  バトラーTPBゲージ
- * @author NUUN
- * @version 1.5.1
- * @base NUUN_Base
- * @base NUUN_BattlerOverlayBase
- * @orderAfter NUUN_Base
- * 
- * @help
- * 戦闘中の敵及びSVアクターにTPBゲージを表示します。
- * 
- * 敵キャラまたはアクターのメモ欄
- * <TPBGaugeX:[position]> TPBゲージのX座標を調整します。（相対座標）
- * <TPBGaugeY:[position]> TPBゲージのY座標を調整します。（相対座標）
- * [position]:座標
- * 
- * バトルイベントの注釈
- * <TPBGaugePosition:[Id],[x],[y]> 敵グループの[Id]番目のモンスターのゲージの位置を調整します。（相対座標）
- * [Id]：表示順番号
- * [x]：X座標
- * [y]：Y座標
- * [id]は敵グループ設定で配置した順番のIDで指定します。配置ビューのモンスター画像の左上に番号が表示されますのでその番号を記入します。
- * 
- * このプラグインはNUUN_Base Ver.1.2.0以降が必要です。
- * 
- * バトラーオーバーレイベースは必ず最新版にしてください。
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2023/6/2 Ver.1.5.1
- * 処理の修正。
- * 2023/5/28 Ver.1.5.0
- * TPBゲージをアクターにも表示できるように対応。
- * 2022/5/14 Ver.1.4.0
- * バトラーの表示処理の定義大幅変更に関する定義変更。
- * 2021/12/19 Ver.1.3.0
- * ゲージ画像化に対応。
- * 2021/11/8 Ver.1.2.2
- * 敵グループの座標変更の設定方法を変更。
- * 2021/11/7 Ver.1.2.1
- * 一部処理を修正。
- * 2021/11/6 Ver.1.2.0
- * 敵グループのモンスター毎にゲージの座標を調整できる機能を追加。
- * 2021/9/2 Ver.1.1.9
- * 中心に表示する機能を追加。
- * TPBゲージの位置が反映しなかった問題を修正。
- * 2021/8/29 Ver.1.1.8
- * 競合対策のための処理追加。
- * 2021/7/15 Ver.1.1.7
- * 処理の最適化により一部処理をNUUN_Baseに移行。
- * 2021/7/14 Ver.1.1.6
- * エネミー画像を消去する及び新たにエネミー画像を追加表示するプラグインとの競合対策。
- * 2021/6/19 Ver.1.1.5
- * 疑似3DバトルVer.1.1対応のため一部の処理を変更。
- * 2021/5/24 Ver.1.1.4
- * 処理の一部を修正。
- * 2021/4/11 Ver.1.1.3
- * モンスターにサイドビューアクター表示系のプラグインに対応。
- * サイドビューアクターを指定したモンスターと戦闘を開始したときにエラーが出る問題を修正。
- * 2021/1/28 Ver.1.1.2
- * エネミーごとにX座標を調整できるように変更。
- * 2021/1/20 Ver.1.1.1
- * X座標を調整できるように変更。
- * エネミーごとにY座標を調整できるように変更。
- * 2021/1/17 Ver.1.1.0
- * Y座標を調整できる機能を追加。
- * エネミーのステート表示が被る問題を修正。
- * 2021/1/17 Ver.1.0.1
- * 少し修正。
- * 2021/1/16 Ver.1.0.0
- * 初版
- * 
- * @param EnemySetting
- * @text 敵設定
- * @default ------------------------------
- * 
- * @param EnemyVisibleSetting
- * @text 表示設定
- * @default ------------------------------
- * @parent EnemySetting
- * 
- * @param TpbPosition
- * @desc エネミーのTPBゲージ位置
- * @text TPBゲージ位置
- * @type select
- * @option 表示なし
- * @value -1
- * @option 敵画像の上
- * @value 0
- * @option 敵画像の下
- * @value 1
- * @option 敵画像の中心
- * @value 2
- * @default 0
- * @parent EnemyVisibleSetting
- * 
- * @param GaugeSetting
- * @text 敵ゲージ設定
- * @default ------------------------------
- * @parent EnemySetting
- * 
- * @param GaugeWidth
- * @desc TPBゲージの横幅を指定します。
- * @text TPBゲージ横幅
- * @type number
- * @default 128
- * @min 0
- * @parent GaugeSetting
- * 
- * @param GaugeHeight
- * @desc TPBゲージの縦幅を指定します。
- * @text TPBゲージ縦幅
- * @type number
- * @default 12
- * @min 0
- * @parent GaugeSetting
- * 
- * @param Gauge_X
- * @desc TPBゲージのX座標（相対座標）指定します。
- * @text TPBゲージX座標
- * @type number
- * @default 0
- * @min -9999
- * @parent GaugeSetting
- * 
- * @param Gauge_Y
- * @desc TPBゲージのY座標（相対座標）指定します。
- * @text TPBゲージY座標
- * @type number
- * @default 0
- * @min -9999
- * @parent GaugeSetting
- * 
- * 
- * @param ActorSetting
- * @text アクター設定
- * @default ------------------------------
- * 
- * @param ActorVisibleSetting
- * @text 表示設定
- * @default ------------------------------
- * @parent ActorSetting
- * 
- * @param ActorTpbPosition
- * @desc アクターのTPBゲージ位置
- * @text TPBゲージ位置
- * @type select
- * @option 表示なし
- * @value -1
- * @option SVアクター画像の上
- * @value 0
- * @option SVアクター画像の下
- * @value 1
- * @default -1
- * @parent ActorVisibleSetting
- * 
- * @param ActorGaugeSetting
- * @text アクターゲージ設定
- * @default ------------------------------
- * @parent ActorSetting
- * 
- * @param ActorGaugeWidth
- * @desc アクターのTPBゲージの横幅を指定します。
- * @text TPBゲージ横幅
- * @type number
- * @default 128
- * @min 0
- * @parent ActorGaugeSetting
- * 
- * @param ActorGaugeHeight
- * @desc アクターのTPBゲージの縦幅を指定します。
- * @text TPBゲージ縦幅
- * @type number
- * @default 12
- * @min 0
- * @parent ActorGaugeSetting
- * 
- * @param ActorGauge_X
- * @desc アクターのTPBゲージのX座標（相対座標）指定します。
- * @text TPBゲージX座標
- * @type number
- * @default 0
- * @min -9999
- * @parent ActorGaugeSetting
- * 
- * @param ActorGauge_Y
- * @desc アクターのTPBゲージのY座標（相対座標）指定します。
- * @text TPBゲージY座標
- * @type number
- * @default 0
- * @min -9999
- * @parent ActorGaugeSetting
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Butler TPB Gauge
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Displays the TPB gauge for enemies and SV actors during battle.
+
+Enemy character or actor memo field
+<TPBGaugeX:[position]> Adjusts the X coordinate of the TPB gauge. (Relative
+coordinates)
+<TPBGaugeY:[position]> Adjusts the Y coordinate of the TPB gauge. (Relative
+coordinates)
+[position]: Coordinates
+
+Battle event notes
+<TPBGaugePosition:[Id],[x],[y]> Adjusts the gauge position of the [Id]th
+monster in the enemy group. (Relative coordinates)
+[Id]: Display order number
+[x]: X coordinate
+[y]: Y coordinate
+[id] is specified by the ID of the monster placement order in the enemy group
+settings. A number appears in the upper left corner of the monster image in
+the placement view; enter that number here.
+
+This plugin requires NUUN_Base Ver. 1.2.0 or later.
+
+Please make sure to update the Battler Overlay Base to the latest version.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+June 2, 2023 Ver. 1.5.1
+Processing fixes.
+May 28, 2023 Ver. 1.5.0
+Support for displaying the TPB gauge on actors.
+May 14, 2022 Ver. 1.4.0
+Define changes related to major changes to the Battler display processing
+definition.
+December 19, 2021 Ver. 1.3.0
+Support for gauge visualization.
+November 8, 2021 Ver. 1.2.2
+Changed the method for setting enemy group coordinate changes.
+November 7, 2021 Ver. 1.2.1
+Some processing fixes.
+November 6, 2021 Ver. 1.2.0
+Added a feature to adjust gauge coordinates for each monster in the enemy
+group.
+September 2, 2021 Ver. 1.1.9
+Added a centered display feature.
+Fixed an issue where the TPB gauge position was not reflected.
+August 29, 2021 Ver. 1.1.8
+Added processing to prevent conflicts.
+July 15, 2021 Ver. 1.1.7
+Processing optimization: Some processing has been moved to NUUN_Base.
+July 14, 2021 Ver. 1.1.6
+Addressed conflicts with plugins that delete enemy images and add new enemy
+images.
+June 19, 2021 Ver. 1.1.5
+Some processing changes to support Pseudo 3D Battle Ver. 1.1.
+May 24, 2021 Ver. 1.1.4
+Some processing fixes.
+April 11, 2021 Ver. 1.1.3
+Added support for plugins that display side-view actors for monsters.
+Fixed an error that occurred when starting a battle with a monster that
+specified a side-view actor.
+January 28, 2021 Ver. 1.1.2
+Allows you to adjust the X coordinate for each enemy.
+January 20, 2021 Ver. 1.1.1
+Added the ability to adjust the X coordinate.
+Added the ability to adjust the Y coordinate for each enemy.
+January 17, 2021 Ver. 1.1.0
+Added the ability to adjust the Y coordinate.
+Fixed an issue where enemy state displays overlapped.
+January 17, 2021 Ver. 1.0.1
+Minor fixes.
+January 16, 2021 Ver. 1.0.0
+First release.
+
+@param EnemySetting
+@text Enemy Settings
+@default ------------------------------
+
+@param EnemyVisibleSetting
+@text Display settings
+@default ------------------------------
+@parent EnemySetting
+
+@param TpbPosition
+@text TPB gauge position
+@desc Enemy TPB gauge position
+@type select
+@default 0
+@option No display
+@value -1
+@option Above the enemy image
+@value 0
+@option Under the enemy image
+@value 1
+@option Center of enemy image
+@value 2
+@parent EnemyVisibleSetting
+
+@param GaugeSetting
+@text Enemy Gauge Settings
+@default ------------------------------
+@parent EnemySetting
+
+@param GaugeWidth
+@text TPB gauge width
+@desc Specifies the width of the TPB gauge.
+@type number
+@default 128
+@min 0
+@parent GaugeSetting
+
+@param GaugeHeight
+@text TPB gauge vertical width
+@desc Specifies the vertical width of the TPB gauge.
+@type number
+@default 12
+@min 0
+@parent GaugeSetting
+
+@param Gauge_X
+@text TPB gauge X coordinate
+@desc Specifies the X coordinate (relative coordinate) of the TPB gauge.
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param Gauge_Y
+@text TPB gauge Y coordinate
+@desc Specifies the Y coordinate (relative coordinate) of the TPB gauge.
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param ActorSetting
+@text Actor Settings
+@default ------------------------------
+
+@param ActorVisibleSetting
+@text Display settings
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorTpbPosition
+@text TPB gauge position
+@desc Actor's TPB gauge position
+@type select
+@default -1
+@option No display
+@value -1
+@option Above the SV actor image
+@value 0
+@option Under the SV actor image
+@value 1
+@parent ActorVisibleSetting
+
+@param ActorGaugeSetting
+@text Actor Gauge Settings
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorGaugeWidth
+@text TPB gauge width
+@desc Specifies the width of the actor's TPB gauge.
+@type number
+@default 128
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGaugeHeight
+@text TPB gauge vertical width
+@desc Specifies the vertical width of the actor's TPB gauge.
+@type number
+@default 12
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGauge_X
+@text TPB gauge X coordinate
+@desc Specifies the X coordinate (relative coordinate) of the actor's TPB gauge.
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorGauge_Y
+@text TPB gauge Y coordinate
+@desc Specifies the Y coordinate (relative coordinate) of the actor's TPB gauge.
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+*/
+
+/*:ja
+@target MZ
+@plugindesc  バトラーTPBゲージ
+@author NUUN
+@version 1.5.1
+@base NUUN_Base
+@base NUUN_BattlerOverlayBase
+@orderAfter NUUN_Base
+
+@help
+戦闘中の敵及びSVアクターにTPBゲージを表示します。
+
+敵キャラまたはアクターのメモ欄
+<TPBGaugeX:[position]> TPBゲージのX座標を調整します。（相対座標）
+<TPBGaugeY:[position]> TPBゲージのY座標を調整します。（相対座標）
+[position]:座標
+
+バトルイベントの注釈
+<TPBGaugePosition:[Id],[x],[y]> 敵グループの[Id]番目のモンスターのゲージの位置を調整します。（相対座標）
+[Id]：表示順番号
+[x]：X座標
+[y]：Y座標
+[id]は敵グループ設定で配置した順番のIDで指定します。配置ビューのモンスター画像の左上に番号が表示されますのでその番号を記入します。
+
+このプラグインはNUUN_Base Ver.1.2.0以降が必要です。
+
+バトラーオーバーレイベースは必ず最新版にしてください。
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2023/6/2 Ver.1.5.1
+処理の修正。
+2023/5/28 Ver.1.5.0
+TPBゲージをアクターにも表示できるように対応。
+2022/5/14 Ver.1.4.0
+バトラーの表示処理の定義大幅変更に関する定義変更。
+2021/12/19 Ver.1.3.0
+ゲージ画像化に対応。
+2021/11/8 Ver.1.2.2
+敵グループの座標変更の設定方法を変更。
+2021/11/7 Ver.1.2.1
+一部処理を修正。
+2021/11/6 Ver.1.2.0
+敵グループのモンスター毎にゲージの座標を調整できる機能を追加。
+2021/9/2 Ver.1.1.9
+中心に表示する機能を追加。
+TPBゲージの位置が反映しなかった問題を修正。
+2021/8/29 Ver.1.1.8
+競合対策のための処理追加。
+2021/7/15 Ver.1.1.7
+処理の最適化により一部処理をNUUN_Baseに移行。
+2021/7/14 Ver.1.1.6
+エネミー画像を消去する及び新たにエネミー画像を追加表示するプラグインとの競合対策。
+2021/6/19 Ver.1.1.5
+疑似3DバトルVer.1.1対応のため一部の処理を変更。
+2021/5/24 Ver.1.1.4
+処理の一部を修正。
+2021/4/11 Ver.1.1.3
+モンスターにサイドビューアクター表示系のプラグインに対応。
+サイドビューアクターを指定したモンスターと戦闘を開始したときにエラーが出る問題を修正。
+2021/1/28 Ver.1.1.2
+エネミーごとにX座標を調整できるように変更。
+2021/1/20 Ver.1.1.1
+X座標を調整できるように変更。
+エネミーごとにY座標を調整できるように変更。
+2021/1/17 Ver.1.1.0
+Y座標を調整できる機能を追加。
+エネミーのステート表示が被る問題を修正。
+2021/1/17 Ver.1.0.1
+少し修正。
+2021/1/16 Ver.1.0.0
+初版
+
+@param EnemySetting
+@text 敵設定
+@default ------------------------------
+
+@param EnemyVisibleSetting
+@text 表示設定
+@default ------------------------------
+@parent EnemySetting
+
+@param TpbPosition
+@desc エネミーのTPBゲージ位置
+@text TPBゲージ位置
+@type select
+@option 表示なし
+@value -1
+@option 敵画像の上
+@value 0
+@option 敵画像の下
+@value 1
+@option 敵画像の中心
+@value 2
+@default 0
+@parent EnemyVisibleSetting
+
+@param GaugeSetting
+@text 敵ゲージ設定
+@default ------------------------------
+@parent EnemySetting
+
+@param GaugeWidth
+@desc TPBゲージの横幅を指定します。
+@text TPBゲージ横幅
+@type number
+@default 128
+@min 0
+@parent GaugeSetting
+
+@param GaugeHeight
+@desc TPBゲージの縦幅を指定します。
+@text TPBゲージ縦幅
+@type number
+@default 12
+@min 0
+@parent GaugeSetting
+
+@param Gauge_X
+@desc TPBゲージのX座標（相対座標）指定します。
+@text TPBゲージX座標
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param Gauge_Y
+@desc TPBゲージのY座標（相対座標）指定します。
+@text TPBゲージY座標
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+
+@param ActorSetting
+@text アクター設定
+@default ------------------------------
+
+@param ActorVisibleSetting
+@text 表示設定
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorTpbPosition
+@desc アクターのTPBゲージ位置
+@text TPBゲージ位置
+@type select
+@option 表示なし
+@value -1
+@option SVアクター画像の上
+@value 0
+@option SVアクター画像の下
+@value 1
+@default -1
+@parent ActorVisibleSetting
+
+@param ActorGaugeSetting
+@text アクターゲージ設定
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorGaugeWidth
+@desc アクターのTPBゲージの横幅を指定します。
+@text TPBゲージ横幅
+@type number
+@default 128
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGaugeHeight
+@desc アクターのTPBゲージの縦幅を指定します。
+@text TPBゲージ縦幅
+@type number
+@default 12
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGauge_X
+@desc アクターのTPBゲージのX座標（相対座標）指定します。
+@text TPBゲージX座標
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorGauge_Y
+@desc アクターのTPBゲージのY座標（相対座標）指定します。
+@text TPBゲージY座標
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_BattlerTpbGauge = true;
 

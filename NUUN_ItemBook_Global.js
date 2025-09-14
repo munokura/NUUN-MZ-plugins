@@ -5,29 +5,52 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
- */ 
-/*:
- * @target MZ
- * @plugindesc アイテム図鑑全セーブ共通
- * @author NUUN
- * @version 1.0.0
- * @base NUUN_GlobalCore
- * @base NUUN_ItemBook
- * @orderAfter NUUN_GlobalCore
- * @orderAfter NUUN_ItemBook
- * 
- * @help
- * アイテム図鑑のデータを全セーブデータで共用します。
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2022/5/4 Ver.1.0.0
- * 初版
- * 
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Item encyclopedia (common to all saves)
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Item encyclopedia data is shared across all save data.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+May 4, 2022 Ver. 1.0.0
+First Edition
+*/
+
+/*:ja
+@target MZ
+@plugindesc アイテム図鑑全セーブ共通
+@author NUUN
+@version 1.0.0
+@base NUUN_GlobalCore
+@base NUUN_ItemBook
+@orderAfter NUUN_GlobalCore
+@orderAfter NUUN_ItemBook
+
+@help
+アイテム図鑑のデータを全セーブデータで共用します。
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2022/5/4 Ver.1.0.0
+初版
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_ItemBook_Global = true;
 

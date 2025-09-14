@@ -6,911 +6,1803 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  */
+
 /*:
- * @target MZ
- * @plugindesc XP風対象選択ウィンドウ
- * @author NUUN
- * @base NUUN_Base
- * @base NUUN_MenuParamListBase
- * @orderAfter NUUN_Base
- * @orderAfter NUUN_MenuParamListBase
- * @version 1.3.2
- * 
- * @help
- * 敵、味方の対象選択時のウィンドウをXP風に変更します。
- * 
- * 全体、ランダム、敵味方全体攻撃(Ver.1.6.0以降)でも対象選択と併用することで、全体、ランダム対象時の表示をすることができます。
- * 
- * アクター、敵キャラのメモ欄
- * <XPBattlerFace:[imgUrl], [indexId]> 表示する顔グラを指定します。アクターの場合は未指定の場合はデフォルトの顔グラまたは立ち絵、顔グラEXの顔グラが表示されます。
- * [imgUrl]:faceインデックス内のURL(拡張子なし)
- * [indexId]:顔グラのインデックスID
- * ※[]は記入しないでください。
- * 
- * 記述欄のテキスト 制御文字が使用可能です。
- * <[tag]:[text]> 記述欄のテキスト
- * [tag]:記述欄タグ名
- * [text]:表示するテキスト。
- * 改行すれば何行でも表示可能ですので、独自の項目を追加することも可能です。
- * <desc:ああああ> descとタグ付けされた項目に「ああああ」が表示されます。
- * 
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2025/5/10 Ver.1.3.2
- * ゲージ表示を行っている場合にエラーが出る問題を修正。
- * 2025/2/2 Ver.1.3.1
- * 敵のウィンドウの透明度が適用されていなかった問題を修正。
- * ウィンドウ開閉時のアニメーションの有効無効化する機能を追加。
- * 2025/1/4 Ver.1.3.0
- * 背景画像を表示する機能を追加。
- * 2024/12/17 Ver.1.2.1
- * 対象選択時にエラーが出る問題を修正。
- * 2024/9/8 Ver.1.2.0
- * ステータス項目ベースプラグインを介しての処理に仕様変更。
- * 幾つかのプラグインパラメータのスペルミスを修正。
- * 2023/1/10 Ver.1.1.4
- * 対象選択画面表示位置が上部しか適用されていなかった問題を修正。
- * 2023/1/9 Ver.1.1.3
- * アクター及び敵キャラのウィンドウを表示しない設定にしたときエラーが出る問題を修正。
- * 対象選択ウィンドウが表示されない問題を修正。
- * 2022/9/4 Ver.1.1.2
- * 特定の場面でウィンドウが表示さてたままになってしまう問題を修正。
- * 2022/8/26 Ver.1.1.1
- * スクロール時のSEを再生しない機能を追加。
- * アクターコマンドを開くと対象選択時のカーソルSEが再生しまう問題を修正。
- * 2022/8/24 Ver.1.1.0
- * 敵対象選択時にスクロール選択出来る機能を追加。
- * 2022/6/5 Ver.1.0.5
- * 微修正。
- * 2022/4/2 Ver.1.0.4
- * 敵に顔グラを指定できる機能を追加。
- * 2022/4/1 Ver.1.0.3
- * 評価式のバトラーの取得する変数を変更。
- * 2022/3/31 Ver.1.0.2
- * 敵のデフォルトのステート表示が表示されないように修正。
- * 2022/3/30 Ver.1.0.1
- * 敵の対象選択時にアクターステータスウィンドウを表示するように修正。
- * アクター選択時の顔グラの表示を立ち絵、顔グラ表示EX設定に対応。
- * 2022/3/27 Ver.1.0.0
- * 初版
- * 
- * @param XPSelectPosition
- * @text 対象選択画面表示位置
- * @desc 対象選択画面の表示位置を指定します。
- * @type select
- * @option 上部
- * @value 'top'
- * @option 中間
- * @value 'middle'
- * @option アクターステータスウィンドウの上
- * @value 'under'
- * @default 'top'
- * 
- * @param OriginPositionMode
- * @text 背景基準位置
- * @desc 背景の基準位置をUIに合わせます。
- * @type boolean
- * @default false
- * 
- * @param OpenAnimation
- * @desc ウィンドウ開閉時のアニメーションを有効にします。
- * @text ウィンドウ開閉時のアニメーション有効
- * @type boolean
- * @default true
- * 
- * @param ActorSetting
- * @text アクター設定
- * @default ------------------------------
- * 
- * @param ActorXPSelect
- * @desc アクター対象選択画面をXPスタイルに変更します。
- * @text アクター対象選択画面XP有効
- * @type boolean
- * @default true
- * @parent ActorSetting
- * 
- * @param ActorData
- * @text 表示アクターデータ
- * @desc 選択時に表示するアクターのデータを選択します。
- * @default ["{\"DateSelect\":\"Face\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}","{\"DateSelect\":\"ActorName\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"152\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"288\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}","{\"DateSelect\":\"State2\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"448\",\"Y_Coordinate\":\"-8\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}","{\"DateSelect\":\"HpGauge\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"500\",\"Y_Coordinate\":\"6\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}","{\"DateSelect\":\"MpGauge\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"640\",\"Y_Coordinate\":\"6\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}"]
- * @type struct<DataActorList>[]
- * @parent ActorSetting
- * 
- * @param ActorXPSelectWindowVisible
- * @desc ウィンドウ画像を不透明化。背景指定時はOFFにしてください。
- * @text ウィンドウ不透明化
- * @type boolean
- * @default true
- * @parent ActorSetting
- * 
- * @param ActorSelect_X
- * @desc アクターコマンドウィンドウのX座標を指定します。
- * @text アクターコマンドウィンドウX座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent ActorSetting
- * 
- * @param ActorSelect_Y
- * @desc アクターコマンドウィンドウのY座標を指定します。
- * @text アクターコマンドウィンドウY座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent ActorSetting
- * 
- * @param ActorSelect_Width
- * @desc アクターコマンドウィンドウの横幅を指定します。0でUIサイズ 画面より大きい値にすると自動的に画面の横幅になります。
- * @text アクターコマンドウィンドウの横幅
- * @type number
- * @default 0
- * @max 9999
- * @min 0
- * @parent ActorSetting
- * 
- * @param ActorSelectionHelpWindowHide
- * @desc 味方対象選択時のヘルプウィンドウの表示。
- * @text 味方対象選択時ヘルプウィンドウの表示
- * @type boolean
- * @default false
- * @parent ActorSetting
- * 
- * @param ActorBackGroundImgSetting
- * @text 味方対象選択時背景設定
- * @default ------------------------------
- * 
- * @param ActorBackGroundImg
- * @desc 味方対象味方対象選択時の背景画像ファイル名を指定します。
- * @text 味方対象背景画像
- * @type file
- * @dir img/
- * @default 
- * @parent ActorBackGroundImgSetting
- * 
- * @param ActorBackGroundImg_X
- * @desc 背景画像のX座標を指定します。
- * @text 背景画像X座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent ActorBackGroundImgSetting
- * 
- * @param ActorBackGroundImg_Y
- * @desc 背景画像のY座標を指定します。
- * @text 背景画像Y座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent ActorBackGroundImgSetting
- * 
- * @param EnemySetting
- * @text 敵キャラ設定
- * @default ------------------------------
- * 
- * @param EnemyXPSelect
- * @desc 敵キャラ対象選択画面をXPスタイルに変更します。
- * @text 敵キャラ対象選択画面XP有効
- * @type boolean
- * @default true
- * @parent EnemySetting
- * 
- * @param EnemyData
- * @text 表示敵キャラデータ
- * @desc 選択時に表示する敵キャラのデータを選択します。
- * @default ["{\"DateSelect\":\"EnemyName\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'center'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}"]
- * @type struct<DataEnemyList>[]
- * @parent EnemySetting
- * 
- * @param EnemyXPSelectWindowVisible
- * @desc ウィンドウ画像を不透明化。背景指定時はOFFにしてください。
- * @text ウィンドウ不透明化
- * @type boolean
- * @default true
- * @parent EnemySetting
- * 
- * @param EnemySelect_X
- * @desc 敵キャラコマンドウィンドウのX座標を指定します。
- * @text 敵キャラコマンドウィンドウX座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent EnemySetting
- * 
- * @param EnemySelect_Y
- * @desc 敵キャラコマンドウィンドウのY座標を指定します。
- * @text 敵キャラコマンドウィンドウY座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent EnemySetting
- * 
- * @param EnemySelect_Width
- * @desc 敵キャラコマンドウィンドウの横幅を指定します。0でUIサイズ 画面より大きい値にすると自動的に画面の横幅になります。
- * @text 敵キャラコマンドウィンドウの横幅
- * @type number
- * @default 0
- * @max 9999
- * @min 0
- * @parent EnemySetting
- * 
- * @param EnemySelectdScrollSE
- * @desc 敵対象選択時のスクロールをしたときにカーソルSEをならします。
- * @text 敵対象スクロール時カーソルSE_ON
- * @type boolean
- * @default true
- * @parent EnemySetting
- * 
- * @param EnemyBackGroundImgSetting
- * @text 味方対象選択時背景設定
- * @default ------------------------------
- * 
- * @param EnemyBackGroundImg
- * @desc 敵対象味方対象選択時の背景画像ファイル名を指定します。
- * @text 敵対象背景画像
- * @type file
- * @dir img/
- * @default 
- * @parent EnemyBackGroundImgSetting
- * 
- * @param EnemyBackGroundImg_X
- * @desc 背景画像のX座標を指定します。
- * @text 背景画像X座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent EnemyBackGroundImgSetting
- * 
- * @param EnemyBackGroundImg_Y
- * @desc 背景画像のY座標を指定します。
- * @text 背景画像Y座標
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * @parent EnemyBackGroundImgSetting
- * 
- * @param ActorPictureSetting
- * @text 立ち絵、顔グラ表示EX設定
- * @default ------------------------------
- * 
- * @param DynamicFace
- * @desc アクターの顔グラを条件による変化させます。（要立ち絵、顔グラ表示EX）
- * @text 条件顔グラ変化
- * @type boolean
- * @default true
- * @parent ActorPictureSetting
- * 
- */
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc XP-style target selection window
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Changes the window used when selecting enemies or allies to an XP-style
+display.
+
+When used in conjunction with target selection, you can display the All,
+Random, and All-Friendly Attacks (Ver. 1.6.0 and later) when using All,
+Random, or All-Friendly Attacks.
+
+Actor and Enemy Character Memo Field
+<XPBattlerFace:[imgUrl], [indexId]> Specifies the face graphic to display. For
+actors, if not specified, the default face graphic, character portrait, or EX
+face graphic will be displayed.
+[imgUrl]: URL in the face index (without extension)
+[indexId]: Index ID of the face graphic
+*Do not enter [].
+
+Description Text: Control characters are allowed.
+<[tag]:[text]> Description Text
+[tag]: Description tag name
+[text]: Text to display.
+You can display as many lines as you like by inserting line breaks, so you can
+add your own items.
+<desc:ああああ> "ああああ" will appear in items tagged with "desc."
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+2025/5/10 Ver.1.3.2
+Fixed an issue where an error occurred when displaying gauges.
+2025/2/2 Ver.1.3.1
+Fixed an issue where enemy window transparency was not being applied.
+Added a feature to enable or disable animations when opening and closing
+windows.
+2025/1/4 Ver.1.3.0
+Added a feature to display background images.
+2024/12/17 Ver.1.2.1
+Fixed an issue where an error occurred when selecting targets.
+2024/9/8 Ver.1.2.0
+Changed specifications to process via the status item-based plugin.
+Fixed spelling errors in several plugin parameters.
+2023/1/10 Ver.1.1.4
+Fixed an issue where the target selection screen display position was only
+applied to the top.
+January 9, 2023 Ver. 1.1.3
+Fixed an issue that caused an error when actor and enemy character windows
+were hidden.
+Fixed an issue that prevented the target selection window from appearing.
+September 4, 2022 Ver. 1.1.2
+Fixed an issue that caused the window to remain visible in certain scenes.
+August 26, 2022 Ver. 1.1.1
+Added a feature to disable sound effects when scrolling.
+Fixed an issue that caused the cursor sound effects to play when selecting
+targets when actor commands were open.
+August 24, 2022 Ver. 1.1.0
+Added the ability to scroll when selecting enemy targets.
+June 5, 2022 Ver. 1.0.5
+Minor fixes.
+April 2, 2022 Ver. 1.0.4
+Added the ability to specify face graphics for enemies.
+April 1, 2022 Ver. 1.0.3
+Changed the variables acquired by the battler in the evaluation formula.
+March 31, 2022 Ver. 1.0.2
+Fixed the display of enemy default states to no longer be displayed.
+March 30, 2022 Ver. 1.0.1
+Fixed the display of the actor status window when selecting an enemy.
+Fixed the display of face graphics when selecting an actor to support standing
+portraits and the EX Face Graphics Display setting.
+March 27, 2022 Ver. 1.0.0
+First release
+
+@param XPSelectPosition
+@text Target selection screen display position
+@desc Specify the display position of the target selection screen.
+@type select
+@default 'top'
+@option Top
+@value 'top'
+@option middle
+@value 'middle'
+@option Above the Actor Status window
+@value 'under'
+
+@param OriginPositionMode
+@text Background reference position
+@desc Align the background reference position with the UI.
+@type boolean
+@default false
+
+@param OpenAnimation
+@text Enable animation when opening and closing windows
+@desc Enables animations when opening and closing windows.
+@type boolean
+@default true
+
+@param ActorSetting
+@text Actor Settings
+@default ------------------------------
+
+@param ActorXPSelect
+@text Actor Target Selection Screen XP Enabled
+@desc Change the actor target selection screen to XP style.
+@type boolean
+@default true
+@parent ActorSetting
+
+@param ActorData
+@text Display Actor Data
+@desc Select the actor data to display when selected.
+@type struct<DataActorList>[]
+@default ["{\"DateSelect\":\"Face\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}","{\"DateSelect\":\"ActorName\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"152\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"288\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}","{\"DateSelect\":\"State2\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"448\",\"Y_Coordinate\":\"-8\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}","{\"DateSelect\":\"HpGauge\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"500\",\"Y_Coordinate\":\"6\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}","{\"DateSelect\":\"MpGauge\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"640\",\"Y_Coordinate\":\"6\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}"]
+@parent ActorSetting
+
+@param ActorXPSelectWindowVisible
+@text Window Opacity
+@desc Makes the window image opaque. Set this to OFF when specifying a background.
+@type boolean
+@default true
+@parent ActorSetting
+
+@param ActorSelect_X
+@text Actor Command Window X coordinate
+@desc Specifies the X coordinate of the actor command window.
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent ActorSetting
+
+@param ActorSelect_Y
+@text Actor Command Window Y coordinate
+@desc Specifies the Y coordinate of the actor command window.
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent ActorSetting
+
+@param ActorSelect_Width
+@text Actor Commands window width
+@desc Specifies the width of the actor command window. If you set it to 0 (the UI size is larger than the screen), it will automatically be set to the width of the screen.
+@type number
+@default 0
+@min 0
+@max 9999
+@parent ActorSetting
+
+@param ActorSelectionHelpWindowHide
+@text Display help window when selecting ally target
+@desc Display of help window when selecting an ally target.
+@type boolean
+@default false
+@parent ActorSetting
+
+@param ActorBackGroundImgSetting
+@text Background settings when selecting an ally target
+@default ------------------------------
+
+@param ActorBackGroundImg
+@text Allied target background image
+@desc Ally Target Specifies the background image file name when selecting an ally target.
+@type file
+@dir img/
+@parent ActorBackGroundImgSetting
+
+@param ActorBackGroundImg_X
+@text Background image X coordinate
+@desc Specifies the X coordinate of the background image.
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent ActorBackGroundImgSetting
+
+@param ActorBackGroundImg_Y
+@text Background image Y coordinate
+@desc Specifies the Y coordinate of the background image.
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent ActorBackGroundImgSetting
+
+@param EnemySetting
+@text Enemy character settings
+@default ------------------------------
+
+@param EnemyXPSelect
+@text Enemy character target selection screen XP enabled
+@desc Changes the enemy character target selection screen to XP style.
+@type boolean
+@default true
+@parent EnemySetting
+
+@param EnemyData
+@text Display enemy character data
+@desc Select the enemy character data to display when selected.
+@type struct<DataEnemyList>[]
+@default ["{\"DateSelect\":\"EnemyName\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'center'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}"]
+@parent EnemySetting
+
+@param EnemyXPSelectWindowVisible
+@text Window Opacity
+@desc Makes the window image opaque. Set this to OFF when specifying a background.
+@type boolean
+@default true
+@parent EnemySetting
+
+@param EnemySelect_X
+@text Enemy character command window X coordinate
+@desc Specifies the X coordinate of the enemy character command window.
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent EnemySetting
+
+@param EnemySelect_Y
+@text Enemy character command window Y coordinate
+@desc Specifies the Y coordinate of the enemy character command window.
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent EnemySetting
+
+@param EnemySelect_Width
+@text Enemy command window width
+@desc Specifies the width of the enemy character command window. If you set it to 0, the UI size will be larger than the screen size. If you set it to a value larger than the screen size, it will automatically be set to the screen width.
+@type number
+@default 0
+@min 0
+@max 9999
+@parent EnemySetting
+
+@param EnemySelectdScrollSE
+@text Enemy target scrolling cursor SE_ON
+@desc The cursor sound effect will be played when scrolling to select an enemy target.
+@type boolean
+@default true
+@parent EnemySetting
+
+@param EnemyBackGroundImgSetting
+@text Background settings when selecting an ally target
+@default ------------------------------
+
+@param EnemyBackGroundImg
+@text Enemy target background image
+@desc Specifies the background image file name when selecting enemy or ally targets.
+@type file
+@dir img/
+@parent EnemyBackGroundImgSetting
+
+@param EnemyBackGroundImg_X
+@text Background image X coordinate
+@desc Specifies the X coordinate of the background image.
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent EnemyBackGroundImgSetting
+
+@param EnemyBackGroundImg_Y
+@text Background image Y coordinate
+@desc Specifies the Y coordinate of the background image.
+@type number
+@default 0
+@min -9999
+@max 9999
+@parent EnemyBackGroundImgSetting
+
+@param ActorPictureSetting
+@text Standing picture, face graphics display EX setting
+@default ------------------------------
+
+@param DynamicFace
+@text Conditional face graphics change
+@desc Changes the actor's facial graphics depending on the conditions. (Requires standing image, facial graphics display EX)
+@type boolean
+@default true
+@parent ActorPictureSetting
+*/
+
 /*~struct~DataActorList:
- * 
- * @param DateSelect
- * @text 表示するステータス
- * @desc 表示するステータスを指定します。
- * @type select
- * @option なし
- * @value None
- * @option 名称のみ(1)(2)(3)(4)(5)(7)(8)(9)(11)(12)(14)(15)
- * @value Name
- * @option バトラー名(1)(2)(3)(4)(5)(9)(11)(12)
- * @value ActorName
- * @option 二つ名(1)(2)(3)(4)(5)(9)(11)(12)
- * @value Nickname
- * @option 職業(1)(2)(3)(4)(5)(9)(11)(12)
- * @value Class
- * @option レベル(1)(2)(3)(4)(5)(6)(9)(11)(12)(13)
- * @value Level
- * @option ステート(1)(2)(3)(4)(5)(16※1)
- * @value State
- * @option ステート(戦闘用と同じ表示)(1)(2)(3)(4)
- * @value State2
- * @option 独自パラメータ(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(16)(18)
- * @value OrgParam
- * @option HPゲージ(1)(2)(3)(4)(5)(7)(20)(21)(23)(24)
- * @value HpGauge
- * @option MPゲージ(1)(2)(3)(4)(5)(7)(20)(21)(23)(24)
- * @value MpGauge
- * @option TPゲージ(1)(2)(3)(4)(5)(7)(20)(21)(23)(24)
- * @value TpGauge
- * @option 攻撃力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Atk
- * @option 防御力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Def
- * @option 魔法力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Mat
- * @option 魔法防御(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Mdf
- * @option 敏捷性(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Agi
- * @option 運(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Luk
- * @option 命中率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Hit
- * @option 回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Eva
- * @option 会心率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Cri
- * @option 会心回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value CritcalEvade
- * @option 魔法回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value MagicEvade
- * @option 魔法反射率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value MagicrEflect
- * @option 反撃率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Counter
- * @option HP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value HpRegen
- * @option MP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value MpRegen
- * @option TP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value TpRegen
- * @option 狙われ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Aggro
- * @option 防御効果率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Guard
- * @option 回復効果率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Recovery
- * @option 薬の知識(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value ItemEffect
- * @option MP消費率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value MpCost
- * @option TPチャージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value TpCharge
- * @option 物理ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value PhysicalDamage
- * @option 魔法ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value MagicalDamage
- * @option 床ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value FloorDamage
- * @option 獲得経験値率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value GainExpRate
- * @option 独自ゲージ(1)(2)(3)(4)(5)(7)(16)(18)(20)(21)(22)(23)(24)
- * @value OrgGauge
- * @option 画像(1)(2)(3)(4)(25)
- * @value Imges
- * @option 顔グラ(1)(2)(3)(4)(26)
- * @value Face
- * @option フリーテキスト(1)(2)(3)(4)(35)
- * @value Freetext
- * @option ライン(1)(2)(3)(4)(5)(8)
- * @value HorzLine
- * @option 記述欄(1)(2)(3)(4)(6)(7)(8)(19)
- * @value Desc
- * @default None
- * 
- * @param X_Position
- * @text X表示列位置(1)
- * @desc X表示列位置
- * @type number
- * @default 1
- * @min 1
- * @max 4
- * 
- * @param Y_Position
- * @desc Y表示行位置
- * @text Y表示行位置(2)
- * @type number
- * @default 1
- * @min 1
- * @max 99
- * 
- * @param X_Coordinate
- * @text X座標（相対）(3)
- * @desc X座標（X表示列位置からの相対座標）
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * 
- * @param Y_Coordinate
- * @text Y座標（相対）(4)
- * @desc Y座標（Y表示行位置からの相対座標）
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * 
- * @param ItemWidth
- * @desc 項目、ゲージ横幅（0でデフォルト幅）
- * @text 項目、ゲージ横幅(5)
- * @type number
- * @default 0
- * @min 0
- * 
- * @param SystemItemWidth
- * @desc 項目名称の横幅（0でデフォルト幅）
- * @text 項目名称横幅(6)
- * @type number
- * @default 0
- * @min 0
- * 
- * @param ParamName
- * @desc 項目の名称を設定します。
- * @text 名称(7)
- * @type string
- * @default
- * 
- * @param NameColor
- * @desc 項目名称のシステムカラーID。テキストタブでカラーコードを入力できます。
- * @text 項目名称文字色(8)
- * @type color
- * @default 16
- * @min 0
- * 
- * @param Align
- * @desc 文字揃え。
- * @text 文字揃え(9)
- * @type select
- * @option 左
- * @value 'left'
- * @option 右
- * @value 'right'
- * @option 中央
- * @value 'center'
- * @default 'left'
- * 
- * @param paramUnit
- * @desc 単位を設定します。
- * @text 単位(10)
- * @type string
- * @default 
- * 
- * @param FontSize
- * @desc フォントサイズ（メインフォントからの差）
- * @text フォントサイズ(11)
- * @type number
- * @default 0
- * @min -99
- * 
- * @param FontFace
- * @desc 項目名称のフォントを設定します。
- * @text 項目名称フォント(12)
- * @type string
- * @default 
- * 
- * @param ValueFontFace
- * @desc 数値のフォントを設定します。
- * @text 数値フォント(13)
- * @type string
- * @default 
- * 
- * @param Icon
- * @desc アイコンを設定します。
- * @text アイコン(14)
- * @type icon
- * @default 0
- * 
- * @param IconY
- * @desc アイコンを調整するY座標を指定します。(相対)
- * @text アイコン調整Y座標(15)
- * @type number
- * @default 2
- * @min -99
- * 
- * @param DetaEval
- * @desc 評価式または文字列を記入します。
- * @text 評価式or文字列(javaScript)(16)
- * @type combo
- * @option '$gameVariables.value(0);//ゲーム変数'
- * @option 'actor;//アクターのゲームデータ'
- * @option 'actor.actor();//アクターのシステムデータ'
- * @option 'battler.turnCount()+"ターン";//ターン'
- * @default 
- * 
- * @param Decimal
- * @text 小数点桁数(18)
- * @desc 表示出来る小数点桁数。
- * @type number
- * @default 0
- * @min 0
- * @max 99
- * 
- * @param TextMethod
- * @desc 記述欄に紐づけするタグ名
- * @text 記述欄タグ名(19)
- * @type string
- * @default 
- * @parent textSetting
- * 
- * @param GaugeSetting
- * @text ゲージ設定
- * @default ------------------------------
- * 
- * @param GaugeID
- * @desc 識別ID。
- * @text 識別ID(20)
- * @type string
- * @default 
- * @parent GaugeSetting
- * 
- * @param GaugeHeight
- * @desc ゲージの縦幅を指定します。
- * @text ゲージの縦幅(21)
- * @type number
- * @default 12
- * @min 0
- * @max 24
- * @parent GaugeSetting
- * 
- * @param DetaEval2
- * @desc 最大値の評価式。
- * @text 最大値評価式(javaScript)(22)
- * @type combo
- * @option '$gameVariables.value(0);//ゲーム変数'
- * @option 'actor;//アクターのゲームデータ'
- * @option 'actor.actor();//アクターのシステムデータ'
- * @default 
- * @parent GaugeSetting
- * 
- * @param Color1
- * @desc ゲージのシステムカラーID(左)。テキストタブでカラーコードを入力できます。
- * @text ゲージカラー(左)(23)
- * @type color
- * @default -1
- * @min -1
- * @parent GaugeSetting
- * 
- * @param Color2
- * @desc ゲージのシステムカラーID(右)。テキストタブでカラーコードを入力できます。
- * @text ゲージカラー(右)(24)
- * @type color
- * @default -1
- * @min -1
- * @parent GaugeSetting
- * 
- * @param ImgSetting
- * @text 画像設定
- * @default ------------------------------
- * 
- * @param ImgData
- * @desc 表示する画像を指定します。
- * @text 画像(25)
- * @type file
- * @dir img/
- * @default 
- * @parent ImgSetting
- * 
- * @param OtherSetting
- * @text その他設定
- * @default ------------------------------
- * 
- * @param Text
- * @desc フリーテキストのテキストを記入します。(制御文字使用可能)
- * @text フリーテキストのテキスト(35)
- * @type multiline_string
- * @default
- * @parent OtherSetting
- * 
- * @param CondSetting
- * @text 表示条件設定
- * @default ------------------------------
- * 
- * @param Conditions
- * @desc 項目が表示される条件を指定します。(JavaScript)
- * @text 項目条件(all)
- * @type combo
- * @option '$gameVariables.value(0);//ゲーム変数'
- * @option 'actor;//アクターのゲームデータ'
- * @option 'actor.actor();//アクターのシステムデータ'
- * @option '$dataSystem.optDisplayTp'//TP表示
- * @default 
- * 
- */
+@param DateSelect
+@text Status to display
+@desc Specifies the status to display.
+@type select
+@default None
+@option none
+@value None
+@option Name only (1)(2)(3)(4)(5)(7)(8)(9)(11)(12)(14)(15)
+@value Name
+@option Butler Name(1)(2)(3)(4)(5)(9)(11)(12)
+@value ActorName
+@option Nickname(1)(2)(3)(4)(5)(9)(11)(12)
+@value Nickname
+@option Occupation (1)(2)(3)(4)(5)(9)(11)(12)
+@value Class
+@option Level(1)(2)(3)(4)(5)(6)(9)(11)(12)(13)
+@value Level
+@option State (1) (2) (3) (4) (5) (16 * 1)
+@value State
+@option State (same display as for battle) (1) (2) (3) (4)
+@value State2
+@option Unique parameters (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (13) (14) (15) (16) (18)
+@value OrgParam
+@option HP Gauge(1)(2)(3)(4)(5)(7)(20)(21)(23)(24)
+@value HpGauge
+@option MP Gauge (1) (2) (3) (4) (5) (7) (20) (21) (23) (24)
+@value MpGauge
+@option TP Gauge (1) (2) (3) (4) (5) (7) (20) (21) (23) (24)
+@value TpGauge
+@option Attack Power (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Atk
+@option Defense power (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Def
+@option Magic power (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Mat
+@option Magic Defense (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Mdf
+@option Agility (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Agi
+@option Luck (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (13) (14) (15) (18)
+@value Luk
+@option Accuracy rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Hit
+@option Evasion rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Eva
+@option Attention rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Cri
+@option Critical hit avoidance rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value CritcalEvade
+@option Magic evasion rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MagicEvade
+@option Magic reflectance (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MagicrEflect
+@option Counterattack Rate (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (13) (14) (15) (18)
+@value Counter
+@option HP regeneration rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value HpRegen
+@option MP playback rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MpRegen
+@option TP playback rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value TpRegen
+@option Target Rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Aggro
+@option Defense Effectiveness Rate(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Guard
+@option Recovery Rate (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (13) (14) (15) (18)
+@value Recovery
+@option Medicine knowledge (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value ItemEffect
+@option MP consumption rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MpCost
+@option TP Charge Rate (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (13) (14) (15) (18)
+@value TpCharge
+@option Physical Damage Rate(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value PhysicalDamage
+@option Magic Damage Rate (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (13) (14) (15) (18)
+@value MagicalDamage
+@option Floor Damage Rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value FloorDamage
+@option Experience Point Earning Rate(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value GainExpRate
+@option Unique Gauge (1) (2) (3) (4) (5) (7) (16) (18) (20) (21) (22) (23) (24)
+@value OrgGauge
+@option Images (1)(2)(3)(4)(25)
+@value Imges
+@option Face graphics (1) (2) (3) (4) (26)
+@value Face
+@option Free Text(1)(2)(3)(4)(35)
+@value Freetext
+@option Line (1) (2) (3) (4) (5) (8)
+@value HorzLine
+@option Description column (1)(2)(3)(4)(6)(7)(8)(19)
+@value Desc
+
+@param X_Position
+@text X display column position (1)
+@desc X display column position
+@type number
+@default 1
+@min 1
+@max 4
+
+@param Y_Position
+@text Y display line position (2)
+@desc Y display line position
+@type number
+@default 1
+@min 1
+@max 99
+
+@param X_Coordinate
+@text X coordinate (relative) (3)
+@desc X coordinate (relative to the X display column position)
+@type number
+@default 0
+@min -9999
+@max 9999
+
+@param Y_Coordinate
+@text Y coordinate (relative) (4)
+@desc Y coordinate (relative to the Y display row position)
+@type number
+@default 0
+@min -9999
+@max 9999
+
+@param ItemWidth
+@text Item, gauge width (5)
+@desc Item and gauge width (default width at 0)
+@type number
+@default 0
+@min 0
+
+@param SystemItemWidth
+@text Item name width (6)
+@desc Item name width (0 is default width)
+@type number
+@default 0
+@min 0
+
+@param ParamName
+@text Name(7)
+@desc Set the name of the item.
+@type string
+
+@param NameColor
+@text Item name font color (8)
+@desc System color ID for item name. You can enter the color code in the Text tab.
+@type color
+@default 16
+@min 0
+
+@param Align
+@text Justification(9)
+@desc Character alignment.
+@type select
+@default 'left'
+@option left
+@value 'left'
+@option right
+@value 'right'
+@option center
+@value 'center'
+
+@param paramUnit
+@text Units(10)
+@desc Set the units.
+@type string
+
+@param FontSize
+@text Font size(11)
+@desc Font size (difference from main font)
+@type number
+@default 0
+@min -99
+
+@param FontFace
+@text Item Name Font(12)
+@desc Set the font for the item name.
+@type string
+
+@param ValueFontFace
+@text Numeric Fonts (13)
+@desc Sets the font for numbers.
+@type string
+
+@param Icon
+@text Icons (14)
+@desc Set the icon.
+@type icon
+@default 0
+
+@param IconY
+@text Icon adjustment Y coordinate (15)
+@desc Specifies the Y coordinate to adjust the icon (relative).
+@type number
+@default 2
+@min -99
+
+@param DetaEval
+@text Expression or String (JavaScript) (16)
+@desc Enter an expression or a string.
+@type combo
+@option '$gameVariables.value(0); // Game Variables
+@option 'actor; // Actor's Game Data
+@option 'actor.actor(); // Actor System Data'
+@option 'battler.turnCount()+"ターン"; // turn'
+
+@param Decimal
+@text Decimal places (18)
+@desc The number of decimal points that can be displayed.
+@type number
+@default 0
+@min 0
+@max 99
+
+@param TextMethod
+@text Description field tag name (19)
+@desc Tag name to be linked to the description field
+@type string
+@parent textSetting
+
+@param GaugeSetting
+@text Gauge Settings
+@default ------------------------------
+
+@param GaugeID
+@text Identification ID(20)
+@desc Identification ID.
+@type string
+@parent GaugeSetting
+
+@param GaugeHeight
+@text Gauge vertical width(21)
+@desc Specifies the vertical width of the gauge.
+@type number
+@default 12
+@min 0
+@max 24
+@parent GaugeSetting
+
+@param DetaEval2
+@text Maximum Value Evaluation Formula (javascript) (22)
+@desc The maximum value.
+@type combo
+@option '$gameVariables.value(0); // Game Variables
+@option 'actor; // Actor's Game Data
+@option 'actor.actor(); // Actor System Data'
+@parent GaugeSetting
+
+@param Color1
+@text Gauge color (left) (23)
+@desc Gauge system color ID (left). You can enter a color code in the Text tab.
+@type color
+@default -1
+@min -1
+@parent GaugeSetting
+
+@param Color2
+@text Gauge color (right) (24)
+@desc Gauge system color ID (right). You can enter a color code in the Text tab.
+@type color
+@default -1
+@min -1
+@parent GaugeSetting
+
+@param ImgSetting
+@text Image Settings
+@default ------------------------------
+
+@param ImgData
+@text Images (25)
+@desc Specifies the image to display.
+@type file
+@dir img/
+@parent ImgSetting
+
+@param OtherSetting
+@text Other settings
+@default ------------------------------
+
+@param Text
+@text Free Text Text (35)
+@desc Enter free text (control characters allowed).
+@type multiline_string
+@parent OtherSetting
+
+@param CondSetting
+@text Display condition settings
+@default ------------------------------
+
+@param Conditions
+@text Item condition (all)
+@desc Specify the conditions under which the item is displayed. (JavaScript)
+@type combo
+@option '$gameVariables.value(0); // Game Variables
+@option 'actor; // Actor's Game Data
+@option 'actor.actor(); // Actor System Data'
+@option '$dataSystem.optDisplayTp' // TP display
+*/
+
 /*~struct~DataEnemyList:
- * 
- * @param DateSelect
- * @text 表示するステータス
- * @desc 表示するステータスを指定します。
- * @type select
- * @option なし
- * @value None
- * @option 名称のみ(1)(2)(3)(4)(5)(7)(8)(9)(11)(12)(14)(15)
- * @value Name
- * @option モンスター名(1)(2)(3)(4)(5)(9)(11)(12)
- * @value EnemyName
- * @option ステート(1)(2)(3)(4)(5)(16※1)
- * @value State
- * @option ステート(戦闘用と同じ表示)(1)(2)(3)(4)
- * @value State2
- * @option 独自パラメータ(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(16)(18)
- * @value OrgParam
- * @option HPゲージ(1)(2)(3)(4)(5)(7)(20)(21)(23)(24)
- * @value HpGauge
- * @option MPゲージ(1)(2)(3)(4)(5)(7)(20)(21)(23)(24)
- * @value MpGauge
- * @option TPゲージ(1)(2)(3)(4)(5)(7)(20)(21)(23)(24)
- * @value TpGauge
- * @option 攻撃力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Atk
- * @option 防御力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Def
- * @option 魔法力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Mat
- * @option 魔法防御(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Mdf
- * @option 敏捷性(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Agi
- * @option 運(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Luk
- * @option 命中率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Hit
- * @option 回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Eva
- * @option 会心率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Cri
- * @option 会心回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value CritcalEvade
- * @option 魔法回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value MagicEvade
- * @option 魔法反射率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value MagicrEflect
- * @option 反撃率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Counter
- * @option HP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value HpRegen
- * @option MP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value MpRegen
- * @option TP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value TpRegen
- * @option 狙われ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Aggro
- * @option 防御効果率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Guard
- * @option 回復効果率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value Recovery
- * @option 薬の知識(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value ItemEffect
- * @option MP消費率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value MpCost
- * @option TPチャージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value TpCharge
- * @option 物理ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value PhysicalDamage
- * @option 魔法ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value MagicalDamage
- * @option 床ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value FloorDamage
- * @option 獲得経験値率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
- * @value GainExpRate
- * @option 独自ゲージ(1)(2)(3)(4)(5)(7)(16)(18)(20)(21)(22)(23)(24)
- * @value OrgGauge
- * @option 画像(1)(2)(3)(4)(25)
- * @value Imges
- * @option フリーテキスト(1)(2)(3)(4)(35)
- * @value Freetext
- * @option ライン(1)(2)(3)(4)(5)(8)
- * @value HorzLine
- * @option 記述欄(1)(2)(3)(4)(6)(7)(8)(19)
- * @value Desc
- * @default None
- * 
- * @param X_Position
- * @text X表示列位置(1)
- * @desc X表示列位置
- * @type number
- * @default 1
- * @min 1
- * @max 4
- * 
- * @param Y_Position
- * @desc Y表示行位置
- * @text Y表示行位置(2)
- * @type number
- * @default 1
- * @min 1
- * @max 99
- * 
- * @param X_Coordinate
- * @text X座標（相対）(3)
- * @desc X座標（X表示列位置からの相対座標）
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * 
- * @param Y_Coordinate
- * @text Y座標（相対）(4)
- * @desc Y座標（Y表示行位置からの相対座標）
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * 
- * @param ItemWidth
- * @desc 項目、ゲージ横幅（0でデフォルト幅）
- * @text 項目、ゲージ横幅(5)
- * @type number
- * @default 0
- * @min 0
- * 
- * @param SystemItemWidth
- * @desc 項目名称の横幅（0でデフォルト幅）
- * @text 項目名称横幅(6)
- * @type number
- * @default 0
- * @min 0
- * 
- * @param ParamName
- * @desc 項目の名称を設定します。
- * @text 名称(7)
- * @type string
- * @default
- * 
- * @param NameColor
- * @desc 項目名称のシステムカラーID。テキストタブでカラーコードを入力できます。
- * @text 項目名称文字色(8)
- * @type color
- * @default 16
- * @min 0
- * 
- * @param Align
- * @desc 文字揃え。
- * @text 文字揃え(9)
- * @type select
- * @option 左
- * @value 'left'
- * @option 右
- * @value 'right'
- * @option 中央
- * @value 'center'
- * @default 'left'
- * 
- * @param paramUnit
- * @desc 単位を設定します。
- * @text 単位(10)
- * @type string
- * @default 
- * 
- * @param FontSize
- * @desc フォントサイズ（メインフォントからの差）
- * @text フォントサイズ(11)
- * @type number
- * @default 0
- * @min -99
- * 
- * @param FontFace
- * @desc 項目名称のフォントを設定します。
- * @text 項目名称フォント(12)
- * @type string
- * @default 
- * 
- * @param ValueFontFace
- * @desc 数値のフォントを設定します。
- * @text 数値フォント(13)
- * @type string
- * @default 
- * 
- * @param Icon
- * @desc アイコンを設定します。
- * @text アイコン(14)
- * @type icon
- * @default 0
- * 
- * @param IconY
- * @desc アイコンを調整するY座標を指定します。(相対)
- * @text アイコン調整Y座標(15)
- * @type number
- * @default 2
- * @min -99
- * 
- * @param DetaEval
- * @desc 評価式または文字列を記入します。
- * @text 評価式or文字列(javaScript)(16)
- * @type combo
- * @option '$gameVariables.value(0);//ゲーム変数'
- * @option 'actor;//アクターのゲームデータ'
- * @option 'actor.actor();//アクターのシステムデータ'
- * @option 'battler.turnCount()+"ターン";//ターン'
- * @default 
- * 
- * @param Decimal
- * @text 小数点桁数(18)
- * @desc 表示出来る小数点桁数。
- * @type number
- * @default 0
- * @min 0
- * @max 99
- * 
- * @param TextMethod
- * @desc 記述欄に紐づけするタグ名
- * @text 記述欄タグ名(19)
- * @type string
- * @default 
- * @parent textSetting
- * 
- * @param GaugeSetting
- * @text ゲージ設定
- * @default ------------------------------
- * 
- * @param GaugeID
- * @desc 識別ID。
- * @text 識別ID(20)
- * @type string
- * @default 
- * @parent GaugeSetting
- * 
- * @param GaugeHeight
- * @desc ゲージの縦幅を指定します。
- * @text ゲージの縦幅(21)
- * @type number
- * @default 12
- * @min 0
- * @max 24
- * @parent GaugeSetting
- * 
- * @param DetaEval2
- * @desc 最大値の評価式。
- * @text 最大値評価式(javaScript)(22)
- * @type combo
- * @option '$gameVariables.value(0);//ゲーム変数'
- * @option 'actor;//アクターのゲームデータ'
- * @option 'actor.actor();//アクターのシステムデータ'
- * @default 
- * @parent GaugeSetting
- * 
- * @param Color1
- * @desc ゲージのシステムカラーID(左)。テキストタブでカラーコードを入力できます。
- * @text ゲージカラー(左)(23)
- * @type color
- * @default -1
- * @min -1
- * @parent GaugeSetting
- * 
- * @param Color2
- * @desc ゲージのシステムカラーID(右)。テキストタブでカラーコードを入力できます。
- * @text ゲージカラー(右)(24)
- * @type color
- * @default -1
- * @min -1
- * @parent GaugeSetting
- * 
- * @param ImgSetting
- * @text 画像設定
- * @default ------------------------------
- * 
- * @param ImgData
- * @desc 表示する画像を指定します。
- * @text 画像(25)
- * @type file
- * @dir img/
- * @default 
- * @parent ImgSetting
- * 
- * @param OtherSetting
- * @text その他設定
- * @default ------------------------------
- * 
- * @param Text
- * @desc フリーテキストのテキストを記入します。(制御文字使用可能)
- * @text フリーテキストのテキスト(35)
- * @type multiline_string
- * @default
- * @parent OtherSetting
- * 
- * @param CondSetting
- * @text 表示条件設定
- * @default ------------------------------
- * 
- * @param Conditions
- * @desc 項目が表示される条件を指定します。(JavaScript)
- * @text 項目条件(all)
- * @type combo
- * @option '$gameVariables.value(0);//ゲーム変数'
- * @option 'actor;//アクターのゲームデータ'
- * @option 'actor.actor();//アクターのシステムデータ'
- * @option '$dataSystem.optDisplayTp'//TP表示
- * @default 
- * 
- */
+@param DateSelect
+@text Status to display
+@desc Specifies the status to display.
+@type select
+@default None
+@option none
+@value None
+@option Name only (1)(2)(3)(4)(5)(7)(8)(9)(11)(12)(14)(15)
+@value Name
+@option Monster Name(1)(2)(3)(4)(5)(9)(11)(12)
+@value EnemyName
+@option State (1) (2) (3) (4) (5) (16 * 1)
+@value State
+@option State (same display as for battle) (1) (2) (3) (4)
+@value State2
+@option Unique parameters (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (13) (14) (15) (16) (18)
+@value OrgParam
+@option HP Gauge(1)(2)(3)(4)(5)(7)(20)(21)(23)(24)
+@value HpGauge
+@option MP Gauge (1) (2) (3) (4) (5) (7) (20) (21) (23) (24)
+@value MpGauge
+@option TP Gauge (1) (2) (3) (4) (5) (7) (20) (21) (23) (24)
+@value TpGauge
+@option Attack Power (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Atk
+@option Defense power (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Def
+@option Magic power (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Mat
+@option Magic Defense (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Mdf
+@option Agility (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Agi
+@option Luck (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (13) (14) (15) (18)
+@value Luk
+@option Accuracy rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Hit
+@option Evasion rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Eva
+@option Attention rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Cri
+@option Critical hit avoidance rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value CritcalEvade
+@option Magic evasion rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MagicEvade
+@option Magic reflectance (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MagicrEflect
+@option Counterattack Rate (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (13) (14) (15) (18)
+@value Counter
+@option HP regeneration rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value HpRegen
+@option MP playback rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MpRegen
+@option TP playback rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value TpRegen
+@option Target Rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Aggro
+@option Defense Effectiveness Rate(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Guard
+@option Recovery Rate (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (13) (14) (15) (18)
+@value Recovery
+@option Medicine knowledge (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value ItemEffect
+@option MP consumption rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MpCost
+@option TP Charge Rate (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (13) (14) (15) (18)
+@value TpCharge
+@option Physical Damage Rate(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value PhysicalDamage
+@option Magic Damage Rate (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (13) (14) (15) (18)
+@value MagicalDamage
+@option Floor Damage Rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value FloorDamage
+@option Experience Point Earning Rate(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value GainExpRate
+@option Unique Gauge (1) (2) (3) (4) (5) (7) (16) (18) (20) (21) (22) (23) (24)
+@value OrgGauge
+@option Images (1)(2)(3)(4)(25)
+@value Imges
+@option Free Text(1)(2)(3)(4)(35)
+@value Freetext
+@option Line (1) (2) (3) (4) (5) (8)
+@value HorzLine
+@option Description column (1)(2)(3)(4)(6)(7)(8)(19)
+@value Desc
+
+@param X_Position
+@text X display column position (1)
+@desc X display column position
+@type number
+@default 1
+@min 1
+@max 4
+
+@param Y_Position
+@text Y display line position (2)
+@desc Y display line position
+@type number
+@default 1
+@min 1
+@max 99
+
+@param X_Coordinate
+@text X coordinate (relative) (3)
+@desc X coordinate (relative to the X display column position)
+@type number
+@default 0
+@min -9999
+@max 9999
+
+@param Y_Coordinate
+@text Y coordinate (relative) (4)
+@desc Y coordinate (relative to the Y display row position)
+@type number
+@default 0
+@min -9999
+@max 9999
+
+@param ItemWidth
+@text Item, gauge width (5)
+@desc Item and gauge width (default width at 0)
+@type number
+@default 0
+@min 0
+
+@param SystemItemWidth
+@text Item name width (6)
+@desc Item name width (0 is default width)
+@type number
+@default 0
+@min 0
+
+@param ParamName
+@text Name(7)
+@desc Set the name of the item.
+@type string
+
+@param NameColor
+@text Item name font color (8)
+@desc System color ID for item name. You can enter the color code in the Text tab.
+@type color
+@default 16
+@min 0
+
+@param Align
+@text Justification(9)
+@desc Character alignment.
+@type select
+@default 'left'
+@option left
+@value 'left'
+@option right
+@value 'right'
+@option center
+@value 'center'
+
+@param paramUnit
+@text Units(10)
+@desc Set the units.
+@type string
+
+@param FontSize
+@text Font size(11)
+@desc Font size (difference from main font)
+@type number
+@default 0
+@min -99
+
+@param FontFace
+@text Item Name Font(12)
+@desc Set the font for the item name.
+@type string
+
+@param ValueFontFace
+@text Numeric Fonts (13)
+@desc Sets the font for numbers.
+@type string
+
+@param Icon
+@text Icons (14)
+@desc Set the icon.
+@type icon
+@default 0
+
+@param IconY
+@text Icon adjustment Y coordinate (15)
+@desc Specifies the Y coordinate to adjust the icon (relative).
+@type number
+@default 2
+@min -99
+
+@param DetaEval
+@text Expression or String (JavaScript) (16)
+@desc Enter an expression or a string.
+@type combo
+@option '$gameVariables.value(0); // Game Variables
+@option 'actor; // Actor's Game Data
+@option 'actor.actor(); // Actor System Data'
+@option 'battler.turnCount()+"ターン"; // turn'
+
+@param Decimal
+@text Decimal places (18)
+@desc The number of decimal points that can be displayed.
+@type number
+@default 0
+@min 0
+@max 99
+
+@param TextMethod
+@text Description field tag name (19)
+@desc Tag name to be linked to the description field
+@type string
+@parent textSetting
+
+@param GaugeSetting
+@text Gauge Settings
+@default ------------------------------
+
+@param GaugeID
+@text Identification ID(20)
+@desc Identification ID.
+@type string
+@parent GaugeSetting
+
+@param GaugeHeight
+@text Gauge vertical width(21)
+@desc Specifies the vertical width of the gauge.
+@type number
+@default 12
+@min 0
+@max 24
+@parent GaugeSetting
+
+@param DetaEval2
+@text Maximum Value Evaluation Formula (javascript) (22)
+@desc The maximum value.
+@type combo
+@option '$gameVariables.value(0); // Game Variables
+@option 'actor; // Actor's Game Data
+@option 'actor.actor(); // Actor System Data'
+@parent GaugeSetting
+
+@param Color1
+@text Gauge color (left) (23)
+@desc Gauge system color ID (left). You can enter a color code in the Text tab.
+@type color
+@default -1
+@min -1
+@parent GaugeSetting
+
+@param Color2
+@text Gauge color (right) (24)
+@desc Gauge system color ID (right). You can enter a color code in the Text tab.
+@type color
+@default -1
+@min -1
+@parent GaugeSetting
+
+@param ImgSetting
+@text Image Settings
+@default ------------------------------
+
+@param ImgData
+@text Images (25)
+@desc Specifies the image to display.
+@type file
+@dir img/
+@parent ImgSetting
+
+@param OtherSetting
+@text Other settings
+@default ------------------------------
+
+@param Text
+@text Free Text Text (35)
+@desc Enter free text (control characters allowed).
+@type multiline_string
+@parent OtherSetting
+
+@param CondSetting
+@text Display condition settings
+@default ------------------------------
+
+@param Conditions
+@text Item condition (all)
+@desc Specify the conditions under which the item is displayed. (JavaScript)
+@type combo
+@option '$gameVariables.value(0); // Game Variables
+@option 'actor; // Actor's Game Data
+@option 'actor.actor(); // Actor System Data'
+@option '$dataSystem.optDisplayTp' // TP display
+*/
+
+/*:ja
+@target MZ
+@plugindesc XP風対象選択ウィンドウ
+@author NUUN
+@base NUUN_Base
+@base NUUN_MenuParamListBase
+@orderAfter NUUN_Base
+@orderAfter NUUN_MenuParamListBase
+@version 1.3.2
+
+@help
+敵、味方の対象選択時のウィンドウをXP風に変更します。
+
+全体、ランダム、敵味方全体攻撃(Ver.1.6.0以降)でも対象選択と併用することで、全体、ランダム対象時の表示をすることができます。
+
+アクター、敵キャラのメモ欄
+<XPBattlerFace:[imgUrl], [indexId]> 表示する顔グラを指定します。アクターの場合は未指定の場合はデフォルトの顔グラまたは立ち絵、顔グラEXの顔グラが表示されます。
+[imgUrl]:faceインデックス内のURL(拡張子なし)
+[indexId]:顔グラのインデックスID
+※[]は記入しないでください。
+
+記述欄のテキスト 制御文字が使用可能です。
+<[tag]:[text]> 記述欄のテキスト
+[tag]:記述欄タグ名
+[text]:表示するテキスト。
+改行すれば何行でも表示可能ですので、独自の項目を追加することも可能です。
+<desc:ああああ> descとタグ付けされた項目に「ああああ」が表示されます。
+
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2025/5/10 Ver.1.3.2
+ゲージ表示を行っている場合にエラーが出る問題を修正。
+2025/2/2 Ver.1.3.1
+敵のウィンドウの透明度が適用されていなかった問題を修正。
+ウィンドウ開閉時のアニメーションの有効無効化する機能を追加。
+2025/1/4 Ver.1.3.0
+背景画像を表示する機能を追加。
+2024/12/17 Ver.1.2.1
+対象選択時にエラーが出る問題を修正。
+2024/9/8 Ver.1.2.0
+ステータス項目ベースプラグインを介しての処理に仕様変更。
+幾つかのプラグインパラメータのスペルミスを修正。
+2023/1/10 Ver.1.1.4
+対象選択画面表示位置が上部しか適用されていなかった問題を修正。
+2023/1/9 Ver.1.1.3
+アクター及び敵キャラのウィンドウを表示しない設定にしたときエラーが出る問題を修正。
+対象選択ウィンドウが表示されない問題を修正。
+2022/9/4 Ver.1.1.2
+特定の場面でウィンドウが表示さてたままになってしまう問題を修正。
+2022/8/26 Ver.1.1.1
+スクロール時のSEを再生しない機能を追加。
+アクターコマンドを開くと対象選択時のカーソルSEが再生しまう問題を修正。
+2022/8/24 Ver.1.1.0
+敵対象選択時にスクロール選択出来る機能を追加。
+2022/6/5 Ver.1.0.5
+微修正。
+2022/4/2 Ver.1.0.4
+敵に顔グラを指定できる機能を追加。
+2022/4/1 Ver.1.0.3
+評価式のバトラーの取得する変数を変更。
+2022/3/31 Ver.1.0.2
+敵のデフォルトのステート表示が表示されないように修正。
+2022/3/30 Ver.1.0.1
+敵の対象選択時にアクターステータスウィンドウを表示するように修正。
+アクター選択時の顔グラの表示を立ち絵、顔グラ表示EX設定に対応。
+2022/3/27 Ver.1.0.0
+初版
+
+@param XPSelectPosition
+@text 対象選択画面表示位置
+@desc 対象選択画面の表示位置を指定します。
+@type select
+@option 上部
+@value 'top'
+@option 中間
+@value 'middle'
+@option アクターステータスウィンドウの上
+@value 'under'
+@default 'top'
+
+@param OriginPositionMode
+@text 背景基準位置
+@desc 背景の基準位置をUIに合わせます。
+@type boolean
+@default false
+
+@param OpenAnimation
+@desc ウィンドウ開閉時のアニメーションを有効にします。
+@text ウィンドウ開閉時のアニメーション有効
+@type boolean
+@default true
+
+@param ActorSetting
+@text アクター設定
+@default ------------------------------
+
+@param ActorXPSelect
+@desc アクター対象選択画面をXPスタイルに変更します。
+@text アクター対象選択画面XP有効
+@type boolean
+@default true
+@parent ActorSetting
+
+@param ActorData
+@text 表示アクターデータ
+@desc 選択時に表示するアクターのデータを選択します。
+@default ["{\"DateSelect\":\"Face\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}","{\"DateSelect\":\"ActorName\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"152\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"288\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}","{\"DateSelect\":\"State2\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"448\",\"Y_Coordinate\":\"-8\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}","{\"DateSelect\":\"HpGauge\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"500\",\"Y_Coordinate\":\"6\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}","{\"DateSelect\":\"MpGauge\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"640\",\"Y_Coordinate\":\"6\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'left'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}"]
+@type struct<DataActorList>[]
+@parent ActorSetting
+
+@param ActorXPSelectWindowVisible
+@desc ウィンドウ画像を不透明化。背景指定時はOFFにしてください。
+@text ウィンドウ不透明化
+@type boolean
+@default true
+@parent ActorSetting
+
+@param ActorSelect_X
+@desc アクターコマンドウィンドウのX座標を指定します。
+@text アクターコマンドウィンドウX座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent ActorSetting
+
+@param ActorSelect_Y
+@desc アクターコマンドウィンドウのY座標を指定します。
+@text アクターコマンドウィンドウY座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent ActorSetting
+
+@param ActorSelect_Width
+@desc アクターコマンドウィンドウの横幅を指定します。0でUIサイズ 画面より大きい値にすると自動的に画面の横幅になります。
+@text アクターコマンドウィンドウの横幅
+@type number
+@default 0
+@max 9999
+@min 0
+@parent ActorSetting
+
+@param ActorSelectionHelpWindowHide
+@desc 味方対象選択時のヘルプウィンドウの表示。
+@text 味方対象選択時ヘルプウィンドウの表示
+@type boolean
+@default false
+@parent ActorSetting
+
+@param ActorBackGroundImgSetting
+@text 味方対象選択時背景設定
+@default ------------------------------
+
+@param ActorBackGroundImg
+@desc 味方対象味方対象選択時の背景画像ファイル名を指定します。
+@text 味方対象背景画像
+@type file
+@dir img/
+@default 
+@parent ActorBackGroundImgSetting
+
+@param ActorBackGroundImg_X
+@desc 背景画像のX座標を指定します。
+@text 背景画像X座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent ActorBackGroundImgSetting
+
+@param ActorBackGroundImg_Y
+@desc 背景画像のY座標を指定します。
+@text 背景画像Y座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent ActorBackGroundImgSetting
+
+@param EnemySetting
+@text 敵キャラ設定
+@default ------------------------------
+
+@param EnemyXPSelect
+@desc 敵キャラ対象選択画面をXPスタイルに変更します。
+@text 敵キャラ対象選択画面XP有効
+@type boolean
+@default true
+@parent EnemySetting
+
+@param EnemyData
+@text 表示敵キャラデータ
+@desc 選択時に表示する敵キャラのデータを選択します。
+@default ["{\"DateSelect\":\"EnemyName\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"ParamName\":\"\",\"NameColor\":\"16\",\"Align\":\"'center'\",\"paramUnit\":\"\",\"FontSize\":\"0\",\"FontFace\":\"\",\"ValueFontFace\":\"\",\"Icon\":\"0\",\"IconY\":\"2\",\"DetaEval\":\"\",\"Decimal\":\"0\",\"TextMethod\":\"\",\"GaugeSetting\":\"------------------------------\",\"GaugeID\":\"\",\"GaugeHeight\":\"12\",\"DetaEval2\":\"\",\"Color1\":\"-1\",\"Color2\":\"-1\",\"ImgSetting\":\"------------------------------\",\"ImgData\":\"\",\"OtherSetting\":\"------------------------------\",\"Text\":\"\",\"CondSetting\":\"------------------------------\",\"Conditions\":\"\"}"]
+@type struct<DataEnemyList>[]
+@parent EnemySetting
+
+@param EnemyXPSelectWindowVisible
+@desc ウィンドウ画像を不透明化。背景指定時はOFFにしてください。
+@text ウィンドウ不透明化
+@type boolean
+@default true
+@parent EnemySetting
+
+@param EnemySelect_X
+@desc 敵キャラコマンドウィンドウのX座標を指定します。
+@text 敵キャラコマンドウィンドウX座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent EnemySetting
+
+@param EnemySelect_Y
+@desc 敵キャラコマンドウィンドウのY座標を指定します。
+@text 敵キャラコマンドウィンドウY座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent EnemySetting
+
+@param EnemySelect_Width
+@desc 敵キャラコマンドウィンドウの横幅を指定します。0でUIサイズ 画面より大きい値にすると自動的に画面の横幅になります。
+@text 敵キャラコマンドウィンドウの横幅
+@type number
+@default 0
+@max 9999
+@min 0
+@parent EnemySetting
+
+@param EnemySelectdScrollSE
+@desc 敵対象選択時のスクロールをしたときにカーソルSEをならします。
+@text 敵対象スクロール時カーソルSE_ON
+@type boolean
+@default true
+@parent EnemySetting
+
+@param EnemyBackGroundImgSetting
+@text 味方対象選択時背景設定
+@default ------------------------------
+
+@param EnemyBackGroundImg
+@desc 敵対象味方対象選択時の背景画像ファイル名を指定します。
+@text 敵対象背景画像
+@type file
+@dir img/
+@default 
+@parent EnemyBackGroundImgSetting
+
+@param EnemyBackGroundImg_X
+@desc 背景画像のX座標を指定します。
+@text 背景画像X座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent EnemyBackGroundImgSetting
+
+@param EnemyBackGroundImg_Y
+@desc 背景画像のY座標を指定します。
+@text 背景画像Y座標
+@type number
+@default 0
+@max 9999
+@min -9999
+@parent EnemyBackGroundImgSetting
+
+@param ActorPictureSetting
+@text 立ち絵、顔グラ表示EX設定
+@default ------------------------------
+
+@param DynamicFace
+@desc アクターの顔グラを条件による変化させます。（要立ち絵、顔グラ表示EX）
+@text 条件顔グラ変化
+@type boolean
+@default true
+@parent ActorPictureSetting
+*/
+
+/*~struct~DataActorList:ja
+
+@param DateSelect
+@text 表示するステータス
+@desc 表示するステータスを指定します。
+@type select
+@option なし
+@value None
+@option 名称のみ(1)(2)(3)(4)(5)(7)(8)(9)(11)(12)(14)(15)
+@value Name
+@option バトラー名(1)(2)(3)(4)(5)(9)(11)(12)
+@value ActorName
+@option 二つ名(1)(2)(3)(4)(5)(9)(11)(12)
+@value Nickname
+@option 職業(1)(2)(3)(4)(5)(9)(11)(12)
+@value Class
+@option レベル(1)(2)(3)(4)(5)(6)(9)(11)(12)(13)
+@value Level
+@option ステート(1)(2)(3)(4)(5)(16※1)
+@value State
+@option ステート(戦闘用と同じ表示)(1)(2)(3)(4)
+@value State2
+@option 独自パラメータ(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(16)(18)
+@value OrgParam
+@option HPゲージ(1)(2)(3)(4)(5)(7)(20)(21)(23)(24)
+@value HpGauge
+@option MPゲージ(1)(2)(3)(4)(5)(7)(20)(21)(23)(24)
+@value MpGauge
+@option TPゲージ(1)(2)(3)(4)(5)(7)(20)(21)(23)(24)
+@value TpGauge
+@option 攻撃力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Atk
+@option 防御力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Def
+@option 魔法力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Mat
+@option 魔法防御(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Mdf
+@option 敏捷性(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Agi
+@option 運(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Luk
+@option 命中率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Hit
+@option 回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Eva
+@option 会心率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Cri
+@option 会心回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value CritcalEvade
+@option 魔法回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MagicEvade
+@option 魔法反射率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MagicrEflect
+@option 反撃率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Counter
+@option HP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value HpRegen
+@option MP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MpRegen
+@option TP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value TpRegen
+@option 狙われ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Aggro
+@option 防御効果率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Guard
+@option 回復効果率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Recovery
+@option 薬の知識(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value ItemEffect
+@option MP消費率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MpCost
+@option TPチャージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value TpCharge
+@option 物理ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value PhysicalDamage
+@option 魔法ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MagicalDamage
+@option 床ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value FloorDamage
+@option 獲得経験値率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value GainExpRate
+@option 独自ゲージ(1)(2)(3)(4)(5)(7)(16)(18)(20)(21)(22)(23)(24)
+@value OrgGauge
+@option 画像(1)(2)(3)(4)(25)
+@value Imges
+@option 顔グラ(1)(2)(3)(4)(26)
+@value Face
+@option フリーテキスト(1)(2)(3)(4)(35)
+@value Freetext
+@option ライン(1)(2)(3)(4)(5)(8)
+@value HorzLine
+@option 記述欄(1)(2)(3)(4)(6)(7)(8)(19)
+@value Desc
+@default None
+
+@param X_Position
+@text X表示列位置(1)
+@desc X表示列位置
+@type number
+@default 1
+@min 1
+@max 4
+
+@param Y_Position
+@desc Y表示行位置
+@text Y表示行位置(2)
+@type number
+@default 1
+@min 1
+@max 99
+
+@param X_Coordinate
+@text X座標（相対）(3)
+@desc X座標（X表示列位置からの相対座標）
+@type number
+@default 0
+@max 9999
+@min -9999
+
+@param Y_Coordinate
+@text Y座標（相対）(4)
+@desc Y座標（Y表示行位置からの相対座標）
+@type number
+@default 0
+@max 9999
+@min -9999
+
+@param ItemWidth
+@desc 項目、ゲージ横幅（0でデフォルト幅）
+@text 項目、ゲージ横幅(5)
+@type number
+@default 0
+@min 0
+
+@param SystemItemWidth
+@desc 項目名称の横幅（0でデフォルト幅）
+@text 項目名称横幅(6)
+@type number
+@default 0
+@min 0
+
+@param ParamName
+@desc 項目の名称を設定します。
+@text 名称(7)
+@type string
+@default
+
+@param NameColor
+@desc 項目名称のシステムカラーID。テキストタブでカラーコードを入力できます。
+@text 項目名称文字色(8)
+@type color
+@default 16
+@min 0
+
+@param Align
+@desc 文字揃え。
+@text 文字揃え(9)
+@type select
+@option 左
+@value 'left'
+@option 右
+@value 'right'
+@option 中央
+@value 'center'
+@default 'left'
+
+@param paramUnit
+@desc 単位を設定します。
+@text 単位(10)
+@type string
+@default 
+
+@param FontSize
+@desc フォントサイズ（メインフォントからの差）
+@text フォントサイズ(11)
+@type number
+@default 0
+@min -99
+
+@param FontFace
+@desc 項目名称のフォントを設定します。
+@text 項目名称フォント(12)
+@type string
+@default 
+
+@param ValueFontFace
+@desc 数値のフォントを設定します。
+@text 数値フォント(13)
+@type string
+@default 
+
+@param Icon
+@desc アイコンを設定します。
+@text アイコン(14)
+@type icon
+@default 0
+
+@param IconY
+@desc アイコンを調整するY座標を指定します。(相対)
+@text アイコン調整Y座標(15)
+@type number
+@default 2
+@min -99
+
+@param DetaEval
+@desc 評価式または文字列を記入します。
+@text 評価式or文字列(javaScript)(16)
+@type combo
+@option '$gameVariables.value(0);//ゲーム変数'
+@option 'actor;//アクターのゲームデータ'
+@option 'actor.actor();//アクターのシステムデータ'
+@option 'battler.turnCount()+"ターン";//ターン'
+@default 
+
+@param Decimal
+@text 小数点桁数(18)
+@desc 表示出来る小数点桁数。
+@type number
+@default 0
+@min 0
+@max 99
+
+@param TextMethod
+@desc 記述欄に紐づけするタグ名
+@text 記述欄タグ名(19)
+@type string
+@default 
+@parent textSetting
+
+@param GaugeSetting
+@text ゲージ設定
+@default ------------------------------
+
+@param GaugeID
+@desc 識別ID。
+@text 識別ID(20)
+@type string
+@default 
+@parent GaugeSetting
+
+@param GaugeHeight
+@desc ゲージの縦幅を指定します。
+@text ゲージの縦幅(21)
+@type number
+@default 12
+@min 0
+@max 24
+@parent GaugeSetting
+
+@param DetaEval2
+@desc 最大値の評価式。
+@text 最大値評価式(javaScript)(22)
+@type combo
+@option '$gameVariables.value(0);//ゲーム変数'
+@option 'actor;//アクターのゲームデータ'
+@option 'actor.actor();//アクターのシステムデータ'
+@default 
+@parent GaugeSetting
+
+@param Color1
+@desc ゲージのシステムカラーID(左)。テキストタブでカラーコードを入力できます。
+@text ゲージカラー(左)(23)
+@type color
+@default -1
+@min -1
+@parent GaugeSetting
+
+@param Color2
+@desc ゲージのシステムカラーID(右)。テキストタブでカラーコードを入力できます。
+@text ゲージカラー(右)(24)
+@type color
+@default -1
+@min -1
+@parent GaugeSetting
+
+@param ImgSetting
+@text 画像設定
+@default ------------------------------
+
+@param ImgData
+@desc 表示する画像を指定します。
+@text 画像(25)
+@type file
+@dir img/
+@default 
+@parent ImgSetting
+
+@param OtherSetting
+@text その他設定
+@default ------------------------------
+
+@param Text
+@desc フリーテキストのテキストを記入します。(制御文字使用可能)
+@text フリーテキストのテキスト(35)
+@type multiline_string
+@default
+@parent OtherSetting
+
+@param CondSetting
+@text 表示条件設定
+@default ------------------------------
+
+@param Conditions
+@desc 項目が表示される条件を指定します。(JavaScript)
+@text 項目条件(all)
+@type combo
+@option '$gameVariables.value(0);//ゲーム変数'
+@option 'actor;//アクターのゲームデータ'
+@option 'actor.actor();//アクターのシステムデータ'
+@option '$dataSystem.optDisplayTp'//TP表示
+@default 
+*/
+
+/*~struct~DataEnemyList:ja
+
+@param DateSelect
+@text 表示するステータス
+@desc 表示するステータスを指定します。
+@type select
+@option なし
+@value None
+@option 名称のみ(1)(2)(3)(4)(5)(7)(8)(9)(11)(12)(14)(15)
+@value Name
+@option モンスター名(1)(2)(3)(4)(5)(9)(11)(12)
+@value EnemyName
+@option ステート(1)(2)(3)(4)(5)(16※1)
+@value State
+@option ステート(戦闘用と同じ表示)(1)(2)(3)(4)
+@value State2
+@option 独自パラメータ(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(16)(18)
+@value OrgParam
+@option HPゲージ(1)(2)(3)(4)(5)(7)(20)(21)(23)(24)
+@value HpGauge
+@option MPゲージ(1)(2)(3)(4)(5)(7)(20)(21)(23)(24)
+@value MpGauge
+@option TPゲージ(1)(2)(3)(4)(5)(7)(20)(21)(23)(24)
+@value TpGauge
+@option 攻撃力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Atk
+@option 防御力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Def
+@option 魔法力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Mat
+@option 魔法防御(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Mdf
+@option 敏捷性(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Agi
+@option 運(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Luk
+@option 命中率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Hit
+@option 回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Eva
+@option 会心率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Cri
+@option 会心回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value CritcalEvade
+@option 魔法回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MagicEvade
+@option 魔法反射率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MagicrEflect
+@option 反撃率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Counter
+@option HP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value HpRegen
+@option MP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MpRegen
+@option TP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value TpRegen
+@option 狙われ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Aggro
+@option 防御効果率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Guard
+@option 回復効果率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value Recovery
+@option 薬の知識(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value ItemEffect
+@option MP消費率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MpCost
+@option TPチャージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value TpCharge
+@option 物理ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value PhysicalDamage
+@option 魔法ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value MagicalDamage
+@option 床ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value FloorDamage
+@option 獲得経験値率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(18)
+@value GainExpRate
+@option 独自ゲージ(1)(2)(3)(4)(5)(7)(16)(18)(20)(21)(22)(23)(24)
+@value OrgGauge
+@option 画像(1)(2)(3)(4)(25)
+@value Imges
+@option フリーテキスト(1)(2)(3)(4)(35)
+@value Freetext
+@option ライン(1)(2)(3)(4)(5)(8)
+@value HorzLine
+@option 記述欄(1)(2)(3)(4)(6)(7)(8)(19)
+@value Desc
+@default None
+
+@param X_Position
+@text X表示列位置(1)
+@desc X表示列位置
+@type number
+@default 1
+@min 1
+@max 4
+
+@param Y_Position
+@desc Y表示行位置
+@text Y表示行位置(2)
+@type number
+@default 1
+@min 1
+@max 99
+
+@param X_Coordinate
+@text X座標（相対）(3)
+@desc X座標（X表示列位置からの相対座標）
+@type number
+@default 0
+@max 9999
+@min -9999
+
+@param Y_Coordinate
+@text Y座標（相対）(4)
+@desc Y座標（Y表示行位置からの相対座標）
+@type number
+@default 0
+@max 9999
+@min -9999
+
+@param ItemWidth
+@desc 項目、ゲージ横幅（0でデフォルト幅）
+@text 項目、ゲージ横幅(5)
+@type number
+@default 0
+@min 0
+
+@param SystemItemWidth
+@desc 項目名称の横幅（0でデフォルト幅）
+@text 項目名称横幅(6)
+@type number
+@default 0
+@min 0
+
+@param ParamName
+@desc 項目の名称を設定します。
+@text 名称(7)
+@type string
+@default
+
+@param NameColor
+@desc 項目名称のシステムカラーID。テキストタブでカラーコードを入力できます。
+@text 項目名称文字色(8)
+@type color
+@default 16
+@min 0
+
+@param Align
+@desc 文字揃え。
+@text 文字揃え(9)
+@type select
+@option 左
+@value 'left'
+@option 右
+@value 'right'
+@option 中央
+@value 'center'
+@default 'left'
+
+@param paramUnit
+@desc 単位を設定します。
+@text 単位(10)
+@type string
+@default 
+
+@param FontSize
+@desc フォントサイズ（メインフォントからの差）
+@text フォントサイズ(11)
+@type number
+@default 0
+@min -99
+
+@param FontFace
+@desc 項目名称のフォントを設定します。
+@text 項目名称フォント(12)
+@type string
+@default 
+
+@param ValueFontFace
+@desc 数値のフォントを設定します。
+@text 数値フォント(13)
+@type string
+@default 
+
+@param Icon
+@desc アイコンを設定します。
+@text アイコン(14)
+@type icon
+@default 0
+
+@param IconY
+@desc アイコンを調整するY座標を指定します。(相対)
+@text アイコン調整Y座標(15)
+@type number
+@default 2
+@min -99
+
+@param DetaEval
+@desc 評価式または文字列を記入します。
+@text 評価式or文字列(javaScript)(16)
+@type combo
+@option '$gameVariables.value(0);//ゲーム変数'
+@option 'actor;//アクターのゲームデータ'
+@option 'actor.actor();//アクターのシステムデータ'
+@option 'battler.turnCount()+"ターン";//ターン'
+@default 
+
+@param Decimal
+@text 小数点桁数(18)
+@desc 表示出来る小数点桁数。
+@type number
+@default 0
+@min 0
+@max 99
+
+@param TextMethod
+@desc 記述欄に紐づけするタグ名
+@text 記述欄タグ名(19)
+@type string
+@default 
+@parent textSetting
+
+@param GaugeSetting
+@text ゲージ設定
+@default ------------------------------
+
+@param GaugeID
+@desc 識別ID。
+@text 識別ID(20)
+@type string
+@default 
+@parent GaugeSetting
+
+@param GaugeHeight
+@desc ゲージの縦幅を指定します。
+@text ゲージの縦幅(21)
+@type number
+@default 12
+@min 0
+@max 24
+@parent GaugeSetting
+
+@param DetaEval2
+@desc 最大値の評価式。
+@text 最大値評価式(javaScript)(22)
+@type combo
+@option '$gameVariables.value(0);//ゲーム変数'
+@option 'actor;//アクターのゲームデータ'
+@option 'actor.actor();//アクターのシステムデータ'
+@default 
+@parent GaugeSetting
+
+@param Color1
+@desc ゲージのシステムカラーID(左)。テキストタブでカラーコードを入力できます。
+@text ゲージカラー(左)(23)
+@type color
+@default -1
+@min -1
+@parent GaugeSetting
+
+@param Color2
+@desc ゲージのシステムカラーID(右)。テキストタブでカラーコードを入力できます。
+@text ゲージカラー(右)(24)
+@type color
+@default -1
+@min -1
+@parent GaugeSetting
+
+@param ImgSetting
+@text 画像設定
+@default ------------------------------
+
+@param ImgData
+@desc 表示する画像を指定します。
+@text 画像(25)
+@type file
+@dir img/
+@default 
+@parent ImgSetting
+
+@param OtherSetting
+@text その他設定
+@default ------------------------------
+
+@param Text
+@desc フリーテキストのテキストを記入します。(制御文字使用可能)
+@text フリーテキストのテキスト(35)
+@type multiline_string
+@default
+@parent OtherSetting
+
+@param CondSetting
+@text 表示条件設定
+@default ------------------------------
+
+@param Conditions
+@desc 項目が表示される条件を指定します。(JavaScript)
+@text 項目条件(all)
+@type combo
+@option '$gameVariables.value(0);//ゲーム変数'
+@option 'actor;//アクターのゲームデータ'
+@option 'actor.actor();//アクターのシステムデータ'
+@option '$dataSystem.optDisplayTp'//TP表示
+@default 
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_XPSelectWindow = true;
 

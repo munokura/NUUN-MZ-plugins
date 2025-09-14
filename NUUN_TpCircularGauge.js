@@ -6,125 +6,250 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  * 
- */ 
-/*:
- * @target MZ
- * @plugindesc TP円形ゲージプラグイン
- * @author NUUN
- * @version 1.1.1
- * 
- * @help
- * TPゲージを円形にします。
- * バトルスタイル拡張プラグインと併用する場合はこのプラグインを「NUUN_BattleStyleEX_Base」より下に配置してください。
- * 
- * 更新履歴
- * 2022/5/19 Ver.1.1.1
- * ゲージ更新時に前の画像が残ってしまう問題を修正。
- * 2022/5/18 Ver.1.1.0
- * 画像対応。
- * バトルスタイル拡張Ver.3.0.0以降で座標の変更ができなかった問題を修正。
- * 2021/5/3 Ver.1.0.4
- * Y座標の変更が機能していなかった問題を修正。
- * 2021/5/2 Ver.1.0.3
- * 処理ミスがあったため修正。
- * 2021/5/1 Ver.1.0.2
- * LL_ExGaugeDrawingの一部機能に対応。
- * 2021/4/27 Ver.1.0.1
- * アクターステータスにのみ表示するように修正。
- * 2021/4/25 Ver.1.0.0
- * 初版
- * 
- * @param TPFontSize
- * @desc TPのフォントサイズ（メインフォントサイズからの差）
- * @text TPフォントサイズ
- * @type number
- * @default -6
- * @parent FontSize
- * @min -99
- * 
- * @param TPValueFontSize
- * @desc TPの値のフォントサイズ（メインフォントサイズからの差）
- * @text TP値フォントサイズ
- * @type number
- * @default -6
- * @parent FontSize
- * @min -99
- * 
- * @param OnGaugePosition
- * @desc ゲージの座標変更を許可します。
- * @text ゲージ座標変更許可
- * @type select
- * @option 許可しない
- * @value 0
- * @option 許可する
- * @value 1
- * @option バトルスタイル拡張プラグインの設定を反映する。
- * @value 10
- * @default 0
- * 
- * @param GaugeX
- * @desc ゲージのX座標を指定します。
- * @text ゲージX座標
- * @type number
- * @default 0
- * @min -999
- * 
- * @param GaugeY
- * @desc ゲージのY座標を指定します。
- * @text ゲージY座標
- * @type number
- * @default 0
- * @min -999
- * 
- * @param GaugeRadius
- * @desc ゲージの半径を指定します。
- * @text ゲージ半径(画像未指定時)
- * @type number
- * @default 25
- * @min 0
- * 
- * @param GaugeHeight
- * @desc ゲージの縦幅を指定します。
- * @text ゲージ縦幅(画像未指定時)
- * @type number
- * @default 10
- * @min 0
- * 
- * @param StartAngle
- * @desc ゲージの開始角度を指定します。（１２時の位置が-90で３時の位置が0です）
- * @text ゲージ開始角度
- * @type number
- * @default -90
- * @max 360
- * @min -360
- * 
- * @param EndAngle
- * @desc ゲージの終了角度を指定します。
- * @text ゲージ終了角度
- * @type number
- * @default 270
- * @max 360
- * @min -360
- *
- * @param ImgSetting
- * @text 画像設定
- * @default ------------------------------
- * 
- * @param GaugeBackImg
- * @desc ゲージの背景画像ファイル名を指定します。
- * @text ゲージ背景画像
- * @type file
- * @dir img/
- * @default 
- * 
- * @param GaugeImg
- * @desc ゲージの画像ファイル名を指定します。
- * @text ゲージ画像
- * @type file
- * @dir img/
- * @default 
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc TP Circular Gauge Plugin
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Makes the TP gauge circular.
+When using this plugin in conjunction with the Battle Style Extension plugin,
+place this plugin below "NUUN_BattleStyleEX_Base."
+
+Update History
+2022/5/19 Ver.1.1.1
+Fixed an issue where the previous image would remain when updating the gauge.
+2022/5/18 Ver.1.1.0
+Image support.
+Fixed an issue where coordinate changes were not possible in Battle Style
+Extension Ver.3.0.0 and later.
+2021/5/3 Ver.1.0.4
+Fixed an issue where changing the Y coordinate was not working.
+2021/5/2 Ver.1.0.3
+Fixed a processing error.
+2021/5/1 Ver.1.0.2
+Added support for some LL_ExGaugeDrawing functions.
+2021/4/27 Ver.1.0.1
+Fixed to only display on actor status.
+April 25, 2021 Ver. 1.0.0
+First edition
+
+@param TPFontSize
+@text TP Font Size
+@desc TP font size (difference from main font size)
+@type number
+@default -6
+@min -99
+@parent FontSize
+
+@param TPValueFontSize
+@text TP value font size
+@desc Font size of TP value (difference from main font size)
+@type number
+@default -6
+@min -99
+@parent FontSize
+
+@param OnGaugePosition
+@text Allow gauge coordinate changes
+@desc Allows changing the coordinates of the gauge.
+@type select
+@default 0
+@option Do not allow
+@value 0
+@option Allow
+@value 1
+@option Reflects the settings of the Battle Style Extension Plugin.
+@value 10
+
+@param GaugeX
+@text Gauge X coordinate
+@desc Specifies the X coordinate of the gauge.
+@type number
+@default 0
+@min -999
+
+@param GaugeY
+@text Gauge Y coordinate
+@desc Specifies the Y coordinate of the gauge.
+@type number
+@default 0
+@min -999
+
+@param GaugeRadius
+@text Gauge radius (when no image is specified)
+@desc Specifies the radius of the gauge.
+@type number
+@default 25
+@min 0
+
+@param GaugeHeight
+@text Gauge vertical width (when no image is specified)
+@desc Specifies the vertical width of the gauge.
+@type number
+@default 10
+@min 0
+
+@param StartAngle
+@text Gauge Start Angle
+@desc Specifies the starting angle of the gauge (12 o'clock is -90 and 3 o'clock is 0).
+@type number
+@default -90
+@min -360
+@max 360
+
+@param EndAngle
+@text Gauge End Angle
+@desc Specifies the end angle of the gauge.
+@type number
+@default 270
+@min -360
+@max 360
+
+@param ImgSetting
+@text Image Settings
+@default ------------------------------
+
+@param GaugeBackImg
+@text Gauge background image
+@desc Specifies the background image file name for the gauge.
+@type file
+@dir img/
+
+@param GaugeImg
+@text Gauge Image
+@desc Specifies the image file name for the gauge.
+@type file
+@dir img/
+*/
+
+/*:ja
+@target MZ
+@plugindesc TP円形ゲージプラグイン
+@author NUUN
+@version 1.1.1
+
+@help
+TPゲージを円形にします。
+バトルスタイル拡張プラグインと併用する場合はこのプラグインを「NUUN_BattleStyleEX_Base」より下に配置してください。
+
+更新履歴
+2022/5/19 Ver.1.1.1
+ゲージ更新時に前の画像が残ってしまう問題を修正。
+2022/5/18 Ver.1.1.0
+画像対応。
+バトルスタイル拡張Ver.3.0.0以降で座標の変更ができなかった問題を修正。
+2021/5/3 Ver.1.0.4
+Y座標の変更が機能していなかった問題を修正。
+2021/5/2 Ver.1.0.3
+処理ミスがあったため修正。
+2021/5/1 Ver.1.0.2
+LL_ExGaugeDrawingの一部機能に対応。
+2021/4/27 Ver.1.0.1
+アクターステータスにのみ表示するように修正。
+2021/4/25 Ver.1.0.0
+初版
+
+@param TPFontSize
+@desc TPのフォントサイズ（メインフォントサイズからの差）
+@text TPフォントサイズ
+@type number
+@default -6
+@parent FontSize
+@min -99
+
+@param TPValueFontSize
+@desc TPの値のフォントサイズ（メインフォントサイズからの差）
+@text TP値フォントサイズ
+@type number
+@default -6
+@parent FontSize
+@min -99
+
+@param OnGaugePosition
+@desc ゲージの座標変更を許可します。
+@text ゲージ座標変更許可
+@type select
+@option 許可しない
+@value 0
+@option 許可する
+@value 1
+@option バトルスタイル拡張プラグインの設定を反映する。
+@value 10
+@default 0
+
+@param GaugeX
+@desc ゲージのX座標を指定します。
+@text ゲージX座標
+@type number
+@default 0
+@min -999
+
+@param GaugeY
+@desc ゲージのY座標を指定します。
+@text ゲージY座標
+@type number
+@default 0
+@min -999
+
+@param GaugeRadius
+@desc ゲージの半径を指定します。
+@text ゲージ半径(画像未指定時)
+@type number
+@default 25
+@min 0
+
+@param GaugeHeight
+@desc ゲージの縦幅を指定します。
+@text ゲージ縦幅(画像未指定時)
+@type number
+@default 10
+@min 0
+
+@param StartAngle
+@desc ゲージの開始角度を指定します。（１２時の位置が-90で３時の位置が0です）
+@text ゲージ開始角度
+@type number
+@default -90
+@max 360
+@min -360
+
+@param EndAngle
+@desc ゲージの終了角度を指定します。
+@text ゲージ終了角度
+@type number
+@default 270
+@max 360
+@min -360
+
+@param ImgSetting
+@text 画像設定
+@default ------------------------------
+
+@param GaugeBackImg
+@desc ゲージの背景画像ファイル名を指定します。
+@text ゲージ背景画像
+@type file
+@dir img/
+@default 
+
+@param GaugeImg
+@desc ゲージの画像ファイル名を指定します。
+@text ゲージ画像
+@type file
+@dir img/
+@default 
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_TpCircularGauge = true;
 

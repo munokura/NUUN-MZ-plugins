@@ -6,33 +6,66 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  */
+
 /*:
- * @target MZ
- * @plugindesc 条件バトラー反撃拡張プラグイン適用
- * @author NUUN
- * @base NUUN_BattleStyleEX
- * @orderAfter NUUN_BattleStyleEX
- * @orderAfter CounterExtend
- * @version 1.0.2
- * 
- * @help
- * トリアコンタン氏の反撃拡張プラグインで設定した反撃をバトルスタイル拡張プラグインでの条件バトラーに適用させるプラグインです。
- * バトルスタイル拡張プラグインまたは、立ち絵、顔グラ表示EXのプラグインパラメータのアクター画像の条件設定の変化シーンで、反撃時(CounterExtend)(4)を選択し
- * 識別タグ(4)で反撃拡張プラグインで設定した識別子を指定してください。識別子は複数設定可能です。
- * 
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2023/6/26 Ver.1.0.2
- * カウンターの処理を修正。
- * 2023/4/11 Ver.1.0.1
- * カウンター時のスキル発動時のアクター画像切り替えを行うように修正。
- * 2023/4/11 Ver.1.0.0
- * 初版。
- * 
- */
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Condition: Butler Counterattack Extension Plugin applied
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+This plugin applies counterattacks set in Triacontan's Counterattack Extension
+Plugin to conditional battlers set in the Battle Style Extension Plugin.
+In the Battle Style Extension Plugin or the Standing Image/Face Graphics
+Display EX plugin parameters, select CounterExtend (4) in the Actor Image
+Condition Change Scene.
+In the Identification Tag (4), specify the identifier set in the Counterattack
+Extension Plugin. Multiple identifiers can be set.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+June 26, 2023 Ver. 1.0.2
+Fixed counter processing.
+April 11, 2023 Ver. 1.0.1
+Fixed actor image switching when counter skills are activated.
+April 11, 2023 Ver. 1.0.0
+First release.
+*/
+
+/*:ja
+@target MZ
+@plugindesc 条件バトラー反撃拡張プラグイン適用
+@author NUUN
+@base NUUN_BattleStyleEX
+@orderAfter NUUN_BattleStyleEX
+@orderAfter CounterExtend
+@version 1.0.2
+
+@help
+トリアコンタン氏の反撃拡張プラグインで設定した反撃をバトルスタイル拡張プラグインでの条件バトラーに適用させるプラグインです。
+バトルスタイル拡張プラグインまたは、立ち絵、顔グラ表示EXのプラグインパラメータのアクター画像の条件設定の変化シーンで、反撃時(CounterExtend)(4)を選択し
+識別タグ(4)で反撃拡張プラグインで設定した識別子を指定してください。識別子は複数設定可能です。
+
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2023/6/26 Ver.1.0.2
+カウンターの処理を修正。
+2023/4/11 Ver.1.0.1
+カウンター時のスキル発動時のアクター画像切り替えを行うように修正。
+2023/4/11 Ver.1.0.0
+初版。
+*/
 
 var Imported = Imported || {};
 Imported.NUUN_BattleStyleEX_CounterExtend = true;

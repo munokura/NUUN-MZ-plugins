@@ -5,65 +5,134 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
- */ 
-/*:
- * @target MZ
- * @plugindesc 条件付きドロップ
- * @author NUUN
- * @version 1.0.9
- * @base NUUN_ConditionsBase
- * 
- * @help
- * 条件によりドロップするアイテムを設定できます。
- * 敵のメモ欄
- * <CondDropItem:[item],[id],[rate],[condNameTag],[CondMode]>
- * [item]:
- * I:アイテム W：武器 A：防具
- * [id]：アイテムID
- * [rate]：確率
- * [condNameTag]：任意の条件タグ名（省略可）省略した場合はCondが指定されます。
- * [condMode]：条件モード（省略可）0:一部一致 1:全て一致
- * 
- * <Drop[condNameTag]:[id],[id],[id]...> 攻撃して倒したアクターが指定したIDの条件を満たしたときにドロップします。
- * <TargetDrop[condNameTag]:[id],[id],[id]...> 倒された敵が指定したIDの条件を全て満たしたときにドロップします。
- * <PartyDrop[condNameTag]:[id],[id],[id]...> パーティメンバーの指定したIDの条件を全て満たしたときにドロップします。
- * <TroopDrop[condNameTag]:[id],[id],[id]...> 敵グループの指定したIDの条件を全て満たしたときにドロップします。
- * [id]:条件付きベースの適用条件のリストID
- * 例
- * <CondDropItem:I,16,50,cond1> 条件cond1が一致したときにアイテム番号16番のアイテムが５０％の確率でドロップします。
- * <DropCond1:1>上記の条件を参照するためのタグでリスト番号１番の条件を判定します。
- * 
- * このプラグインはNUUN_ConditionsBaseが必要です。
- * 
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2024/3/2 Ver.1.0.9
- * 微修正。
- * 2022/6/14 Ver.1.0.8
- * 競合対策。
- * 2021/12/25 Ver.1.0.7
- * モンスター図鑑の不具合修正による処理を追加。
- * 2021/12/22 Ver.1.0.6
- * モンスター図鑑に表示させるための処理を追加。
- * 2021/12/20 Ver.1.0.5
- * 条件付きアイテムが正常に取得できない問題を修正。
- * 2021/11/28 Ver.1.0.4
- * 条件モードが機能していなかった問題を修正。
- * 2021/11/27 Ver.1.0.3
- * [condNameTag]を省略したときの文字列がも違っていたのを修正。
- * 2021/11/12 Ver.1.0.2
- * 条件付きベースの定義変更による条件タグの設定方法を変更。
- * ターゲットデータが取得できない問題を修正。
- * 2021/10/24 Ver.1.0.1
- * 条件タグにスペースを入れると条件が判定されない問題を修正。
- * 2021/10/22 Ver.1.0.0
- * 初版
- * 
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Conditional Drop
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+You can set items to drop based on conditions.
+Enemy Memo
+<CondDropItem:[item],[id],[rate],[condNameTag],[CondMode]>
+[item]:
+I: Item W: Weapon A: Armor
+[id]: Item ID
+[rate]: Probability
+[condNameTag]: Optional condition tag name (optional). If omitted, Cond will
+be used.
+[condMode]: Condition mode (optional). 0: Partial match 1: Full match
+
+<Drop[condNameTag]:[id],[id],[id]...> Drops when the attacked and defeated
+actor meets the specified ID conditions.
+<TargetDrop[condNameTag]:[id],[id],[id]...> Drops when the defeated enemy
+meets all of the specified ID conditions.
+<PartyDrop[condNameTag]:[id],[id],[id]...> Drops when all conditions for the
+specified party member IDs are met.
+<TroopDrop[condNameTag]:[id],[id],[id]...> Drops when all conditions for the
+specified enemy group IDs are met.
+[id]: Condition-based condition list ID.
+Example
+<CondDropItem:I,16,50,cond1> When condition cond1 is met, item number 16 will
+drop with a 50% chance.
+<DropCond1:1> This tag references the above condition and determines condition
+number 1 in the list.
+
+This plugin requires NUUN_ConditionsBase.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+March 2, 2024 Ver. 1.0.9
+Minor fixes.
+June 14, 2022 Ver. 1.0.8
+Fixed conflicts.
+December 25, 2021 Ver. 1.0.7
+Added processing to fix a bug in the Monster Encyclopedia.
+December 22, 2021 Ver. 1.0.6
+Added processing to display monsters in the Monster Encyclopedia.
+December 20, 2021 Ver. 1.0.5
+Fixed an issue where conditional items could not be obtained correctly.
+November 28, 2021 Ver. 1.0.4
+Fixed an issue where condition mode was not working.
+November 27, 2021 Ver. 1.0.3
+Fixed an issue where the string was incorrect when [condNameTag] was omitted.
+November 12, 2021 Ver. 1.0.2
+Changed the way condition tags are set by changing the definition of a
+conditional base.
+Fixed an issue where target data could not be obtained.
+October 24, 2021 Ver. 1.0.1
+Fixed an issue where conditions would not be evaluated if a space was added to
+the condition tag.
+October 22, 2021 Ver. 1.0.0
+First release
+*/
+
+/*:ja
+@target MZ
+@plugindesc 条件付きドロップ
+@author NUUN
+@version 1.0.9
+@base NUUN_ConditionsBase
+
+@help
+条件によりドロップするアイテムを設定できます。
+敵のメモ欄
+<CondDropItem:[item],[id],[rate],[condNameTag],[CondMode]>
+[item]:
+I:アイテム W：武器 A：防具
+[id]：アイテムID
+[rate]：確率
+[condNameTag]：任意の条件タグ名（省略可）省略した場合はCondが指定されます。
+[condMode]：条件モード（省略可）0:一部一致 1:全て一致
+
+<Drop[condNameTag]:[id],[id],[id]...> 攻撃して倒したアクターが指定したIDの条件を満たしたときにドロップします。
+<TargetDrop[condNameTag]:[id],[id],[id]...> 倒された敵が指定したIDの条件を全て満たしたときにドロップします。
+<PartyDrop[condNameTag]:[id],[id],[id]...> パーティメンバーの指定したIDの条件を全て満たしたときにドロップします。
+<TroopDrop[condNameTag]:[id],[id],[id]...> 敵グループの指定したIDの条件を全て満たしたときにドロップします。
+[id]:条件付きベースの適用条件のリストID
+例
+<CondDropItem:I,16,50,cond1> 条件cond1が一致したときにアイテム番号16番のアイテムが５０％の確率でドロップします。
+<DropCond1:1>上記の条件を参照するためのタグでリスト番号１番の条件を判定します。
+
+このプラグインはNUUN_ConditionsBaseが必要です。
+
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2024/3/2 Ver.1.0.9
+微修正。
+2022/6/14 Ver.1.0.8
+競合対策。
+2021/12/25 Ver.1.0.7
+モンスター図鑑の不具合修正による処理を追加。
+2021/12/22 Ver.1.0.6
+モンスター図鑑に表示させるための処理を追加。
+2021/12/20 Ver.1.0.5
+条件付きアイテムが正常に取得できない問題を修正。
+2021/11/28 Ver.1.0.4
+条件モードが機能していなかった問題を修正。
+2021/11/27 Ver.1.0.3
+[condNameTag]を省略したときの文字列がも違っていたのを修正。
+2021/11/12 Ver.1.0.2
+条件付きベースの定義変更による条件タグの設定方法を変更。
+ターゲットデータが取得できない問題を修正。
+2021/10/24 Ver.1.0.1
+条件タグにスペースを入れると条件が判定されない問題を修正。
+2021/10/22 Ver.1.0.0
+初版
+*/
 
 var Imported = Imported || {};
 Imported.NUUN_ConditionalDrops = true;

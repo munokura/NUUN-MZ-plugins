@@ -6,7 +6,257 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  * 
- */ 
+ */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Cost Display Extension
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+This command forces the display of both MP and TP costs for skills with both
+MP and TP costs.
+
+How to use:
+
+If the skill name is long or the cost has many digits, the skill name and cost
+will overlap.
+
+You can limit the display width of the skill name by changing the number of
+characters in the costWidthText parameter.
+
+For example, if costWidthText is 00000, the cost display width will be set to
+five half-width zeros, narrowing the skill name display width accordingly.
+
+If you are also using TMSkillCostEx, the cost of HP, experience points, and
+money will also be displayed.
+
+There are no plugin commands.
+
+This plugin is distributed under the MIT License and is free to use, modify,
+redistribute, and otherwise use commercially.
+
+Update History
+May 1, 2021 Ver. 1.0.0
+First Edition
+
+@param mpCostHeader
+@text Consumed MP initial string
+@desc String to prefix to MP consumption
+@type string
+@default MP
+
+@param tpCostHeader
+@text Consumed TP initial string
+@desc String to prefix to consumed TP
+@type string
+@default TP
+
+@param conjunction
+@text Cost Inter-string
+@desc String to be placed between costs
+@type string
+@default /
+
+@param costWidthText
+@text Cost Range
+@desc The string to reference as the cost range
+@type string
+@default 000
+
+@param maxCostNum
+@text Simultaneous display cost limit
+@desc Maximum cost to display at one time
+@type number
+@default 2
+
+@param ---TMSkillCostEx---
+@default 以下はTMSkillCostEx併用時に利用
+
+@param hpCostHeader
+@text Consumed HP initial string
+@desc String to prefix to consumed HP
+@type string
+@default HP
+@parent ---TMSkillCostEx---
+
+@param expCostHeader
+@text Experience point consumption prefix
+@desc String to prefix to expended experience points
+@type string
+@default EXP
+@parent ---TMSkillCostEx---
+
+@param expCostFooter
+@text EXP Suffix
+@desc String attached to the end of the expended experience
+@type string
+@parent ---TMSkillCostEx---
+
+@param goldCostHeader
+@text Consumption Money Head String
+@desc A string of characters that precedes consumption money
+@type string
+@parent ---TMSkillCostEx---
+
+@param goldCostFooter
+@text Consumption money suffix string
+@desc A string attached to the butt of consumption money
+@default G
+@parent ---TMSkillCostEx---
+
+@param hpCostColor
+@text Consumed HP string number
+@desc HP consumption text color number
+@type number
+@default 21
+@parent ---TMSkillCostEx---
+
+@param expCostColor
+@text Experience value consumption string number
+@desc Experience value consumption text color number
+@type number
+@default 16
+@parent ---TMSkillCostEx---
+
+@param goldCostColor
+@text Consumption Money String Number
+@desc Consumption money letters color numbers
+@type number
+@default 0
+@parent ---TMSkillCostEx---
+*/
+
+/*:ja
+@target MZ
+@plugindesc  コスト表示拡張
+@author tomoaky  改変 NUUN
+@version 1.0.0
+
+@help
+ＭＰ消費とＴＰ消費が両方設定されたスキルのコストを無理やり両方表示します。
+
+
+使い方:
+
+  スキル名が長い場合や、コストの桁数が多い場合にはスキル名とコストが
+  重なって表示されてしまいます。
+
+  パラメータ costWidthText の文字数を変更することで
+  スキル名の表示幅に上限を設けることができます。
+  たとえば costWidthText が 00000 の場合、コストの表示幅として
+  半角の 0 ５文字分を確保し、スキル名の表示幅をその分だけ狭くします。
+
+  TMSkillCostEx を併用している場合、消費ＨＰ、経験値、お金も
+  コスト表示されるようになります。
+
+  プラグインコマンドはありません。
+
+
+  このプラグインはMITライセンスのもとに配布しています、商用利用、
+  改造、再配布など、自由にお使いいただけます。
+
+
+更新履歴
+2021/5/1 Ver 1.0.0
+初版
+
+@param mpCostHeader
+@desc 消費MPの頭につける文字列
+@text 消費MP頭文字列
+@type string
+@default MP
+
+@param tpCostHeader
+@desc 消費TPの頭につける文字列
+@text 消費TP頭文字列
+@type string
+@default TP
+
+@param conjunction
+@desc コストとコストの間につける文字列
+@text コスト間文字列
+@type string
+@default /
+
+@param costWidthText
+@desc コストの幅として参照する文字列
+@text コスト幅
+@type string
+@default 000
+
+@param maxCostNum
+@desc 同時に表示するコストの上限
+@text 同時表示コスト上限
+@type number
+@default 2
+
+@param ---TMSkillCostEx---
+@default 以下はTMSkillCostEx併用時に利用
+
+@param hpCostHeader
+@desc 消費HPの頭につける文字列
+@text 消費HP頭文字列
+@default HP
+@type string
+@parent ---TMSkillCostEx---
+
+@param expCostHeader
+@desc 消費経験値の頭につける文字列
+@text 消費経験値頭文字列
+@default EXP
+@type string
+@parent ---TMSkillCostEx---
+
+@param expCostFooter
+@desc 消費経験値のお尻につける文字列
+@text 消費経験値接尾文字列
+@default
+@type string
+@parent ---TMSkillCostEx---
+
+@param goldCostHeader
+@desc 消費お金の頭につける文字列
+@text 消費お金頭文字列
+@default
+@type string
+@parent ---TMSkillCostEx---
+
+@param goldCostFooter
+@desc 消費お金のお尻につける文字列
+@text 消費お金接尾文字列
+@default G
+@parent ---TMSkillCostEx---
+
+@param hpCostColor
+@desc 消費HPの文字色番号
+@text 消費HP文字列番号
+@default 21
+@type number
+@parent ---TMSkillCostEx---
+
+@param expCostColor
+@desc 消費経験値の文字色番号
+@text 消費経験値文字列番号
+@default 16
+@type number
+@parent ---TMSkillCostEx---
+
+@param goldCostColor
+@desc 消費お金の文字色番号
+@text 消費お金文字列番号
+@default 0
+@type number
+@parent ---TMSkillCostEx---
+*/
+
 //=============================================================================
 // TMPlugin - コスト表示拡張
 // バージョン: 1.0.0
@@ -17,129 +267,7 @@
 // Released under the MIT license.
 // http://opensource.org/licenses/mit-license.php
 //=============================================================================
-/*:
- * @target MZ
- * @plugindesc  コスト表示拡張
- * @author tomoaky  改変 NUUN
- * @version 1.0.0
- * 
- * @help
- * ＭＰ消費とＴＰ消費が両方設定されたスキルのコストを無理やり両方表示します。
- * 
- * 
- * 使い方:
- * 
- *   スキル名が長い場合や、コストの桁数が多い場合にはスキル名とコストが
- *   重なって表示されてしまいます。
- *
- *   パラメータ costWidthText の文字数を変更することで
- *   スキル名の表示幅に上限を設けることができます。
- *   たとえば costWidthText が 00000 の場合、コストの表示幅として
- *   半角の 0 ５文字分を確保し、スキル名の表示幅をその分だけ狭くします。
- *
- *   TMSkillCostEx を併用している場合、消費ＨＰ、経験値、お金も
- *   コスト表示されるようになります。
- * 
- *   プラグインコマンドはありません。
- * 
- * 
- *   このプラグインはMITライセンスのもとに配布しています、商用利用、
- *   改造、再配布など、自由にお使いいただけます。
- * 
- * 
- * 更新履歴
- * 2021/5/1 Ver 1.0.0
- * 初版
- * 
- * @param mpCostHeader
- * @desc 消費MPの頭につける文字列
- * @text 消費MP頭文字列
- * @type string
- * @default MP
- *
- * @param tpCostHeader
- * @desc 消費TPの頭につける文字列
- * @text 消費TP頭文字列
- * @type string
- * @default TP
- *
- * @param conjunction
- * @desc コストとコストの間につける文字列
- * @text コスト間文字列
- * @type string
- * @default /
- *
- * @param costWidthText
- * @desc コストの幅として参照する文字列
- * @text コスト幅
- * @type string
- * @default 000
- *
- * @param maxCostNum
- * @desc 同時に表示するコストの上限
- * @text 同時表示コスト上限
- * @type number
- * @default 2
- *
- * @param ---TMSkillCostEx---
- * @default 以下はTMSkillCostEx併用時に利用
- *
- * @param hpCostHeader
- * @desc 消費HPの頭につける文字列
- * @text 消費HP頭文字列
- * @default HP
- * @type string
- * @parent ---TMSkillCostEx---
- *
- * @param expCostHeader
- * @desc 消費経験値の頭につける文字列
- * @text 消費経験値頭文字列
- * @default EXP
- * @type string
- * @parent ---TMSkillCostEx---
- *
- * @param expCostFooter
- * @desc 消費経験値のお尻につける文字列
- * @text 消費経験値接尾文字列
- * @default
- * @type string
- * @parent ---TMSkillCostEx---
- *
- * @param goldCostHeader
- * @desc 消費お金の頭につける文字列
- * @text 消費お金頭文字列
- * @default
- * @type string
- * @parent ---TMSkillCostEx---
- *
- * @param goldCostFooter
- * @desc 消費お金のお尻につける文字列
- * @text 消費お金接尾文字列
- * @default G
- * @parent ---TMSkillCostEx---
- *
- * @param hpCostColor
- * @desc 消費HPの文字色番号
- * @text 消費HP文字列番号
- * @default 21
- * @type number
- * @parent ---TMSkillCostEx---
- *
- * @param expCostColor
- * @desc 消費経験値の文字色番号
- * @text 消費経験値文字列番号
- * @default 16
- * @type number
- * @parent ---TMSkillCostEx---
- *
- * @param goldCostColor
- * @desc 消費お金の文字色番号
- * @text 消費お金文字列番号
- * @default 0
- * @type number
- * @parent ---TMSkillCostEx---
- * 
- */
+
 
 var Imported = Imported || {};
 Imported.NUUN_TMCostShow = true;

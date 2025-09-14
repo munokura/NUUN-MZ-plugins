@@ -6,26 +6,51 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  */
+
 /*:
- * @target MZ
- * @plugindesc ショップ購入カテゴリー表示ショップ購入カテゴリー表示競合対応
- * @author NUUN
- * @orderAfter NUUN_PurchaseCategory
- * @orderAfter ShopScene_Extension
- * @version 1.0.0
- * 
- * @help
- * ショップ購入カテゴリー表示プラグインとうなぎおおとろ様のショップ購入カテゴリー表示プラグインを併用するときの
- * 競合対策プラグインです。
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2022/12/3 Ver.1.0.0
- * 初版
- * 
- */
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Shop Purchase Category Display Shop Purchase Category Display Conflict Response
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+This is a conflict prevention plugin for when using the Shop Purchase Category
+Display plugin and Unagi Otoro's Shop Purchase Category Display plugin
+together.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+December 3, 2022, Version 1.0.0
+First Edition
+*/
+
+/*:ja
+@target MZ
+@plugindesc ショップ購入カテゴリー表示ショップ購入カテゴリー表示競合対応
+@author NUUN
+@orderAfter NUUN_PurchaseCategory
+@orderAfter ShopScene_Extension
+@version 1.0.0
+
+@help
+ショップ購入カテゴリー表示プラグインとうなぎおおとろ様のショップ購入カテゴリー表示プラグインを併用するときの
+競合対策プラグインです。
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2022/12/3 Ver.1.0.0
+初版
+*/
 
 var Imported = Imported || {};
 Imported.NUUN_ShopPurchaseCategory_ShopScene_Extension_cm = true;

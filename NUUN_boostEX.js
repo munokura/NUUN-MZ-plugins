@@ -1,11 +1,27 @@
-﻿/*:-----------------------------------------------------------------------------------
- * NUUN_boostEX.js
- * 
- * Copyright (C) 2021 NUUN
- * This software is released under the MIT License.
- * http://opensource.org/licenses/mit-license.php
- * -------------------------------------------------------------------------------------
- */
+﻿
+
+/*:
+@url https://github.com/nuun888/MZ
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+*/
+
+/*:ja
+-----------------------------------------------------------------------------------
+NUUN_boostEX.js
+
+Copyright (C) 2021 NUUN
+This software is released under the MIT License.
+http://opensource.org/licenses/mit-license.php
+-------------------------------------------------------------------------------------
+*/
+
 /*:
  * @target MZ
  * @plugindesc 行動時ブースト特徴

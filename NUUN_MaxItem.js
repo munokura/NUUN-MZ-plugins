@@ -1,12 +1,57 @@
-﻿/*:-----------------------------------------------------------------------------------
- * NUUN_MaxItem.js
- * 
- * Copyright (C) 2021 NUUN
- * This software is released under the MIT License.
- * http://opensource.org/licenses/mit-license.php
- * -------------------------------------------------------------------------------------
- * 
- */ 
+﻿
+
+/*:
+@url https://github.com/nuun888/MZ
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+*/
+
+/*~struct~CustomDefaultList:
+@param CustomDefaultKey
+@text Group Category Key
+@desc Set the group or category key. (Category must be NUUN_ItemCategory)
+@type string
+
+@param CustomDefaultMax
+@text Maximum number of possessions
+@desc Default maximum number of possessions
+@type number
+@default 99
+@min 1
+*/
+
+/*:ja
+-----------------------------------------------------------------------------------
+NUUN_MaxItem.js
+
+Copyright (C) 2021 NUUN
+This software is released under the MIT License.
+http://opensource.org/licenses/mit-license.php
+-------------------------------------------------------------------------------------
+*/
+
+/*~struct~CustomDefaultList:ja
+
+@param CustomDefaultKey
+@desc グループまたはカテゴリーキーを設定します。（カテゴリーはNUUN_ItemCategoryが必要です）
+@text グループカテゴリーキー
+@type string
+@default
+
+@param CustomDefaultMax
+@desc デフォルト最大所持数
+@text 最大所持数
+@type number
+@default 99
+@min 1
+*/
+
 /*:
  * @target MZ
  * @plugindesc アイテム最大所持数変更
@@ -163,22 +208,7 @@
  * @default []
  * 
  */
-/*~struct~CustomDefaultList:
- *
- * @param CustomDefaultKey
- * @desc グループまたはカテゴリーキーを設定します。（カテゴリーはNUUN_ItemCategoryが必要です）
- * @text グループカテゴリーキー
- * @type string
- * @default
- * 
- * @param CustomDefaultMax
- * @desc デフォルト最大所持数
- * @text 最大所持数
- * @type number
- * @default 99
- * @min 1
- *
- */
+
 var Imported = Imported || {};
 Imported.NUUN_MaxItem = true;
 

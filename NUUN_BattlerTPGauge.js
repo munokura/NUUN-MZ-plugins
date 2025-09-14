@@ -6,337 +6,685 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  * 
- */ 
-/*:
- * @target MZ
- * @plugindesc  バトラーTPゲージ
- * @author NUUN
- * @base NUUN_Base
- * @version 1.2.4
- * @orderAfter NUUN_Base
- * 
- * @help
- * 戦闘中の敵及びSVアクターにTPゲージを表示します。
- * 
- * 敵キャラまたはアクターのメモ欄
- * <TPGaugeX:[position]> TPゲージのX座標を調整します。（相対座標）
- * <TPGaugeY:[position]> TPゲージのY座標を調整します。（相対座標）
- * 
- * 敵キャラのメモ欄
- * <NoTPGauge> TPゲージを表示しません。
- * <TPGaugeLength:[width], [height]> TPゲージの幅を指定します。
- * [width]:ゲージ横幅
- * [height]:ゲージ縦幅
- * 
- * バトルイベントの注釈
- * <TPGaugePosition:[Id],[x],[y]> 敵グループの[Id]番目のモンスターのゲージの位置を調整します。（相対座標）
- * [Id]：表示順番号
- * [x]：X座標
- * [y]：Y座標
- * [id]は敵グループ設定で配置した順番のIDで指定します。モンスター画像の左上に番号が表示されますのでその番号を記入します。
- * 
- * 特徴を有するメモ欄
- * <TPGaugeVisible> この特徴を持つアクターが存在すれば、敵のTPゲージが表示されます。
- * <EnemyTPGaugeVisible> この特徴を持つ敵はTPゲージが表示されます。
- * 敵のメモ欄
- * <TPGaugeMask:[eval]> 条件に一致しなければTP値の表示を？？？にします。
- * this 敵データ
- * this.enemy() 敵のデータベースデータ
- * 例　<TPGaugeMask:this.tp >= this.maxTp() * 0.5>
- * 敵のTPが５０％以上の時にTP値を表示します。
- * 
- * 初期TPゲージ表示
- * <TPGaugeVisible>の特徴を持つアクターが戦闘メンバーにいるとき、または図鑑登録と連動している際に登録済みなら表示されます。
- * 上記の特徴を使用する場合は初期TPゲージ表示を非表示に設定してください。
- * 
- * このプラグインはNUUN_Base Ver.1.2.0以降が必要です。
- * 
- * 疑似３Dバトルを入れている場合はこのプラグインを疑似３Dバトルを下に配置してください。
- * ゲージ表示拡張プラグインで該当のゲージを設定している場合は、フォントサイズの設定はゲージ表示拡張プラグインで設定してください。
- * 
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2025/1/3 Ver.1.2.4
- * 変身後のモンスターのゲージが非表示に設定されている場合、ゲージが表示がされたままになる問題を修正。
- * 2023/8/3 Ver.1.2.3
- * 一部のプラグインにてNoTPGaugeが機能していなかった問題を修正。
- * 2023/7/7 Ver.1.2.2
- * 一部プラグインで表示した敵キャラにゲージを表示されるとエラーが出る問題を修正。
- * 2023/6/23 Ver.1.2.1
- * NoTPGaugeが機能していなかった問題を修正。
- * 2023/6/2 Ver.1.2.0
- * SVアクターにゲージを表示する機能を追加。
- * 敵キャラ毎にHPゲージの横幅、縦幅を指定できる機能を追加。
- * 2023/5/7 Ver.1.1.1
- * TPゲージの表示をフェードアウト、フェードインさせるように修正。
- * 2022/5/14 Ver.1.1.0
- * バトラーの表示処理の定義大幅変更に関する定義変更。
- * 2022/2/12 Ver.1.0.3
- * ダメージ時に表示を指定の時に戦闘開始時にゲージが表示されてしまう問題を修正。
- * 2022/1/10 Ver.1.0.2
- * 再修正。
- * 2022/1/10 Ver.1.0.1
- * ゲージがラベル表示でも座標0から表示されてしまう問題を修正。
- * 2022/1/12 Ver.1.0.0
- * 初版
- * 
- * 
- * @param EnemySetting
- * @text 敵設定
- * @default ------------------------------
- * 
- * @param EnemyVisibleSetting
- * @text 表示設定
- * @default ------------------------------
- * @parent EnemySetting
- * 
- * @param TPPosition
- * @desc 敵のTPゲージ位置
- * @text TPゲージ位置
- * @type select
- * @option 表示なし
- * @value -1
- * @option 敵画像の上
- * @value 0
- * @option 敵画像の下
- * @value 1
- * @option 敵画像の中心
- * @value 2
- * @default 0
- * @param EnemySetting
- * 
- * @param TPVisible
- * @desc TPゲージの表示タイミング
- * @text TPゲージ表示タイミング
- * @type select
- * @option 常に表示
- * @value 0
- * @option 選択時
- * @value 1
- * @option TP変動時
- * @value 2
- * @option 選択時、TP変動時
- * @value 3
- * @default 0
- * @param EnemySetting
- * 
- * @param GaugeSetting
- * @text ゲージ設定
- * @default ------------------------------
- * 
- * @param GaugeWidth
- * @desc ゲージの横幅を指定します。
- * @text ゲージ横幅
- * @type number
- * @default 128
- * @min 0
- * @parent GaugeSetting
- * 
- * @param GaugeHeight
- * @desc ゲージの縦幅を指定します。
- * @text ゲージ縦幅
- * @type number
- * @default 12
- * @min 0
- * @parent GaugeSetting
- * 
- * @param Gauge_X
- * @desc ゲージのX座標（相対座標）指定します。
- * @text ゲージX座標
- * @type number
- * @default 0
- * @min -9999
- * @parent GaugeSetting
- * 
- * @param Gauge_Y
- * @desc ゲージのY座標（相対座標）指定します。
- * @text ゲージY座標
- * @type number
- * @default 0
- * @min -9999
- * @parent GaugeSetting
- * 
- * @param TPLabelVisible
- * @text TPラベル表示
- * @desc TPラベルを表示する。
- * @type boolean
- * @default true
- * @parent GaugeSetting
- * 
- * @param TPValueVisible
- * @text TP数値表示
- * @desc TP数値を表示する。
- * @type boolean
- * @default true
- * @parent GaugeSetting
- * 
- * @param ValueFontSize
- * @desc 数値のフォントサイズ。（メインフォントサイズから）
- * @text 数値フォントサイズ
- * @type number
- * @default -6
- * @min -9999
- * @parent GaugeSetting
- * 
- * @param LabelFontSize
- * @desc ラベルのフォントサイズ。（メインフォントサイズから）
- * @text ラベルフォントサイズ
- * @type number
- * @default -2
- * @min -9999
- * @parent GaugeSetting
- * 
- * @param MaskValueName
- * @desc TPの数値を隠す時の文字。
- * @text TPの数値を隠す時の文字
- * @type string
- * @default ????
- * @parent GaugeSetting
- * 
- * @param SpecialSetting
- * @text 特殊設定
- * @default ------------------------------
- * @parent GaugeSetting
- * 
- * @param TPVisibleMode
- * @desc 初期状態でのTPゲージの表示。特徴によってやTPゲージの表示タイミングによって表示されるようになります。
- * @text 初期TPゲージ表示
- * @type select
- * @option 表示
- * @value 0
- * @option 非表示
- * @value 1
- * @default 0
- * @parent SpecialSetting
- * 
- * @param EnemyBookSetting
- * @text 図鑑連動設定
- * @default ------------------------------
- * @parent GaugeSetting
- * 
- * @param TPEnemyBookVisible
- * @desc TPゲージの表示タイミング（モンスター図鑑）
- * @text TPゲージ表示タイミング（モンスター図鑑）
- * @type select
- * @option 指定なし
- * @value 0
- * @option 図鑑登録後に表示
- * @value 1
- * @option 図鑑情報登録後に表示
- * @value 2
- * @default 0
- * @parent SpecialSetting
- * 
- * 
- * @param ActorSetting
- * @text アクター設定
- * @default ------------------------------
- * 
- * @param ActorVisibleSetting
- * @text 表示設定
- * @default ------------------------------
- * @parent ActorSetting
- * 
- * @param ActorTPPosition
- * @desc アクターのTPゲージ位置
- * @text TPゲージ位置
- * @type select
- * @option 表示なし
- * @value -1
- * @option SV画像の上
- * @value 0
- * @option SV画像の下
- * @value 1
- * @default -1
- * @parent ActorVisibleSetting
- * 
- * @param ActorTPVisible
- * @desc TPゲージの表示タイミング
- * @text TPゲージ表示タイミング
- * @type select
- * @option 常に表示
- * @value 0
- * @option 選択時
- * @value 1
- * @option TP変動時
- * @value 2
- * @option 選択時、TP変動時
- * @value 3
- * @default 0
- * @parent ActorVisibleSetting
- * 
- * @param ActorGaugeSetting
- * @text アクターゲージ設定
- * @default ------------------------------
- * @parent ActorSetting
- * 
- * @param ActorGaugeWidth
- * @desc アクターのゲージの横幅を指定します。
- * @text ゲージ横幅
- * @type number
- * @default 128
- * @min 0
- * @parent ActorGaugeSetting
- * 
- * @param ActorGaugeHeight
- * @desc アクターのゲージの縦幅を指定します。
- * @text ゲージ縦幅
- * @type number
- * @default 12
- * @min 0
- * @parent ActorGaugeSetting
- * 
- * @param ActorGauge_X
- * @desc アクターのゲージのX座標（相対座標）指定します。
- * @text ゲージX座標
- * @type number
- * @default 0
- * @min -9999
- * @parent ActorGaugeSetting
- * 
- * @param ActorGauge_Y
- * @desc アクターのゲージのY座標（相対座標）指定します。
- * @text ゲージY座標
- * @type number
- * @default 0
- * @min -9999
- * @parent ActorGaugeSetting
- * 
- * @param ActorTPLabelVisible
- * @text TPラベル表示
- * @desc アクターのTPラベルを表示する。
- * @type boolean
- * @default true
- * @parent ActorGaugeSetting
- * 
- * @param ActorTPValueVisible
- * @text TP数値表示
- * @desc アクターのTP数値を表示する。
- * @type boolean
- * @default true
- * @parent ActorGaugeSetting
- * 
- * @param ActorValueFontSize
- * @desc アクターの数値のフォントサイズ。（メインフォントサイズから）
- * @text 数値フォントサイズ
- * @type number
- * @default -6
- * @min -9999
- * @parent ActorGaugeSetting
- * 
- * @param ActorLabelFontSize
- * @desc アクターの ラベルのフォントサイズ。（メインフォントサイズから）
- * @text ラベルフォントサイズ
- * @type number
- * @default -2
- * @min -9999
- * @parent ActorGaugeSetting
- * 
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Butler TP Gauge
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Displays TP gauges for enemies and SV actors during battle.
+
+Enemy character or actor memo field
+<TPGaugeX:[position]> Adjusts the X coordinate of the TP gauge. (Relative
+coordinates)
+<TPGaugeY:[position]> Adjusts the Y coordinate of the TP gauge. (Relative
+coordinates)
+
+Enemy character memo field
+<NoTPGauge> Does not display the TP gauge.
+<TPGaugeLength:[width], [height]> Specifies the width of the TP gauge.
+[width]: Gauge width
+[height]: Gauge height
+
+Battle event notes
+<TPGaugePosition:[Id],[x],[y]> Adjusts the gauge position of the [Id]th
+monster in the enemy group. (Relative coordinates)
+[Id]: Display order number
+[x]: X coordinate
+[y]: Y coordinate
+[id] specifies the ID of the monster in the order it was placed in the enemy
+group settings. A number appears in the upper left corner of the monster
+image; enter that number here.
+
+Memo field with a feature
+<TPGaugeVisible> If an actor with this feature is present, the enemy's TP
+gauge will be displayed.
+<EnemyTPGaugeVisible> Enemies with this feature will have their TP gauge
+displayed.
+Enemy Memo field
+<TPGaugeMask:[eval]> If the condition is not met, the TP value display will be
+changed to ???.
+this Enemy data
+this.enemy() Enemy database data
+Example: <TPGaugeMask:this.tp >= this.maxTp() * 0.5>
+Displays the TP value when the enemy's TP is above 50%.
+
+Initial TP Gauge Display
+Displays when an actor with the <TPGaugeVisible> feature is in the battle
+team, or if it is registered when linked to the Pokédex.
+When using the above feature, set the initial TP gauge display to hidden.
+
+This plugin requires NUUN_Base version 1.2.0 or later.
+
+If you have installed the pseudo 3D battle mode, place this plugin below the
+pseudo 3D battle mode.
+If you are using the Gauge Display Extension Plugin to set the corresponding
+gauge, please use the Gauge Display Extension Plugin to set the font size.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+January 3, 2025 Ver. 1.2.4
+Fixed an issue where the transformed monster's gauge would remain displayed
+even if it was set to hidden.
+August 3, 2023 Ver. 1.2.3
+Fixed an issue where NoTPGauge would not work with some plugins.
+July 7, 2023 Ver. 1.2.2
+Fixed an issue where an error would occur when displaying a gauge on an enemy
+character displayed with some plugins.
+June 23, 2023 Ver. 1.2.1
+Fixed an issue where NoTPGauge would not work.
+June 2, 2023 Ver. 1.2.0
+Added the ability to display gauges on SV actors.
+Added the ability to specify the width and height of the HP gauge for each
+enemy character.
+May 7, 2023 Ver. 1.1.1
+Fixed the TP gauge display to fade in and out.
+May 14, 2022 Ver. 1.1.0
+Made a major change to the definition of the battler's display process.
+February 12, 2022 Ver. 1.0.3
+Fixed an issue where the gauge would appear at the start of battle when
+display was specified for damage.
+January 10, 2022 Ver. 1.0.2
+Further fix.
+January 10, 2022 Ver. 1.0.1
+Fixed an issue where the gauge would appear starting from coordinate 0 even
+when displayed as a label.
+January 12, 2022 Ver. 1.0.0
+First release.
+
+@param EnemySetting
+@text Enemy Settings
+@default ------------------------------
+
+@param EnemyVisibleSetting
+@text Display settings
+@default ------------------------------
+@parent EnemySetting
+
+@param TPPosition
+@text TP gauge position
+@desc Enemy TP gauge position
+@type select
+@default 0
+@option No display
+@value -1
+@option Above the enemy image
+@value 0
+@option Under the enemy image
+@value 1
+@option Center of enemy image
+@value 2
+
+@param EnemySetting
+
+@param TPVisible
+@text TP gauge display timing
+@desc TP gauge display timing
+@type select
+@default 0
+@option Always Show
+@value 0
+@option When selected
+@value 1
+@option When TP fluctuates
+@value 2
+@option When selected, when TP changes
+@value 3
+
+@param EnemySetting
+
+@param GaugeSetting
+@text Gauge Settings
+@default ------------------------------
+
+@param GaugeWidth
+@text Gauge width
+@desc Specifies the width of the gauge.
+@type number
+@default 128
+@min 0
+@parent GaugeSetting
+
+@param GaugeHeight
+@text Gauge vertical width
+@desc Specifies the vertical width of the gauge.
+@type number
+@default 12
+@min 0
+@parent GaugeSetting
+
+@param Gauge_X
+@text Gauge X coordinate
+@desc Specifies the X coordinate (relative coordinate) of the gauge.
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param Gauge_Y
+@text Gauge Y coordinate
+@desc Specifies the Y coordinate (relative coordinate) of the gauge.
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param TPLabelVisible
+@text TP label display
+@desc Show TP label.
+@type boolean
+@default true
+@parent GaugeSetting
+
+@param TPValueVisible
+@text TP numerical display
+@desc Displays the TP value.
+@type boolean
+@default true
+@parent GaugeSetting
+
+@param ValueFontSize
+@text Numeric Font Size
+@desc Number font size (from main font size)
+@type number
+@default -6
+@min -9999
+@parent GaugeSetting
+
+@param LabelFontSize
+@text Label Font Size
+@desc Label font size (from main font size).
+@type number
+@default -2
+@min -9999
+@parent GaugeSetting
+
+@param MaskValueName
+@text Characters used to hide TP values
+@desc Characters used to hide the TP value.
+@type string
+@default ????
+@parent GaugeSetting
+
+@param SpecialSetting
+@text Special Settings
+@default ------------------------------
+@parent GaugeSetting
+
+@param TPVisibleMode
+@text Initial TP gauge display
+@desc The TP gauge will be displayed in the initial state. It will be displayed depending on the feature and the timing of the TP gauge display.
+@type select
+@default 0
+@option display
+@value 0
+@option hidden
+@value 1
+@parent SpecialSetting
+
+@param EnemyBookSetting
+@text Pokédex linked settings
+@default ------------------------------
+@parent GaugeSetting
+
+@param TPEnemyBookVisible
+@text TP gauge display timing (Monster Encyclopedia)
+@desc TP gauge display timing (Monster Encyclopedia)
+@type select
+@default 0
+@option Not specified
+@value 0
+@option Displayed after encyclopedia registration
+@value 1
+@option Displayed after registering encyclopedia information
+@value 2
+@parent SpecialSetting
+
+@param ActorSetting
+@text Actor Settings
+@default ------------------------------
+
+@param ActorVisibleSetting
+@text Display settings
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorTPPosition
+@text TP gauge position
+@desc Actor's TP gauge position
+@type select
+@default -1
+@option No display
+@value -1
+@option Above the SV image
+@value 0
+@option Under the SV image
+@value 1
+@parent ActorVisibleSetting
+
+@param ActorTPVisible
+@text TP gauge display timing
+@desc TP gauge display timing
+@type select
+@default 0
+@option Always Show
+@value 0
+@option When selected
+@value 1
+@option When TP fluctuates
+@value 2
+@option When selected, when TP changes
+@value 3
+@parent ActorVisibleSetting
+
+@param ActorGaugeSetting
+@text Actor Gauge Settings
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorGaugeWidth
+@text Gauge width
+@desc Specifies the width of the actor's gauge.
+@type number
+@default 128
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGaugeHeight
+@text Gauge vertical width
+@desc Specifies the vertical width of the actor's gauge.
+@type number
+@default 12
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGauge_X
+@text Gauge X coordinate
+@desc Specifies the X coordinate (relative coordinate) of the actor's gauge.
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorGauge_Y
+@text Gauge Y coordinate
+@desc Specifies the Y coordinate (relative coordinate) of the actor's gauge.
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorTPLabelVisible
+@text TP label display
+@desc Displays the actor's TP label.
+@type boolean
+@default true
+@parent ActorGaugeSetting
+
+@param ActorTPValueVisible
+@text TP numerical display
+@desc Displays the actor's TP value.
+@type boolean
+@default true
+@parent ActorGaugeSetting
+
+@param ActorValueFontSize
+@text Numeric Font Size
+@desc Actor number font size (from main font size)
+@type number
+@default -6
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorLabelFontSize
+@text Label Font Size
+@desc Actor label font size (from main font size).
+@type number
+@default -2
+@min -9999
+@parent ActorGaugeSetting
+*/
+
+/*:ja
+@target MZ
+@plugindesc  バトラーTPゲージ
+@author NUUN
+@base NUUN_Base
+@version 1.2.4
+@orderAfter NUUN_Base
+
+@help
+戦闘中の敵及びSVアクターにTPゲージを表示します。
+
+敵キャラまたはアクターのメモ欄
+<TPGaugeX:[position]> TPゲージのX座標を調整します。（相対座標）
+<TPGaugeY:[position]> TPゲージのY座標を調整します。（相対座標）
+
+敵キャラのメモ欄
+<NoTPGauge> TPゲージを表示しません。
+<TPGaugeLength:[width], [height]> TPゲージの幅を指定します。
+[width]:ゲージ横幅
+[height]:ゲージ縦幅
+
+バトルイベントの注釈
+<TPGaugePosition:[Id],[x],[y]> 敵グループの[Id]番目のモンスターのゲージの位置を調整します。（相対座標）
+[Id]：表示順番号
+[x]：X座標
+[y]：Y座標
+[id]は敵グループ設定で配置した順番のIDで指定します。モンスター画像の左上に番号が表示されますのでその番号を記入します。
+
+特徴を有するメモ欄
+<TPGaugeVisible> この特徴を持つアクターが存在すれば、敵のTPゲージが表示されます。
+<EnemyTPGaugeVisible> この特徴を持つ敵はTPゲージが表示されます。
+敵のメモ欄
+<TPGaugeMask:[eval]> 条件に一致しなければTP値の表示を？？？にします。
+this 敵データ
+this.enemy() 敵のデータベースデータ
+例　<TPGaugeMask:this.tp >= this.maxTp() * 0.5>
+敵のTPが５０％以上の時にTP値を表示します。
+
+初期TPゲージ表示
+<TPGaugeVisible>の特徴を持つアクターが戦闘メンバーにいるとき、または図鑑登録と連動している際に登録済みなら表示されます。
+上記の特徴を使用する場合は初期TPゲージ表示を非表示に設定してください。
+
+このプラグインはNUUN_Base Ver.1.2.0以降が必要です。
+
+疑似３Dバトルを入れている場合はこのプラグインを疑似３Dバトルを下に配置してください。
+ゲージ表示拡張プラグインで該当のゲージを設定している場合は、フォントサイズの設定はゲージ表示拡張プラグインで設定してください。
+
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2025/1/3 Ver.1.2.4
+変身後のモンスターのゲージが非表示に設定されている場合、ゲージが表示がされたままになる問題を修正。
+2023/8/3 Ver.1.2.3
+一部のプラグインにてNoTPGaugeが機能していなかった問題を修正。
+2023/7/7 Ver.1.2.2
+一部プラグインで表示した敵キャラにゲージを表示されるとエラーが出る問題を修正。
+2023/6/23 Ver.1.2.1
+NoTPGaugeが機能していなかった問題を修正。
+2023/6/2 Ver.1.2.0
+SVアクターにゲージを表示する機能を追加。
+敵キャラ毎にHPゲージの横幅、縦幅を指定できる機能を追加。
+2023/5/7 Ver.1.1.1
+TPゲージの表示をフェードアウト、フェードインさせるように修正。
+2022/5/14 Ver.1.1.0
+バトラーの表示処理の定義大幅変更に関する定義変更。
+2022/2/12 Ver.1.0.3
+ダメージ時に表示を指定の時に戦闘開始時にゲージが表示されてしまう問題を修正。
+2022/1/10 Ver.1.0.2
+再修正。
+2022/1/10 Ver.1.0.1
+ゲージがラベル表示でも座標0から表示されてしまう問題を修正。
+2022/1/12 Ver.1.0.0
+初版
+
+
+@param EnemySetting
+@text 敵設定
+@default ------------------------------
+
+@param EnemyVisibleSetting
+@text 表示設定
+@default ------------------------------
+@parent EnemySetting
+
+@param TPPosition
+@desc 敵のTPゲージ位置
+@text TPゲージ位置
+@type select
+@option 表示なし
+@value -1
+@option 敵画像の上
+@value 0
+@option 敵画像の下
+@value 1
+@option 敵画像の中心
+@value 2
+@default 0
+@param EnemySetting
+
+@param TPVisible
+@desc TPゲージの表示タイミング
+@text TPゲージ表示タイミング
+@type select
+@option 常に表示
+@value 0
+@option 選択時
+@value 1
+@option TP変動時
+@value 2
+@option 選択時、TP変動時
+@value 3
+@default 0
+@param EnemySetting
+
+@param GaugeSetting
+@text ゲージ設定
+@default ------------------------------
+
+@param GaugeWidth
+@desc ゲージの横幅を指定します。
+@text ゲージ横幅
+@type number
+@default 128
+@min 0
+@parent GaugeSetting
+
+@param GaugeHeight
+@desc ゲージの縦幅を指定します。
+@text ゲージ縦幅
+@type number
+@default 12
+@min 0
+@parent GaugeSetting
+
+@param Gauge_X
+@desc ゲージのX座標（相対座標）指定します。
+@text ゲージX座標
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param Gauge_Y
+@desc ゲージのY座標（相対座標）指定します。
+@text ゲージY座標
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param TPLabelVisible
+@text TPラベル表示
+@desc TPラベルを表示する。
+@type boolean
+@default true
+@parent GaugeSetting
+
+@param TPValueVisible
+@text TP数値表示
+@desc TP数値を表示する。
+@type boolean
+@default true
+@parent GaugeSetting
+
+@param ValueFontSize
+@desc 数値のフォントサイズ。（メインフォントサイズから）
+@text 数値フォントサイズ
+@type number
+@default -6
+@min -9999
+@parent GaugeSetting
+
+@param LabelFontSize
+@desc ラベルのフォントサイズ。（メインフォントサイズから）
+@text ラベルフォントサイズ
+@type number
+@default -2
+@min -9999
+@parent GaugeSetting
+
+@param MaskValueName
+@desc TPの数値を隠す時の文字。
+@text TPの数値を隠す時の文字
+@type string
+@default ????
+@parent GaugeSetting
+
+@param SpecialSetting
+@text 特殊設定
+@default ------------------------------
+@parent GaugeSetting
+
+@param TPVisibleMode
+@desc 初期状態でのTPゲージの表示。特徴によってやTPゲージの表示タイミングによって表示されるようになります。
+@text 初期TPゲージ表示
+@type select
+@option 表示
+@value 0
+@option 非表示
+@value 1
+@default 0
+@parent SpecialSetting
+
+@param EnemyBookSetting
+@text 図鑑連動設定
+@default ------------------------------
+@parent GaugeSetting
+
+@param TPEnemyBookVisible
+@desc TPゲージの表示タイミング（モンスター図鑑）
+@text TPゲージ表示タイミング（モンスター図鑑）
+@type select
+@option 指定なし
+@value 0
+@option 図鑑登録後に表示
+@value 1
+@option 図鑑情報登録後に表示
+@value 2
+@default 0
+@parent SpecialSetting
+
+
+@param ActorSetting
+@text アクター設定
+@default ------------------------------
+
+@param ActorVisibleSetting
+@text 表示設定
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorTPPosition
+@desc アクターのTPゲージ位置
+@text TPゲージ位置
+@type select
+@option 表示なし
+@value -1
+@option SV画像の上
+@value 0
+@option SV画像の下
+@value 1
+@default -1
+@parent ActorVisibleSetting
+
+@param ActorTPVisible
+@desc TPゲージの表示タイミング
+@text TPゲージ表示タイミング
+@type select
+@option 常に表示
+@value 0
+@option 選択時
+@value 1
+@option TP変動時
+@value 2
+@option 選択時、TP変動時
+@value 3
+@default 0
+@parent ActorVisibleSetting
+
+@param ActorGaugeSetting
+@text アクターゲージ設定
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorGaugeWidth
+@desc アクターのゲージの横幅を指定します。
+@text ゲージ横幅
+@type number
+@default 128
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGaugeHeight
+@desc アクターのゲージの縦幅を指定します。
+@text ゲージ縦幅
+@type number
+@default 12
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGauge_X
+@desc アクターのゲージのX座標（相対座標）指定します。
+@text ゲージX座標
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorGauge_Y
+@desc アクターのゲージのY座標（相対座標）指定します。
+@text ゲージY座標
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorTPLabelVisible
+@text TPラベル表示
+@desc アクターのTPラベルを表示する。
+@type boolean
+@default true
+@parent ActorGaugeSetting
+
+@param ActorTPValueVisible
+@text TP数値表示
+@desc アクターのTP数値を表示する。
+@type boolean
+@default true
+@parent ActorGaugeSetting
+
+@param ActorValueFontSize
+@desc アクターの数値のフォントサイズ。（メインフォントサイズから）
+@text 数値フォントサイズ
+@type number
+@default -6
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorLabelFontSize
+@desc アクターの ラベルのフォントサイズ。（メインフォントサイズから）
+@text ラベルフォントサイズ
+@type number
+@default -2
+@min -9999
+@parent ActorGaugeSetting
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_BattlerTPGauge = true;
 

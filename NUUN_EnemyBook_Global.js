@@ -5,36 +5,68 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
- */ 
-/*:
- * @target MZ
- * @plugindesc モンスター図鑑全セーブ共通
- * @author NUUN
- * @version 1.0.1
- * @base NUUN_GlobalCore
- * @base NUUN_EnemyBook
- * @orderAfter NUUN_GlobalCore
- * @orderAfter NUUN_EnemyBook
- * 
- * @help
- * モンスター図鑑のデータを全セーブデータで共用します。
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2022/5/4 Ver.1.0.1
- * 処理の修正。
- * 2022/4/2 Ver.1.0.0
- * 初版
- * 
- * @param GlobalName
- * @desc 出力するファイル名。(Ver.1.0.0から使用の場合はnuun_Globalと記入してください)
- * @text 出力ファイル名
- * @type string
- * @default EnemyBook_Global
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Monster Encyclopedia (common to all saves)
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Monster encyclopedia data is shared across all save data.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+May 4, 2022 Ver. 1.0.1
+Processing fixes.
+April 2, 2022 Ver. 1.0.0
+First release
+
+@param GlobalName
+@text Output File Name
+@desc Output file name (If using from Ver.1.0.0, enter nuun_Global)
+@type string
+@default EnemyBook_Global
+*/
+
+/*:ja
+@target MZ
+@plugindesc モンスター図鑑全セーブ共通
+@author NUUN
+@version 1.0.1
+@base NUUN_GlobalCore
+@base NUUN_EnemyBook
+@orderAfter NUUN_GlobalCore
+@orderAfter NUUN_EnemyBook
+
+@help
+モンスター図鑑のデータを全セーブデータで共用します。
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2022/5/4 Ver.1.0.1
+処理の修正。
+2022/4/2 Ver.1.0.0
+初版
+
+@param GlobalName
+@desc 出力するファイル名。(Ver.1.0.0から使用の場合はnuun_Globalと記入してください)
+@text 出力ファイル名
+@type string
+@default EnemyBook_Global
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_EnemyBook_Global = true;
 

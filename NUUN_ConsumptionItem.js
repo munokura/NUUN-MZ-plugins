@@ -7,78 +7,157 @@
  * -------------------------------------------------------------------------------------
  * 
  */
+
 /*:
- * @target MZ
- * @plugindesc  アイテム消耗率
- * @author NUUN
- * @version 1.1.1
- * 
- * @help
- * アイテムに一定の確率で消費するアイテムを作ることが出来ます。
- * 消耗率を軽減できる特徴を設定できます。
- * なお、マップ上ではパーティメンバーの中で一番軽減率の高い数値で判定します。
- * 戦闘中では使用者の軽減率で判定します。
- * 
- * アイテムのメモ欄に<ConsumptionRate:[rate]>を記入します。
- * [rate]:確率
- * <ConsumptionRate:50> アイテム使用時に50%の確率で消費します。
- * 
- * <ConsumptionMessage:[Text]> 戦闘時のアイテム消耗時に表示するメッセージ（ログ）を表示します。
- * [Text]:表示メッセージ（ログ）
- * %1：使用者名
- * %2：アイテム名
- * 
- * <ConsumptionSE:[name],[volume],[pitch],[pan]>アイテム消耗時に再生するSEを指定します。
- * <ConsumptionSE:Break, 90, 100, 50>アイテム消耗時に「Break」が再生されます。
- * [name]:ファイル名（拡張子なし）
- * [volume]:音量
- * [pitch]:ピッチ
- * [pan]:位相
- * 
- * 
- * 特徴を持つメモ欄
- * <ConsumptionRatio:[ratio]> 消耗する確率を軽減します。
- * [ratio]：補正消耗率
- * <ConsumptionRatio:70> 消耗率が70%されます。消耗率50%のアイテムは35%の確率で消耗します。
- * このタグが有効なアイテムはConsumptionRateのタグが設定されたアイテムのみ適用されます。
- * 
- * <NoConsumptionRatio>
- * このアイテムには消耗率の軽減が適用されません。
- * 
- * 更新履歴
- * 2021/11/6 Ver.1.1.1
- * 消耗時のデフォルトのSEを設定出来る項目を追加。
- * 消耗率を軽減出来る特徴を設定できる機能を追加。
- * 2021/11/3 Ver.1.1.0
- * メッセージのフォーマットを変更。
- * 2020/12/31 Ver.1.0.0
- * 初版
- * 
- * @param ConsumptionItemSE
- * @text 消耗時SE
- * @desc 消耗率が設定してあるアイテムが消耗したときのSE
- * @type file
- * @dir audio/se/
- * 
- * @param volume
- * @text 音量
- * @desc 音量。
- * @type number
- * @default 90
- * 
- * @param pitch
- * @text ピッチ
- * @desc ピッチ。
- * @type number
- * @default 100
- * 
- * @param pan
- * @text 位相
- * @desc 位相。
- * @type number
- * @default 50
- * 
- */
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Item consumption rate
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+You can create items that have a certain probability of being consumed.
+You can set features that reduce consumption rate.
+On the map, the highest consumption rate among party members will be used.
+In battle, the user's consumption rate will be used.
+
+Enter <ConsumptionRate:[rate]> in the item's memo field.
+[rate]: Probability
+<ConsumptionRate:50> 50% chance of consumption when used.
+
+<ConsumptionMessage:[Text]> Displays the message (log) to be displayed when
+the item is consumed in battle.
+[Text]: Display message (log)
+%1: User name
+%2: Item name
+
+<ConsumptionSE:[name],[volume],[pitch],[pan]> Specifies the sound effect to
+play when the item is consumed.
+<ConsumptionSE:Break, 90, 100, 50> Plays "Break" when the item is consumed.
+[name]: File name (without extension)
+[volume]: Volume
+[pitch]: Pitch
+[pan]: Phase
+
+Memo field with a feature
+<ConsumptionRatio:[ratio]> Reduces the chance of consumption.
+[ratio]: Consumption rate correction
+<ConsumptionRatio:70> Reduces consumption rate by 70%. Items with a 50%
+consumption rate have a 35% chance of consumption.
+This tag only applies to items with the ConsumptionRate tag.
+
+<NoConsumptionRatio>
+This item does not have a reduced consumption rate.
+
+Update History
+2021/11/6 Ver.1.1.1
+Added an option to set the default sound effect when consumed.
+Added a feature to set a feature that reduces consumption rate.
+2021/11/3 Ver.1.1.0
+Changed the message format.
+2020/12/31 Ver.1.0.0
+First version
+
+@param ConsumptionItemSE
+@text SE when exhausted
+@desc Sound effect when an item with a consumption rate is consumed.
+@type file
+@dir audio/se/
+
+@param volume
+@desc volume.
+@type number
+@default 90
+
+@param pitch
+@desc pitch.
+@type number
+@default 100
+
+@param pan
+@text phase
+@desc phase.
+@type number
+@default 50
+*/
+
+/*:ja
+@target MZ
+@plugindesc  アイテム消耗率
+@author NUUN
+@version 1.1.1
+
+@help
+アイテムに一定の確率で消費するアイテムを作ることが出来ます。
+消耗率を軽減できる特徴を設定できます。
+なお、マップ上ではパーティメンバーの中で一番軽減率の高い数値で判定します。
+戦闘中では使用者の軽減率で判定します。
+
+アイテムのメモ欄に<ConsumptionRate:[rate]>を記入します。
+[rate]:確率
+<ConsumptionRate:50> アイテム使用時に50%の確率で消費します。
+
+<ConsumptionMessage:[Text]> 戦闘時のアイテム消耗時に表示するメッセージ（ログ）を表示します。
+[Text]:表示メッセージ（ログ）
+%1：使用者名
+%2：アイテム名
+
+<ConsumptionSE:[name],[volume],[pitch],[pan]>アイテム消耗時に再生するSEを指定します。
+<ConsumptionSE:Break, 90, 100, 50>アイテム消耗時に「Break」が再生されます。
+[name]:ファイル名（拡張子なし）
+[volume]:音量
+[pitch]:ピッチ
+[pan]:位相
+
+
+特徴を持つメモ欄
+<ConsumptionRatio:[ratio]> 消耗する確率を軽減します。
+[ratio]：補正消耗率
+<ConsumptionRatio:70> 消耗率が70%されます。消耗率50%のアイテムは35%の確率で消耗します。
+このタグが有効なアイテムはConsumptionRateのタグが設定されたアイテムのみ適用されます。
+
+<NoConsumptionRatio>
+このアイテムには消耗率の軽減が適用されません。
+
+更新履歴
+2021/11/6 Ver.1.1.1
+消耗時のデフォルトのSEを設定出来る項目を追加。
+消耗率を軽減出来る特徴を設定できる機能を追加。
+2021/11/3 Ver.1.1.0
+メッセージのフォーマットを変更。
+2020/12/31 Ver.1.0.0
+初版
+
+@param ConsumptionItemSE
+@text 消耗時SE
+@desc 消耗率が設定してあるアイテムが消耗したときのSE
+@type file
+@dir audio/se/
+
+@param volume
+@text 音量
+@desc 音量。
+@type number
+@default 90
+
+@param pitch
+@text ピッチ
+@desc ピッチ。
+@type number
+@default 100
+
+@param pan
+@text 位相
+@desc 位相。
+@type number
+@default 50
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_ConsumptionItem = true;
 

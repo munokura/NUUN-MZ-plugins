@@ -5,197 +5,202 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
- */ 
+ */
+
 /*:
- * @target MZ
- * @plugindesc ダメージポップアップ画像化
- * @author NUUN
- * @version 1.1.2
- * @base NUUN_Base
- * @orderAfter NUUN_Base
- * @orderBefore NUUN_DamagePopUpSimulDisplay
- *            
- * @help
- * Change the damage popup to the same specifications as Maker MV. (Displays images instead of text)
- * The material standard must be a height that is divisible by the number set for the vertical divisions. There is no specification for the width.
- * If adding a TP popup (for damage, recovery), set the vertical divisions to 7.
- * Image index numbers start at 0 from the top.
- * Note that in order to use the Maker MV damage popup image "Damage.png", you must be a registered user of Maker MV.
- * 
- * 
- * Terms of Use
- * This plugin is distributed under the MIT license.
- * 
- * log
- * 5/24/2025 Ver.1.1.2
- * Change display language other than Japanese to English.
- * 3/27/2022 Ver.1.1.1
- * Fixed an issue where the image index of the damage popup was misaligned.
- * 1/8/2022 Ver.1.1.0
- * Modified to allow more types of images to be assigned.
- * Modified to allow specifying the index number of each popup image.
- * 7/22/2021 Ver.1.0.0
- * First Edition
- * 
- * @param PopUpDamageImg
- * @desc Specify the file name of the damage image.
- * @text Damage image
- * @type file[]
- * @dir img/
- * @default 
- * 
- * @param BitmapBaseRows
- * @desc Number of vertical divisions of the image
- * @text Number of vertical divisions
- * @type number
- * @default 5
- * @min 1
- * 
- * @param HPDamageBaseRow
- * @desc HP Damage Popup Image Index
- * @text HP Damage Image Index
- * @type number
- * @default 0
- * @min 0
- * 
- * @param HPRecoveryBaseRow
- * @desc HP Damage Popup Image Index
- * @text HP Recovery Image Index
- * @type number
- * @default 1
- * @min 0
- * 
- * @param MPDamageBaseRow
- * @desc MP Damage Popup Image Index
- * @text MP Damage Image Index
- * @type number
- * @default 2
- * @min 0
- * 
- * @param MPRecoveryBaseRow
- * @desc MP recovery popup image index
- * @text MP Recovery Image Index
- * @type number
- * @default 3
- * @min 0
- * 
- * @param TPDamageBaseRow
- * @desc TP Damage Popup Image Index
- * @text TP Damage Image Index
- * @type number
- * @default 0
- * @min 0
- * 
- * @param TPRecoveryBaseRow
- * @desc TP recovery popup image index
- * @text TP Recovery Image Index
- * @type number
- * @default 1
- * @min 0
- * 
- * @param MissBaseRow
- * @desc Image index for failure popup
- * @text Image index on failure
- * @type number
- * @default 4
- * @min 0
- * 
- */
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Damage pop-up imaging
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Changes the damage popup to the same specifications as Maker MV. (Displays
+images instead of text.)
+The material specification must be a height divisible by the vertical division
+number. There is no width specification.
+If adding a popup for TP (damage or recovery), set the vertical division
+number to 7.
+Image index numbers start at 0.
+Note: To use the Maker MV damage popup image "Damage.png," you must register
+as a Maker MV user.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+May 24, 2025 Version 1.1.2
+English support.
+March 27, 2022 Version 1.1.1
+Fixed an issue where the image index of the damage popup was misaligned.
+January 8, 2022 Version 1.1.0
+Fixed the ability to assign more image types.
+Fixed the ability to specify the index number of each popup image.
+July 22, 2021 Version 1.0.0
+First version
+
+@param PopUpDamageImg
+@text Damage image
+@desc Specify the file name of the damage image.
+@type file[]
+@dir img/
+
+@param BitmapBaseRows
+@text Number of vertical divisions
+@desc Number of vertical divisions of the image
+@type number
+@default 5
+@min 1
+
+@param HPDamageBaseRow
+@text HP Damage Image Index
+@desc HP Damage Popup Image Index
+@type number
+@default 0
+@min 0
+
+@param HPRecoveryBaseRow
+@text HP Recovery Image Index
+@desc HP recovery popup image index
+@type number
+@default 1
+@min 0
+
+@param MPDamageBaseRow
+@text MP Damage Image Index
+@desc MP Damage Popup Image Index
+@type number
+@default 2
+@min 0
+
+@param MPRecoveryBaseRow
+@text MP recovery image index
+@desc MP recovery popup image index
+@type number
+@default 3
+@min 0
+
+@param TPDamageBaseRow
+@text TP Damage Image Index
+@desc TP Damage Popup Image Index
+@type number
+@default 0
+@min 0
+
+@param TPRecoveryBaseRow
+@text TP Recovery Image Index
+@desc Image index of TP recovery popup
+@type number
+@default 1
+@min 0
+
+@param MissBaseRow
+@text Image index when failure occurs
+@desc Image index for failure popup
+@type number
+@default 4
+@min 0
+*/
+
 /*:ja
- * @target MZ
- * @plugindesc ダメージポップアップ画像化
- * @author NUUN
- * @version 1.1.2
- * @base NUUN_Base
- * @orderAfter NUUN_Base
- * @orderBefore NUUN_DamagePopUpSimulDisplay
- *            
- * @help
- * ダメージポップアップをツクールMVと同じ仕様に変更します。（文字ではなく画像で表示）
- * 素材規格は縦分割数で設定した数値で割り切れる高さにしてください。横幅は指定はありません。
- * TP用のポップアップ（ダメージ用、回復用）を追加する場合は縦分割数を7にしてください。
- * 画像のインデックス番号は一番上から0で始まります。
- * なおツクールMVのダメージポップアップ画像「Damage.png」を使用するにはのツクールMVのユーザ登録が必要です。
- * 
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2025/5/24 Ver 1.1.2
- * 英語対応。
- * 2022/3/27 Ver 1.1.1
- * ダメージポップアップのイメージインデックスがずれる問題を修正。
- * 2022/1/8 Ver 1.1.0
- * 割り当てられる画像の種類を増やせるように修正。
- * 各ポップアップ画像のインデックス番号を指定できるように修正。
- * 2021/7/22 Ver 1.0.0
- * 初版
- * 
- * @param PopUpDamageImg
- * @desc ダメージ画像のファイル名を指定します。
- * @text ダメージ画像
- * @type file[]
- * @dir img/
- * @default 
- * 
- * @param BitmapBaseRows
- * @desc 画像の縦の分割数
- * @text 縦分割数
- * @type number
- * @default 5
- * @min 1
- * 
- * @param HPDamageBaseRow
- * @desc HPダメージのポップアップの画像インデックス
- * @text HPダメージ画像インデックス
- * @type number
- * @default 0
- * @min 0
- * 
- * @param HPRecoveryBaseRow
- * @desc HP回復のポップアップの画像インデックス
- * @text HP回復画像インデックス
- * @type number
- * @default 1
- * @min 0
- * 
- * @param MPDamageBaseRow
- * @desc MPダメージのポップアップの画像インデックス
- * @text MPダメージ画像インデックス
- * @type number
- * @default 2
- * @min 0
- * 
- * @param MPRecoveryBaseRow
- * @desc MP回復のポップアップの画像インデックス
- * @text MP回復画像インデックス
- * @type number
- * @default 3
- * @min 0
- * 
- * @param TPDamageBaseRow
- * @desc TPダメージのポップアップの画像インデックス
- * @text TPダメージ画像インデックス
- * @type number
- * @default 0
- * @min 0
- * 
- * @param TPRecoveryBaseRow
- * @desc TP回復のポップアップの画像インデックス
- * @text TP回復画像インデックス
- * @type number
- * @default 1
- * @min 0
- * 
- * @param MissBaseRow
- * @desc 失敗時のポップアップの画像インデックス
- * @text 失敗時画像インデックス
- * @type number
- * @default 4
- * @min 0
- * 
- */
+@target MZ
+@plugindesc ダメージポップアップ画像化
+@author NUUN
+@version 1.1.2
+@base NUUN_Base
+@orderAfter NUUN_Base
+@orderBefore NUUN_DamagePopUpSimulDisplay
+           
+@help
+ダメージポップアップをツクールMVと同じ仕様に変更します。（文字ではなく画像で表示）
+素材規格は縦分割数で設定した数値で割り切れる高さにしてください。横幅は指定はありません。
+TP用のポップアップ（ダメージ用、回復用）を追加する場合は縦分割数を7にしてください。
+画像のインデックス番号は一番上から0で始まります。
+なおツクールMVのダメージポップアップ画像「Damage.png」を使用するにはのツクールMVのユーザ登録が必要です。
+
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2025/5/24 Ver 1.1.2
+英語対応。
+2022/3/27 Ver 1.1.1
+ダメージポップアップのイメージインデックスがずれる問題を修正。
+2022/1/8 Ver 1.1.0
+割り当てられる画像の種類を増やせるように修正。
+各ポップアップ画像のインデックス番号を指定できるように修正。
+2021/7/22 Ver 1.0.0
+初版
+
+@param PopUpDamageImg
+@desc ダメージ画像のファイル名を指定します。
+@text ダメージ画像
+@type file[]
+@dir img/
+@default 
+
+@param BitmapBaseRows
+@desc 画像の縦の分割数
+@text 縦分割数
+@type number
+@default 5
+@min 1
+
+@param HPDamageBaseRow
+@desc HPダメージのポップアップの画像インデックス
+@text HPダメージ画像インデックス
+@type number
+@default 0
+@min 0
+
+@param HPRecoveryBaseRow
+@desc HP回復のポップアップの画像インデックス
+@text HP回復画像インデックス
+@type number
+@default 1
+@min 0
+
+@param MPDamageBaseRow
+@desc MPダメージのポップアップの画像インデックス
+@text MPダメージ画像インデックス
+@type number
+@default 2
+@min 0
+
+@param MPRecoveryBaseRow
+@desc MP回復のポップアップの画像インデックス
+@text MP回復画像インデックス
+@type number
+@default 3
+@min 0
+
+@param TPDamageBaseRow
+@desc TPダメージのポップアップの画像インデックス
+@text TPダメージ画像インデックス
+@type number
+@default 0
+@min 0
+
+@param TPRecoveryBaseRow
+@desc TP回復のポップアップの画像インデックス
+@text TP回復画像インデックス
+@type number
+@default 1
+@min 0
+
+@param MissBaseRow
+@desc 失敗時のポップアップの画像インデックス
+@text 失敗時画像インデックス
+@type number
+@default 4
+@min 0
+*/
 
 var Imported = Imported || {};
 Imported.NUUN_DamagePopUpImg = true;

@@ -5,22 +5,42 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
- */ 
-/*:
- * @target MZ
- * @plugindesc ドロップ率確率操作ベース
- * @author NUUN
- * @version 1.0.0
- * 
- * @help
- * 敵のドロップ率の確率に変更を加えるプラグインを適用させるためのベースプラグインです。
- * 
- * 更新履歴
- * 2022/1/29 Ver.1.0.0
- * 初版
- * 
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Drop rate probability manipulation base
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+This is a base plugin for applying plugins that modify enemy drop rates.
+
+Update History
+January 29, 2022 Version 1.0.0
+First release
+*/
+
+/*:ja
+@target MZ
+@plugindesc ドロップ率確率操作ベース
+@author NUUN
+@version 1.0.0
+
+@help
+敵のドロップ率の確率に変更を加えるプラグインを適用させるためのベースプラグインです。
+
+更新履歴
+2022/1/29 Ver.1.0.0
+初版
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_DropItemRateBase = true;
 

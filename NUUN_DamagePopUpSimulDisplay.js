@@ -5,48 +5,94 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
- */ 
-/*:
- * @target MZ
- * @plugindesc ダメージポップアップ同時表示
- * @author NUUN
- * @version 1.0.0
- * @base NUUN_Base
- * @orderAfter NUUN_Base
- * 
- * @help
- * 通常ダメージ対象はHP、MPのどちらかしか選択できません。
- * しかし、プラグインでHP、MPの両方のダメージを受けるとHPのポップアップしか表示されません。
- * このプラグインでは両方ダメージを受けてもHP、MP同時に表示させます。
- * TPダメージのポップアップも表示できます。
- * 
- * 更新履歴
- * 2022/1/8 Ver.1.0.0
- * 初版
- * 
- * @param TPDamageColor
- * @desc TPダメージの色。（システムカラー　※テキストタブでカラーコード入力可能）
- * @text TPダメージ色
- * @type number
- * @default 0
- * @min 0
- * 
- * @param TPRecoveryColor
- * @desc TP回復の色。（システムカラー　※テキストタブでカラーコード入力可能）
- * @text TP回復色
- * @type number
- * @default 0
- * @min 0
- * 
- * @param UpdateFlame
- * @desc ポップアップを表示する間隔。
- * @text ポップアップ間隔
- * @type number
- * @default 30
- * @min 0
- * 
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Simultaneous display of damage popup
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Normally, you can only select either HP or MP as the target of damage.
+However, with the plugin, if you receive both HP and MP damage, only the HP
+pop-up will be displayed.
+This plugin displays both HP and MP simultaneously even if you receive both
+damage.
+You can also display TP damage pop-ups.
+
+Update History
+January 8, 2022 Ver. 1.0.0
+First Edition
+
+@param TPDamageColor
+@text TP damage color
+@desc TP damage color. (System color *Color code can be entered in the Text tab)
+@type number
+@default 0
+@min 0
+
+@param TPRecoveryColor
+@text TP recovery color
+@desc TP recovery color. (System color *Color code can be entered in the Text tab)
+@type number
+@default 0
+@min 0
+
+@param UpdateFlame
+@text Popup Interval
+@desc The interval at which the popup should be displayed.
+@type number
+@default 30
+@min 0
+*/
+
+/*:ja
+@target MZ
+@plugindesc ダメージポップアップ同時表示
+@author NUUN
+@version 1.0.0
+@base NUUN_Base
+@orderAfter NUUN_Base
+
+@help
+通常ダメージ対象はHP、MPのどちらかしか選択できません。
+しかし、プラグインでHP、MPの両方のダメージを受けるとHPのポップアップしか表示されません。
+このプラグインでは両方ダメージを受けてもHP、MP同時に表示させます。
+TPダメージのポップアップも表示できます。
+
+更新履歴
+2022/1/8 Ver.1.0.0
+初版
+
+@param TPDamageColor
+@desc TPダメージの色。（システムカラー　※テキストタブでカラーコード入力可能）
+@text TPダメージ色
+@type number
+@default 0
+@min 0
+
+@param TPRecoveryColor
+@desc TP回復の色。（システムカラー　※テキストタブでカラーコード入力可能）
+@text TP回復色
+@type number
+@default 0
+@min 0
+
+@param UpdateFlame
+@desc ポップアップを表示する間隔。
+@text ポップアップ間隔
+@type number
+@default 30
+@min 0
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_DamagePopUpSimulDisplay = true;
 

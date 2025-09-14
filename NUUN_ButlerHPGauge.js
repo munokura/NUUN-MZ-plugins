@@ -6,381 +6,775 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  * 
- */ 
-/*:
- * @target MZ
- * @plugindesc  バトラーHPゲージ
- * @author NUUN
- * @base NUUN_Base
- * @base NUUN_BattlerOverlayBase
- * @version 1.7.7
- * @orderAfter NUUN_Base
- * 
- * @help
- * 敵またはSVアクターのバトラー上にHPゲージを表示します。
- * 
- * 敵キャラまたはアクターのメモ欄
- * <HPGaugeX:[position]> HPゲージのX座標を調整します。（相対座標）
- * <HPGaugeY:[position]> HPゲージのY座標を調整します。（相対座標）
- * 
- * 敵キャラのメモ欄
- * <NoHPGauge> HPゲージを表示しません。
- * <HPGaugeLength:[width], [height]> HPゲージの幅を指定します。
- * [position]:座標
- * [width]:ゲージ横幅
- * [height]:ゲージ縦幅
- * 
- * バトルイベントの注釈
- * <HPGaugePosition:[Id],[x],[y]> 敵グループの[Id]番目のモンスターのゲージの位置を調整します。（相対座標）
- * [Id]：表示順番号
- * [x]：X座標
- * [y]：Y座標
- * [id]は敵グループ設定で配置した順番のIDで指定します。モンスター画像の左上に番号が表示されますのでその番号を記入します。
- * 
- * 特徴を有するメモ欄
- * <HPGaugeVisible> この特徴を持つアクターが存在すれば、敵のHPゲージが表示されます。
- * <EnemyHPGaugeVisible> この特徴を持つ敵はHPゲージが表示されます。
- * 敵のメモ欄
- * <HPGaugeMask:[eval]> 条件に一致しなければHP値の表示を？？？にします。
- * this 敵データ
- * this.enemy() 敵のデータベースデータ
- * 例　<HPGaugeMask:this.hp < this.mhp * 0.3>
- * 敵のHPが３０％未満の時のみHP値を表示します。
- * 
- * 初期HPゲージ表示
- * <HPGaugeVisible>の特徴を持つアクターが戦闘メンバーにいるとき、または図鑑登録と連動している際に登録済みなら表示されます。
- * 上記の特徴を使用する場合は初期HPゲージ表示を非表示に設定してください。
- * 
- * バトラーオーバーレイベースは必ず最新版にしてください。
- * 
- * このプラグインはNUUN_Base Ver.1.2.0以降が必要です。
- * 
- * 疑似３Dバトルを入れている場合はこのプラグインを疑似３Dバトルを下に配置してください。
- * ゲージ表示拡張プラグインで該当のゲージを設定している場合は、フォントサイズの設定はゲージ表示拡張プラグインで設定してください。
- * 
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2025/1/2 Ver.1.7.7
- * 変身後のモンスターのゲージが非表示に設定されている場合、ゲージが表示がされたままになる問題を修正。
- * 2024/9/11 Ver.1.7.6
- * 特定のスクリプトを記入した場合、スタックエラーが起きる問題を修正。
- * 2023/11/4 Ver.1.7.5
- * <HPGaugeVisible>が機能していなかった問題を修正。
- * 2023/8/3 Ver.1.7.4
- * 一部のプラグインにてNoHPGaugeが機能していなかった問題を修正。
- * 2023/6/23 Ver.1.7.3
- * NoHPGaugeが機能していなかった問題を修正。
- * 2023/6/2 Ver.1.7.2
- * 処理の修正。
- * 2023/5/28 Ver.1.7.1
- * 処理の修正。
- * 2023/5/28 Ver.1.7.0
- * SVアクターにゲージを表示する機能を追加。
- * 2023/5/6 Ver.1.6.1
- * HPゲージの表示をフェードアウト、フェードインさせるように修正。
- * 2022/9/17 Ver.1.6.0
- * 敵キャラ毎にHPゲージの横幅、縦幅を指定できる機能を追加。
- * 2022/5/14 Ver.1.5.0
- * バトラーの表示処理の定義大幅変更に関する定義変更。
- * 2022/1/10 Ver.1.4.2
- * 再修正。
- * 2022/1/10 Ver.1.4.1
- * ゲージがラベル表示でも座標0から表示されてしまう問題を修正。
- * 2021/12/19 Ver.1.4.0
- * ゲージ画像化対応。
- * 2021/11/8 Ver.1.3.3
- * 敵グループの座標変更の設定方法を変更。
- * 2021/11/6 Ver.1.3.2
- * 不要な処理を削除。
- * 2021/11/5 Ver.1.3.1
- * 敵グループからゲージ座標するタグの名前が不自然だったのを変更。
- * 2021/11/5 Ver.1.3.0
- * 敵グループのモンスター毎にゲージの座標を調整できる機能を追加。
- * 2021/9/2 Ver.1.2.7
- * 中心に表示する機能を追加。
- * 2021/8/31 Ver.1.2.6
- * HPラベルが非表示の時にラベル分の余白が空いてしまう問題を修正。
- * 2021/8/29 Ver.1.2.5
- * 一部プラグインとの競合対策。
- * 2021/7/15 Ver.1.2.4
- * 処理の最適化により一部処理をNUUN_Baseに移行。
- * 2021/7/13 Ver.1.2.3
- * エネミー画像を消去する及び新たにエネミー画像を追加表示するプラグインとの競合対策。
- * 2021/6/28 Ver.1.2.2
- * 一部が機能しなくなっていたので処理修正
- * 2021/6/28 Ver.1.2.1
- * 条件によりHPを隠す機能を追加。
- * 2021/6/26 Ver.1.2.0
- * 状況によってHPゲージを表示する機能を追加。
- * 2021/6/20 Ver.1.1.1
- * モンスター図鑑（NUUN_EnemyBook）の登録により表示する機能を追加。
- * 2021/6/19 Ver.1.1.0
- * HPゲージの表示タイミングを設定できる機能を追加。
- * 2021/6/19 Ver.1.0.3
- * 疑似3DバトルVer.1.1対応のため一部の処理を変更。
- * 2021/5/24 Ver.1.0.2
- * HPラベル、数値を表示させない機能を追加。
- * 2021/5/24 Ver.1.0.1
- * HPゲージを表示させない機能を追加。
- * 2021/5/24 Ver.1.0.0
- * 初版
- * 
- * 
- * @param EnemySetting
- * @text 敵設定
- * @default ------------------------------
- * 
- * @param EnemyVisibleSetting
- * @text 表示設定
- * @default ------------------------------
- * @parent EnemySetting
- * 
- * @param HPPosition
- * @desc 敵キャラのHPゲージ位置
- * @text 敵HPゲージ位置
- * @type select
- * @option 表示なし
- * @value -1
- * @option 敵画像の上
- * @value 0
- * @option 敵画像の下
- * @value 1
- * @option 敵画像の中心
- * @value 2
- * @default 0
- * @parent EnemyVisibleSetting
- * 
- * @param HPVisible
- * @desc 敵のHPゲージの表示タイミング
- * @text 敵HPゲージ表示タイミング
- * @type select
- * @option 常に表示
- * @value 0
- * @option 選択時
- * @value 1
- * @option ダメージ時
- * @value 2
- * @option 選択時、ダメージ時
- * @value 3
- * @default 0
- * @parent EnemyVisibleSetting
- * 
- * @param GaugeSetting
- * @text 敵ゲージ設定
- * @default ------------------------------
- * @parent EnemySetting
- * 
- * @param GaugeWidth
- * @desc 敵のゲージの横幅を指定します。
- * @text ゲージ横幅
- * @type number
- * @default 128
- * @min 0
- * @parent GaugeSetting
- * 
- * @param GaugeHeight
- * @desc 敵のゲージの縦幅を指定します。
- * @text ゲージ縦幅
- * @type number
- * @default 12
- * @min 0
- * @parent GaugeSetting
- * 
- * @param Gauge_X
- * @desc 敵のゲージのX座標（相対座標）指定します。
- * @text ゲージX座標
- * @type number
- * @default 0
- * @min -9999
- * @parent GaugeSetting
- * 
- * @param Gauge_Y
- * @desc 敵のゲージのY座標（相対座標）指定します。
- * @text ゲージY座標
- * @type number
- * @default 0
- * @min -9999
- * @parent GaugeSetting
- * 
- * @param HPLabelVisible
- * @text HPラベル表示
- * @desc 敵のHPラベルを表示する。
- * @type boolean
- * @default true
- * @parent GaugeSetting
- * 
- * @param HPValueVisible
- * @text HP数値表示
- * @desc HP数値を表示する。
- * @type boolean
- * @default true
- * @parent GaugeSetting
- * 
- * @param ValueFontSize
- * @desc 数値のフォントサイズ。（メインフォントサイズから）
- * @text 数値フォントサイズ
- * @type number
- * @default -6
- * @min -9999
- * @parent GaugeSetting
- * 
- * @param LabelFontSize
- * @desc ラベルのフォントサイズ。（メインフォントサイズから）
- * @text ラベルフォントサイズ
- * @type number
- * @default -2
- * @min -9999
- * @parent GaugeSetting
- * 
- * @param MaskValueName
- * @desc HPの数値を隠す時の文字。
- * @text HPの数値を隠す時の文字
- * @type string
- * @default ????
- * @parent GaugeSetting
- * 
- * @param SpecialSetting
- * @text 特殊設定
- * @default ------------------------------
- * @parent GaugeSetting
- * 
- * @param HPVisibleMode
- * @desc 初期状態でのHPゲージの表示。特徴によってやHPゲージの表示タイミングによって表示されるようになります。
- * @text 初期HPゲージ表示
- * @type select
- * @option 表示
- * @value 0
- * @option 非表示
- * @value 1
- * @default 0
- * @parent SpecialSetting
- * 
- * @param EnemyBookSetting
- * @text 図鑑連動設定
- * @default ------------------------------
- * @parent GaugeSetting
- * 
- * @param HPEnemyBookVisible
- * @desc HPゲージの表示タイミング（モンスター図鑑）
- * @text HPゲージ表示タイミング（モンスター図鑑）
- * @type select
- * @option 指定なし
- * @value 0
- * @option 図鑑登録後に表示
- * @value 1
- * @option 図鑑情報登録後に表示
- * @value 2
- * @default 0
- * @parent EnemyBookSetting
- * 
- *  @param ActorSetting
- * @text アクター設定
- * @default ------------------------------
- * 
- * @param ActorVisibleSetting
- * @text 表示設定
- * @default ------------------------------
- * @parent ActorSetting
- * 
- * @param ActorHPPosition
- * @desc アクターのHPゲージ位置
- * @text HPゲージ位置
- * @type select
- * @option 表示なし
- * @value -1
- * @option SV画像の上
- * @value 0
- * @option SV画像の下
- * @value 1
- * @default -1
- * @parent ActorVisibleSetting
- * 
- * @param ActorHPVisible
- * @desc アクターのHPゲージの表示タイミング
- * @text アクターHPゲージ表示タイミング
- * @type select
- * @option 常に表示
- * @value 0
- * @option 選択時
- * @value 1
- * @option ダメージ時
- * @value 2
- * @option 選択時、ダメージ時
- * @value 3
- * @default 0
- * @parent ActorVisibleSetting
- * 
- * @param ActorGaugeSetting
- * @text アクターゲージ設定
- * @default ------------------------------
- * @parent ActorSetting
- * 
- * @param ActorGaugeWidth
- * @desc アクターのゲージの横幅を指定します。
- * @text ゲージ横幅
- * @type number
- * @default 128
- * @min 0
- * @parent ActorGaugeSetting
- * 
- * @param ActorGaugeHeight
- * @desc アクターのゲージの縦幅を指定します。
- * @text ゲージ縦幅
- * @type number
- * @default 12
- * @min 0
- * @parent ActorGaugeSetting
- * 
- * @param ActorGauge_X
- * @desc アクターのゲージのX座標（相対座標）指定します。
- * @text ゲージX座標
- * @type number
- * @default 0
- * @min -9999
- * @parent ActorGaugeSetting
- * 
- * @param ActorGauge_Y
- * @desc アクターのゲージのY座標（相対座標）指定します。
- * @text ゲージY座標
- * @type number
- * @default 0
- * @min -9999
- * @parent ActorGaugeSetting
- * 
- * @param ActorHPLabelVisible
- * @text HPラベル表示
- * @desc アクターのHPラベルを表示する。
- * @type boolean
- * @default true
- * @parent ActorGaugeSetting
- * 
- * @param ActorHPValueVisible
- * @text HP数値表示
- * @desc アクターのHP数値を表示する。
- * @type boolean
- * @default true
- * @parent ActorGaugeSetting
- * 
- * @param ActorValueFontSize
- * @desc アクターの数値のフォントサイズ。（メインフォントサイズから）
- * @text 数値フォントサイズ
- * @type number
- * @default -6
- * @min -9999
- * @parent ActorGaugeSetting
- * 
- * @param ActorLabelFontSize
- * @desc アクターの ラベルのフォントサイズ。（メインフォントサイズから）
- * @text ラベルフォントサイズ
- * @type number
- * @default -2
- * @min -9999
- * @parent ActorGaugeSetting
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Butler HP Gauge
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Displays an HP gauge on the enemy or SV actor battler.
+
+Enemy character or actor memo field
+<HPGaugeX:[position]> Adjusts the X coordinate of the HP gauge. (Relative
+coordinates)
+<HPGaugeY:[position]> Adjusts the Y coordinate of the HP gauge. (Relative
+coordinates)
+
+Enemy character memo field
+<NoHPGauge> Does not display the HP gauge.
+<HPGaugeLength:[width], [height]> Specifies the width of the HP gauge.
+[position]: Coordinate
+[width]: Gauge width
+[height]: Gauge height
+
+Battle event notes
+<HPGaugePosition:[Id],[x],[y]> Adjusts the gauge position of the [Id]th
+monster in the enemy group. (Relative coordinates)
+[Id]: Display order number
+[x]: X coordinate
+[y]: Y coordinate
+[id] specifies the ID of the monster placed in the enemy group settings. A
+number appears in the upper left corner of the monster image; enter that
+number here.
+
+Featured Memo Field
+<HPGaugeVisible> If an actor with this feature is present, the enemy's HP
+gauge will be displayed.
+<EnemyHPGaugeVisible> Enemies with this feature will have their HP gauge
+displayed.
+Enemy Memo Field
+<HPGaugeMask:[eval]> If the condition is not met, the HP value display will be
+changed to ???.
+this Enemy Data
+this.enemy() Enemy Database Data
+Example: <HPGaugeMask:this.hp < this.mhp * 0.3>
+Only displays the enemy's HP when its HP is below 30%.
+
+Initial HP Gauge Display
+Displays when an actor with the <HPGaugeVisible> feature is in the battle
+team, or if it is registered when linked to the Pokédex.
+When using the above feature, set the initial HP gauge display to hidden.
+
+Please be sure to update the Battler Overlay Base to the latest version.
+
+This plugin requires NUUN_Base Ver. 1.2.0 or later.
+
+If you have Pseudo 3D Battle installed, place this plugin below it.
+If you have configured the corresponding gauge with the Gauge Display
+Extension plugin, please configure the font size with the Gauge Display
+Extension plugin.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+January 2, 2025 Ver. 1.7.7
+Fixed an issue where the transformed monster's gauge would remain displayed
+even if it was set to hidden.
+September 11, 2024 Ver. 1.7.6
+Fixed an issue where a stack error would occur when entering certain scripts.
+November 4, 2023 Ver. 1.7.5
+Fixed an issue where <HPGaugeVisible> was not working.
+August 3, 2023 Ver. 1.7.4
+Fixed an issue where NoHPGauge was not working with some plugins.
+June 23, 2023 Ver. 1.7.3
+Fixed an issue where NoHPGauge was not working.
+June 2, 2023 Ver. 1.7.2
+Processing fixes.
+May 28, 2023 Ver. 1.7.1
+Processing fixes.
+May 28, 2023 Ver. 1.7.0
+Added the ability to display gauges on SV actors.
+May 6, 2023 Ver. 1.6.1
+Fixed the HP gauge display to fade in and out.
+September 17, 2022 Ver. 1.6.0
+Added the ability to specify the width and height of the HP gauge for each
+enemy character.
+May 14, 2022 Ver. 1.5.0
+Changed the definition regarding major changes to the battler display
+processing.
+January 10, 2022 Ver. 1.4.2
+Further fixes.
+January 10, 2022 Ver. 1.4.1
+Fixed an issue where the gauge would display from coordinate 0 even when
+displayed as a label.
+December 19, 2021 Ver. 1.4.0
+Gauge visualization support.
+November 8, 2021 Ver. 1.3.3
+Changed the setting method for enemy group coordinate changes.
+November 6, 2021 Ver. 1.3.2
+Removed unnecessary processing.
+November 5, 2021 Ver. 1.3.1
+Changed the unnatural tag name for gauge coordinates from enemy groups.
+November 5, 2021 Ver. 1.3.0
+Added a feature to adjust gauge coordinates for each monster in an enemy
+group.
+September 2, 2021 Ver. 1.2.7
+Added a centering feature.
+August 31, 2021 Ver. 1.2.6
+Fixed an issue where HP labels would appear in the margins when hidden.
+August 29, 2021 Ver. 1.2.5
+Fixed conflicts with some plugins.
+July 15, 2021 Ver. 1.2.4
+Processing optimization: Some processing has been moved to NUUN_Base.
+July 13, 2021 Ver. 1.2.3
+Fixed conflicts with plugins that delete enemy images and add new enemy
+images.
+June 28, 2021 Ver. 1.2.2
+Fixed processing that had stopped working.
+June 28, 2021 Ver. 1.2.1
+Added a feature to hide HP under certain conditions.
+June 26, 2021 Ver. 1.2.0
+Added a feature to display the HP gauge depending on the situation.
+June 20, 2021 Ver. 1.1.1
+Added a feature to display the HP gauge by registering it in the monster
+encyclopedia (NUUN_EnemyBook).
+June 19, 2021 Ver. 1.1.0
+Added a feature to set the display timing of the HP gauge.
+June 19, 2021 Ver. 1.0.3
+Some processing changes made to support Pseudo 3D Battle Ver. 1.1.
+May 24, 2021 Ver. 1.0.2
+Added a feature to hide HP labels and values.
+May 24, 2021 Ver. 1.0.1
+Added a feature to hide HP gauges.
+May 24, 2021 Ver. 1.0.0
+First release
+
+@param EnemySetting
+@text Enemy Settings
+@default ------------------------------
+
+@param EnemyVisibleSetting
+@text Display settings
+@default ------------------------------
+@parent EnemySetting
+
+@param HPPosition
+@text Enemy HP gauge location
+@desc Enemy character's HP gauge position
+@type select
+@default 0
+@option No display
+@value -1
+@option Above the enemy image
+@value 0
+@option Under the enemy image
+@value 1
+@option Center of enemy image
+@value 2
+@parent EnemyVisibleSetting
+
+@param HPVisible
+@text Enemy HP gauge display timing
+@desc Enemy HP gauge display timing
+@type select
+@default 0
+@option Always Show
+@value 0
+@option When selected
+@value 1
+@option When damaged
+@value 2
+@option When selected, when damaged
+@value 3
+@parent EnemyVisibleSetting
+
+@param GaugeSetting
+@text Enemy Gauge Settings
+@default ------------------------------
+@parent EnemySetting
+
+@param GaugeWidth
+@text Gauge width
+@desc Specifies the width of the enemy's gauge.
+@type number
+@default 128
+@min 0
+@parent GaugeSetting
+
+@param GaugeHeight
+@text Gauge vertical width
+@desc Specifies the vertical width of the enemy's gauge.
+@type number
+@default 12
+@min 0
+@parent GaugeSetting
+
+@param Gauge_X
+@text Gauge X coordinate
+@desc Specifies the X coordinate (relative coordinate) of the enemy's gauge.
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param Gauge_Y
+@text Gauge Y coordinate
+@desc Specifies the Y coordinate (relative coordinate) of the enemy's gauge.
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param HPLabelVisible
+@text HP labeling
+@desc Shows enemy HP labels.
+@type boolean
+@default true
+@parent GaugeSetting
+
+@param HPValueVisible
+@text HP numerical display
+@desc Displays HP values.
+@type boolean
+@default true
+@parent GaugeSetting
+
+@param ValueFontSize
+@text Numeric Font Size
+@desc Number font size (from main font size)
+@type number
+@default -6
+@min -9999
+@parent GaugeSetting
+
+@param LabelFontSize
+@text Label Font Size
+@desc Label font size (from main font size).
+@type number
+@default -2
+@min -9999
+@parent GaugeSetting
+
+@param MaskValueName
+@text Characters used to hide HP values
+@desc Characters used to hide HP values.
+@type string
+@default ????
+@parent GaugeSetting
+
+@param SpecialSetting
+@text Special Settings
+@default ------------------------------
+@parent GaugeSetting
+
+@param HPVisibleMode
+@text Initial HP gauge display
+@desc The initial HP gauge display. It will be displayed depending on the feature and the timing of the HP gauge display.
+@type select
+@default 0
+@option display
+@value 0
+@option hidden
+@value 1
+@parent SpecialSetting
+
+@param EnemyBookSetting
+@text Pokédex linked settings
+@default ------------------------------
+@parent GaugeSetting
+
+@param HPEnemyBookVisible
+@text HP gauge display timing (Monster Encyclopedia)
+@desc HP gauge display timing (Monster Encyclopedia)
+@type select
+@default 0
+@option Not specified
+@value 0
+@option Displayed after encyclopedia registration
+@value 1
+@option Displayed after registering encyclopedia information
+@value 2
+@parent EnemyBookSetting
+
+@param ActorSetting
+@text Actor Settings
+@default ------------------------------
+
+@param ActorVisibleSetting
+@text Display settings
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorHPPosition
+@text HP gauge location
+@desc Actor's HP gauge location
+@type select
+@default -1
+@option No display
+@value -1
+@option Above the SV image
+@value 0
+@option Under the SV image
+@value 1
+@parent ActorVisibleSetting
+
+@param ActorHPVisible
+@text Actor HP gauge display timing
+@desc Actor HP gauge display timing
+@type select
+@default 0
+@option Always Show
+@value 0
+@option When selected
+@value 1
+@option When damaged
+@value 2
+@option When selected, when damaged
+@value 3
+@parent ActorVisibleSetting
+
+@param ActorGaugeSetting
+@text Actor Gauge Settings
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorGaugeWidth
+@text Gauge width
+@desc Specifies the width of the actor's gauge.
+@type number
+@default 128
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGaugeHeight
+@text Gauge vertical width
+@desc Specifies the vertical width of the actor's gauge.
+@type number
+@default 12
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGauge_X
+@text Gauge X coordinate
+@desc Specifies the X coordinate (relative coordinate) of the actor's gauge.
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorGauge_Y
+@text Gauge Y coordinate
+@desc Specifies the Y coordinate (relative coordinate) of the actor's gauge.
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorHPLabelVisible
+@text HP labeling
+@desc Displays the actor's HP label.
+@type boolean
+@default true
+@parent ActorGaugeSetting
+
+@param ActorHPValueVisible
+@text HP numerical display
+@desc Displays the actor's HP value.
+@type boolean
+@default true
+@parent ActorGaugeSetting
+
+@param ActorValueFontSize
+@text Numeric Font Size
+@desc Actor number font size (from main font size)
+@type number
+@default -6
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorLabelFontSize
+@text Label Font Size
+@desc Actor label font size (from main font size).
+@type number
+@default -2
+@min -9999
+@parent ActorGaugeSetting
+*/
+
+/*:ja
+@target MZ
+@plugindesc  バトラーHPゲージ
+@author NUUN
+@base NUUN_Base
+@base NUUN_BattlerOverlayBase
+@version 1.7.7
+@orderAfter NUUN_Base
+
+@help
+敵またはSVアクターのバトラー上にHPゲージを表示します。
+
+敵キャラまたはアクターのメモ欄
+<HPGaugeX:[position]> HPゲージのX座標を調整します。（相対座標）
+<HPGaugeY:[position]> HPゲージのY座標を調整します。（相対座標）
+
+敵キャラのメモ欄
+<NoHPGauge> HPゲージを表示しません。
+<HPGaugeLength:[width], [height]> HPゲージの幅を指定します。
+[position]:座標
+[width]:ゲージ横幅
+[height]:ゲージ縦幅
+
+バトルイベントの注釈
+<HPGaugePosition:[Id],[x],[y]> 敵グループの[Id]番目のモンスターのゲージの位置を調整します。（相対座標）
+[Id]：表示順番号
+[x]：X座標
+[y]：Y座標
+[id]は敵グループ設定で配置した順番のIDで指定します。モンスター画像の左上に番号が表示されますのでその番号を記入します。
+
+特徴を有するメモ欄
+<HPGaugeVisible> この特徴を持つアクターが存在すれば、敵のHPゲージが表示されます。
+<EnemyHPGaugeVisible> この特徴を持つ敵はHPゲージが表示されます。
+敵のメモ欄
+<HPGaugeMask:[eval]> 条件に一致しなければHP値の表示を？？？にします。
+this 敵データ
+this.enemy() 敵のデータベースデータ
+例　<HPGaugeMask:this.hp < this.mhp * 0.3>
+敵のHPが３０％未満の時のみHP値を表示します。
+
+初期HPゲージ表示
+<HPGaugeVisible>の特徴を持つアクターが戦闘メンバーにいるとき、または図鑑登録と連動している際に登録済みなら表示されます。
+上記の特徴を使用する場合は初期HPゲージ表示を非表示に設定してください。
+
+バトラーオーバーレイベースは必ず最新版にしてください。
+
+このプラグインはNUUN_Base Ver.1.2.0以降が必要です。
+
+疑似３Dバトルを入れている場合はこのプラグインを疑似３Dバトルを下に配置してください。
+ゲージ表示拡張プラグインで該当のゲージを設定している場合は、フォントサイズの設定はゲージ表示拡張プラグインで設定してください。
+
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2025/1/2 Ver.1.7.7
+変身後のモンスターのゲージが非表示に設定されている場合、ゲージが表示がされたままになる問題を修正。
+2024/9/11 Ver.1.7.6
+特定のスクリプトを記入した場合、スタックエラーが起きる問題を修正。
+2023/11/4 Ver.1.7.5
+<HPGaugeVisible>が機能していなかった問題を修正。
+2023/8/3 Ver.1.7.4
+一部のプラグインにてNoHPGaugeが機能していなかった問題を修正。
+2023/6/23 Ver.1.7.3
+NoHPGaugeが機能していなかった問題を修正。
+2023/6/2 Ver.1.7.2
+処理の修正。
+2023/5/28 Ver.1.7.1
+処理の修正。
+2023/5/28 Ver.1.7.0
+SVアクターにゲージを表示する機能を追加。
+2023/5/6 Ver.1.6.1
+HPゲージの表示をフェードアウト、フェードインさせるように修正。
+2022/9/17 Ver.1.6.0
+敵キャラ毎にHPゲージの横幅、縦幅を指定できる機能を追加。
+2022/5/14 Ver.1.5.0
+バトラーの表示処理の定義大幅変更に関する定義変更。
+2022/1/10 Ver.1.4.2
+再修正。
+2022/1/10 Ver.1.4.1
+ゲージがラベル表示でも座標0から表示されてしまう問題を修正。
+2021/12/19 Ver.1.4.0
+ゲージ画像化対応。
+2021/11/8 Ver.1.3.3
+敵グループの座標変更の設定方法を変更。
+2021/11/6 Ver.1.3.2
+不要な処理を削除。
+2021/11/5 Ver.1.3.1
+敵グループからゲージ座標するタグの名前が不自然だったのを変更。
+2021/11/5 Ver.1.3.0
+敵グループのモンスター毎にゲージの座標を調整できる機能を追加。
+2021/9/2 Ver.1.2.7
+中心に表示する機能を追加。
+2021/8/31 Ver.1.2.6
+HPラベルが非表示の時にラベル分の余白が空いてしまう問題を修正。
+2021/8/29 Ver.1.2.5
+一部プラグインとの競合対策。
+2021/7/15 Ver.1.2.4
+処理の最適化により一部処理をNUUN_Baseに移行。
+2021/7/13 Ver.1.2.3
+エネミー画像を消去する及び新たにエネミー画像を追加表示するプラグインとの競合対策。
+2021/6/28 Ver.1.2.2
+一部が機能しなくなっていたので処理修正
+2021/6/28 Ver.1.2.1
+条件によりHPを隠す機能を追加。
+2021/6/26 Ver.1.2.0
+状況によってHPゲージを表示する機能を追加。
+2021/6/20 Ver.1.1.1
+モンスター図鑑（NUUN_EnemyBook）の登録により表示する機能を追加。
+2021/6/19 Ver.1.1.0
+HPゲージの表示タイミングを設定できる機能を追加。
+2021/6/19 Ver.1.0.3
+疑似3DバトルVer.1.1対応のため一部の処理を変更。
+2021/5/24 Ver.1.0.2
+HPラベル、数値を表示させない機能を追加。
+2021/5/24 Ver.1.0.1
+HPゲージを表示させない機能を追加。
+2021/5/24 Ver.1.0.0
+初版
+
+
+@param EnemySetting
+@text 敵設定
+@default ------------------------------
+
+@param EnemyVisibleSetting
+@text 表示設定
+@default ------------------------------
+@parent EnemySetting
+
+@param HPPosition
+@desc 敵キャラのHPゲージ位置
+@text 敵HPゲージ位置
+@type select
+@option 表示なし
+@value -1
+@option 敵画像の上
+@value 0
+@option 敵画像の下
+@value 1
+@option 敵画像の中心
+@value 2
+@default 0
+@parent EnemyVisibleSetting
+
+@param HPVisible
+@desc 敵のHPゲージの表示タイミング
+@text 敵HPゲージ表示タイミング
+@type select
+@option 常に表示
+@value 0
+@option 選択時
+@value 1
+@option ダメージ時
+@value 2
+@option 選択時、ダメージ時
+@value 3
+@default 0
+@parent EnemyVisibleSetting
+
+@param GaugeSetting
+@text 敵ゲージ設定
+@default ------------------------------
+@parent EnemySetting
+
+@param GaugeWidth
+@desc 敵のゲージの横幅を指定します。
+@text ゲージ横幅
+@type number
+@default 128
+@min 0
+@parent GaugeSetting
+
+@param GaugeHeight
+@desc 敵のゲージの縦幅を指定します。
+@text ゲージ縦幅
+@type number
+@default 12
+@min 0
+@parent GaugeSetting
+
+@param Gauge_X
+@desc 敵のゲージのX座標（相対座標）指定します。
+@text ゲージX座標
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param Gauge_Y
+@desc 敵のゲージのY座標（相対座標）指定します。
+@text ゲージY座標
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param HPLabelVisible
+@text HPラベル表示
+@desc 敵のHPラベルを表示する。
+@type boolean
+@default true
+@parent GaugeSetting
+
+@param HPValueVisible
+@text HP数値表示
+@desc HP数値を表示する。
+@type boolean
+@default true
+@parent GaugeSetting
+
+@param ValueFontSize
+@desc 数値のフォントサイズ。（メインフォントサイズから）
+@text 数値フォントサイズ
+@type number
+@default -6
+@min -9999
+@parent GaugeSetting
+
+@param LabelFontSize
+@desc ラベルのフォントサイズ。（メインフォントサイズから）
+@text ラベルフォントサイズ
+@type number
+@default -2
+@min -9999
+@parent GaugeSetting
+
+@param MaskValueName
+@desc HPの数値を隠す時の文字。
+@text HPの数値を隠す時の文字
+@type string
+@default ????
+@parent GaugeSetting
+
+@param SpecialSetting
+@text 特殊設定
+@default ------------------------------
+@parent GaugeSetting
+
+@param HPVisibleMode
+@desc 初期状態でのHPゲージの表示。特徴によってやHPゲージの表示タイミングによって表示されるようになります。
+@text 初期HPゲージ表示
+@type select
+@option 表示
+@value 0
+@option 非表示
+@value 1
+@default 0
+@parent SpecialSetting
+
+@param EnemyBookSetting
+@text 図鑑連動設定
+@default ------------------------------
+@parent GaugeSetting
+
+@param HPEnemyBookVisible
+@desc HPゲージの表示タイミング（モンスター図鑑）
+@text HPゲージ表示タイミング（モンスター図鑑）
+@type select
+@option 指定なし
+@value 0
+@option 図鑑登録後に表示
+@value 1
+@option 図鑑情報登録後に表示
+@value 2
+@default 0
+@parent EnemyBookSetting
+
+ @param ActorSetting
+@text アクター設定
+@default ------------------------------
+
+@param ActorVisibleSetting
+@text 表示設定
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorHPPosition
+@desc アクターのHPゲージ位置
+@text HPゲージ位置
+@type select
+@option 表示なし
+@value -1
+@option SV画像の上
+@value 0
+@option SV画像の下
+@value 1
+@default -1
+@parent ActorVisibleSetting
+
+@param ActorHPVisible
+@desc アクターのHPゲージの表示タイミング
+@text アクターHPゲージ表示タイミング
+@type select
+@option 常に表示
+@value 0
+@option 選択時
+@value 1
+@option ダメージ時
+@value 2
+@option 選択時、ダメージ時
+@value 3
+@default 0
+@parent ActorVisibleSetting
+
+@param ActorGaugeSetting
+@text アクターゲージ設定
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorGaugeWidth
+@desc アクターのゲージの横幅を指定します。
+@text ゲージ横幅
+@type number
+@default 128
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGaugeHeight
+@desc アクターのゲージの縦幅を指定します。
+@text ゲージ縦幅
+@type number
+@default 12
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGauge_X
+@desc アクターのゲージのX座標（相対座標）指定します。
+@text ゲージX座標
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorGauge_Y
+@desc アクターのゲージのY座標（相対座標）指定します。
+@text ゲージY座標
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorHPLabelVisible
+@text HPラベル表示
+@desc アクターのHPラベルを表示する。
+@type boolean
+@default true
+@parent ActorGaugeSetting
+
+@param ActorHPValueVisible
+@text HP数値表示
+@desc アクターのHP数値を表示する。
+@type boolean
+@default true
+@parent ActorGaugeSetting
+
+@param ActorValueFontSize
+@desc アクターの数値のフォントサイズ。（メインフォントサイズから）
+@text 数値フォントサイズ
+@type number
+@default -6
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorLabelFontSize
+@desc アクターの ラベルのフォントサイズ。（メインフォントサイズから）
+@text ラベルフォントサイズ
+@type number
+@default -2
+@min -9999
+@parent ActorGaugeSetting
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_ButlerHPGauge = true;
 

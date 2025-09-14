@@ -6,172 +6,352 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  * 
- */ 
+ */
+
 /*:
- * @target MZ
- * @plugindesc 全体、ランダム、敵味方全体攻撃でも対象選択
- * @author NUUN
- * @base NUUN_Base
- * @base NUUN_MenuStatusAllSelectFix
- * @orderAfter NUUN_Base
- * @orderAfter NUUN_MenuStatusAllSelectFix
- * @version 1.6.3
- *            
- * @help  
- * 全体、ランダム、敵味方全体攻撃でも対象選択させます。
- * 
- * アイテム、スキルのメモ欄
- * <NoTargetSelect> このアイテム、スキルは対象選択しません。デフォルトと同様に省略されます。
- * 対象が全体、ランダム、敵味方全て、使用者のみ（対象使用者のみ選択表示をON）で有効です。
- * 以下のタグは範囲を全体、ランダム、敵味方全てにしたときに有効です。
- * 
- * 対象範囲が全体、ランダム、敵味方全体時のウィンドウカーソルの表示対象を独自に定義することが出来ます。
- * なおエネミー画像、SV画像、アクター画像には反映されません。また複数対象カーソル個別表示がONの時のみ有効です。
- * subject = 使用:者;
- * members = 対象のメンバー;
- * 取得するデータはカーソル表示させるメンバーを配列として取得します。
- * 例:members.filter(member => member.isAlive() && member !== subject)
- * 使用者以外にカーソルが表示させます。
- * 
- * タグはアイテム、スキルのメモ欄に記述します。
- * <[tag]> [tag]:全カーソル表示時対象設定で設定したタグ名
- * 例:<NotUserTarget> NotUserTargetは全カーソル表示時対象設定のタグ名を変更してない限り、使用者以外のカーソルを表示します。
- * 
- * 以下の機能はXPスタイル対象選択ウィンドウプラグインが必要です。
- * 敵味方対象選択時の表示名
- * %1:連続回数
- * %2:ランダム回数
- * 
- * デフォルト設定
- * <NotUserTarget> 使用者除外。
- * <DeathTarget> 戦闘不能者を含む。
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 
- * 更新履歴
- * 2024/9/5 Ver.1.6.3
- * 防御コマンドでキャンセルを行うとコマンドカーソル位置が先頭に戻ってしまう問題を修正。
- * 2021/5/30 Ver.1.6.2
- * メニュー画面アクター全体選択時のカーソル不具合を別プラグイン化による定義修正。
- * 2021/3/27 Ver.1.6.1
- * XP風対象選択ウィンドウのプラグイン名が間違っていたので修正。
- * 2021/3/27 Ver.1.6.0
- * XPスタイル対象選択ウィンドウに対応するための定義追加。
- * 全カーソル表示で対象のカーソル表示を判定させる評価式の仕様を変更。
- * 2021/7/18 Ver.1.5.1
- * 全カーソル表示時対象設定で設定したタグが取得できていない問題を修正。
- * スクロールしたときに選択対象になっていないアクターにカーソルが表示されてしまう問題を修正。
- * 2021/7/17 Ver.1.5.0
- * 複数対象カーソル個別表示をメニューにも対応。
- * 2021/7/14 Ver.1.4.1
- * 敵の対象選択時にエラーが出る問題を修正。
- * カーソル選択中にモンスターが倒されるとエラーが出る問題を修正。
- * 2021/7/14 Ver.1.4.0
- * 全体カーソル表示時のウィンドウのカーソル表示対象指定を独自に定義できる機能を追加。
- * 2021/7/14 Ver.1.3.2
- * 味方に戦闘不能者がいるときに全体選択するとエラーが出る問題を修正。
- * 2021/7/10 Ver.1.3.1
- * 処理を一部変更。
- * 2021/7/8 Ver.1.3.0
- * 全体、ランダム攻撃対象選択を敵選択時のみ表示させる機能を追加。
- * 2021/7/7 Ver.1.2.0
- * 全体選択の時にカーソルを一つにまとめずに別々に表示する機能を追加。
- * 2021/7/6 Ver.1.1.0
- * 敵味方全体対象の時に味方にも点滅するように変更。
- * 対象選択の表示省略をアイテム、スキルごとに設定できる機能を追加。
- * 2021/7/5 Ver.1.0.2
- * カーソル全体選択時の処理を修正。
- * プラグインパラメータのパラメータが間違っていたので修正。
- * 2021/7/5 Ver.1.0.1
- * 味方が奇数の時にカーソル全選択時の表示が正常に表示されない問題を修正。
- * 2021/7/4 Ver.1.0.0
- * 初版
- * 
- * @param EnemyOnrySelect
- * @desc 全体、ランダム攻撃の対象選択を敵のみ表示にします。
- * @text 全体、ランダム攻撃対象選択敵のみ表示
- * @type boolean
- * @default false
- * 
- * @param ForUserSelect
- * @desc 対象が使用者のみの時に選択画面を表示する。
- * @text 対象使用者のみ選択表示
- * @type boolean
- * @default false
- * 
- * @param MultiCursorMode
- * @desc 複数対象選択の時にカーソルを個別に表示する。
- * @text 複数対象カーソル個別表示
- * @type boolean
- * @default true
- * 
- * @param UserSelectTasg
- * @desc 全カーソル表示時に表示するカーソル表示対象設定。（複数対象カーソル個別表示がONの時に有効）
- * @text 全カーソル表示時対象設定
- * @type struct<UserSelectTasList>[]
- * @default ["{\"UserTagName\":\"NotUserTarget\",\"UserTagEval\":\"members.filter(member => member.isAlive() && member !== subject)\"}","{\"UserTagName\":\"DeathTarget\",\"UserTagEval\":\"members\"}"]
- * 
- * 
- * @param XPSelectSetting
- * @text XPスタイル対象選択ウィンドウ設定(要XPスタイル対象選択ウィンドウ)
- * @default ------------------------------
- * 
- * @param TargetUser
- * @desc 対象が使用者の時の表示名。
- * @text 表示名
- * @type string
- * @default 使用者
- * 
- * @param TargetEveryone
- * @desc 対象が敵味方全体の時の表示名。
- * @text 表示名
- * @type string
- * @default 敵味方全体
- * 
- * @param TargetParty
- * @desc 対象が味方全体の時の表示名。
- * @text 表示名
- * @type string
- * @default 味方全体
- * 
- * @param TargetTroop
- * @desc 対象が敵全体の時の表示名。
- * @text 表示名
- * @type string
- * @default 敵全体
- * 
- * @param TargetTroopRandom
- * @desc 対象が敵にランダムの時の表示名。
- * @text 表示名
- * @type string
- * @default 敵ランダム %2回
- * 
- */
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc All, random, and target selection for all-friend/enemy attacks
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Allows target selection for all, random, and all-friend/enemy attacks.
+
+Item and skill memo field
+<NoTargetSelect> This item or skill does not select a target. It is omitted,
+as with the default.
+Valid when the target is all, random, all allies and foes, or the user only
+(Target User Only Selection Display is ON).
+The following tags are valid when the range is all, random, or all allies and
+foes.
+
+You can define the target to display for the window cursor when the target
+range is all, random, or all allies and foes.
+Note that this does not affect enemy images, SV images, or actor images. Also,
+this is only valid when Individual Multi-Target Cursor Display is ON.
+subject = user:user;
+members = target members;
+The data retrieved is an array of members to display the cursor on.
+Example: members.filter(member => member.isAlive() && member !== subject)
+The cursor will be displayed on all but the user.
+
+Enter the tag in the memo field of an item or skill.
+<[tag]> [tag]: The tag name set in the All Cursors Target Settings.
+Example: <NotUserTarget> NotUserTarget displays cursors other than the user's
+unless the tag name in the All Cursors Target Settings has been changed.
+
+The following functions require the XP Style Target Selection Window plugin.
+Display name when selecting friendly or enemy targets
+%1: Consecutive count
+%2: Random count
+
+Default settings
+<NotUserTarget> Excludes the user.
+<DeathTarget> Includes those who are incapacitated.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+September 5, 2024 Ver. 1.6.3
+Fixed an issue where the command cursor would return to the beginning when
+canceling a defense command.
+May 30, 2021 Ver. 1.6.2
+Fixed a cursor issue when selecting all actors in the menu screen by creating
+a separate plugin definition.
+March 27, 2021 Ver. 1.6.1
+Fixed an incorrect plugin name for the XP-style target selection window.
+March 27, 2021 Ver. 1.6.0
+Added definitions to support the XP-style target selection window.
+Changed the evaluation formula used to determine target cursor display when
+displaying the full cursor.
+July 18, 2021 Ver. 1.5.1
+Fixed an issue where tags set in the target settings were not retrieved when
+displaying the full cursor.
+Fixed an issue where the cursor would appear on actors that were not the
+selected target when scrolling.
+July 17, 2021 Ver. 1.5.0
+Supports individual display of multiple target cursors in the menu.
+July 14, 2021 Ver. 1.4.1
+Fixed an issue where an error would occur when selecting an enemy target.
+Fixed an issue where an error would occur if a monster was defeated while
+selecting the cursor.
+July 14, 2021 Ver. 1.4.0
+Added a feature to custom define the target cursor display for windows when
+displaying the full cursor.
+July 14, 2021 Ver. 1.3.2
+Fixed an issue that caused an error when selecting all allies when there were
+incapacitated allies.
+July 10, 2021 Ver. 1.3.1
+Partially changed processing.
+July 8, 2021 Ver. 1.3.0
+Added a feature to display all-party and random attack target selection only
+when selecting enemies.
+July 7, 2021 Ver. 1.2.0
+Added a feature to display the cursors separately when selecting all allies
+instead of combining them.
+July 6, 2021 Ver. 1.1.0
+Changed so that allies also blink when selecting all allies and enemies.
+Added a feature to enable the omission of target selection display for each
+item and skill.
+July 5, 2021 Ver. 1.0.2
+Fixed processing when selecting all allies with the cursor.
+Fixed an incorrect plugin parameter.
+July 5, 2021 Ver. 1.0.1
+Fixed an issue where the cursor would not display correctly when selecting all
+allies when there was an odd number of allies.
+July 4, 2021 Ver. 1.0.0
+First release
+
+@param EnemyOnrySelect
+@text All, random attack target selected enemy only
+@desc Displays only enemies when selecting targets for all and random attacks.
+@type boolean
+@default false
+
+@param ForUserSelect
+@text Select and display only the target users
+@desc When the target is the user only, the selection screen will be displayed.
+@type boolean
+@default false
+
+@param MultiCursorMode
+@text Multiple target cursors displayed individually
+@desc Display cursors individually when selecting multiple targets.
+@type boolean
+@default true
+
+@param UserSelectTasg
+@text Target settings when all cursors are displayed
+@desc Cursor display target setting to be displayed when all cursors are displayed. (Valid when multiple target cursor individual display is ON)
+@type struct<UserSelectTasList>[]
+@default ["{\"UserTagName\":\"NotUserTarget\",\"UserTagEval\":\"members.filter(member => member.isAlive() && member !== subject)\"}","{\"UserTagName\":\"DeathTarget\",\"UserTagEval\":\"members\"}"]
+
+@param XPSelectSetting
+@text XP Style Target Selection Window Settings (Requires XP Style Target Selection Window)
+@default ------------------------------
+
+@param TargetUser
+@text display name
+@desc Display name when the target is a user.
+@type string
+@default 使用者
+
+@param TargetEveryone
+@text display name
+@desc Display name when targeting all allies and enemies.
+@type string
+@default 敵味方全体
+
+@param TargetParty
+@text display name
+@desc Display name when targeting all allies.
+@type string
+@default 味方全体
+
+@param TargetTroop
+@text display name
+@desc Display name when targeting all enemies.
+@type string
+@default 敵全体
+
+@param TargetTroopRandom
+@text display name
+@desc Display name when target is random enemy.
+@type string
+@default 敵ランダム %2回
+*/
+
 /*~struct~UserSelectTasList:
- * 
- * @param UserTagName
- * @desc 全カーソル表示で表示させる対象を指定するタグ名。
- * @text タグ名
- * @type string
- * @default
- * 
- * @param UserTagEval
- * @desc 全カーソル表示で対象のカーソル表示を判定させる評価式。
- * @text 評価式
- * @type combo
- * @option members.filter(member => member.isAlive() && member !== subject);
- * @option members;
- * @default
- * 
- * @param TargetName
- * @desc 対象選択時の表示名。(要XPスタイル対象選択ウィンドウ)
- * @text 表示名(要XPスタイル対象選択ウィンドウ)
- * @type string
- * @default 
- *
- */
+@param UserTagName
+@text Tag Name
+@desc The tag name that specifies what is displayed in the full cursor display.
+@type string
+
+@param UserTagEval
+@text evaluation expression
+@desc An evaluation formula that determines the target cursor display for all cursor displays.
+@type combo
+@option members.filter(member => member.isAlive() && member !== subject);
+@option members;
+
+@param TargetName
+@text Display Name (Requires XP-style target selection window)
+@desc Display name when selecting targets. (Requires XP-style target selection window)
+@type string
+*/
+
+/*:ja
+@target MZ
+@plugindesc 全体、ランダム、敵味方全体攻撃でも対象選択
+@author NUUN
+@base NUUN_Base
+@base NUUN_MenuStatusAllSelectFix
+@orderAfter NUUN_Base
+@orderAfter NUUN_MenuStatusAllSelectFix
+@version 1.6.3
+           
+@help  
+全体、ランダム、敵味方全体攻撃でも対象選択させます。
+
+アイテム、スキルのメモ欄
+<NoTargetSelect> このアイテム、スキルは対象選択しません。デフォルトと同様に省略されます。
+対象が全体、ランダム、敵味方全て、使用者のみ（対象使用者のみ選択表示をON）で有効です。
+以下のタグは範囲を全体、ランダム、敵味方全てにしたときに有効です。
+
+対象範囲が全体、ランダム、敵味方全体時のウィンドウカーソルの表示対象を独自に定義することが出来ます。
+なおエネミー画像、SV画像、アクター画像には反映されません。また複数対象カーソル個別表示がONの時のみ有効です。
+subject = 使用:者;
+members = 対象のメンバー;
+取得するデータはカーソル表示させるメンバーを配列として取得します。
+例:members.filter(member => member.isAlive() && member !== subject)
+使用者以外にカーソルが表示させます。
+
+タグはアイテム、スキルのメモ欄に記述します。
+<[tag]> [tag]:全カーソル表示時対象設定で設定したタグ名
+例:<NotUserTarget> NotUserTargetは全カーソル表示時対象設定のタグ名を変更してない限り、使用者以外のカーソルを表示します。
+
+以下の機能はXPスタイル対象選択ウィンドウプラグインが必要です。
+敵味方対象選択時の表示名
+%1:連続回数
+%2:ランダム回数
+
+デフォルト設定
+<NotUserTarget> 使用者除外。
+<DeathTarget> 戦闘不能者を含む。
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+
+更新履歴
+2024/9/5 Ver.1.6.3
+防御コマンドでキャンセルを行うとコマンドカーソル位置が先頭に戻ってしまう問題を修正。
+2021/5/30 Ver.1.6.2
+メニュー画面アクター全体選択時のカーソル不具合を別プラグイン化による定義修正。
+2021/3/27 Ver.1.6.1
+XP風対象選択ウィンドウのプラグイン名が間違っていたので修正。
+2021/3/27 Ver.1.6.0
+XPスタイル対象選択ウィンドウに対応するための定義追加。
+全カーソル表示で対象のカーソル表示を判定させる評価式の仕様を変更。
+2021/7/18 Ver.1.5.1
+全カーソル表示時対象設定で設定したタグが取得できていない問題を修正。
+スクロールしたときに選択対象になっていないアクターにカーソルが表示されてしまう問題を修正。
+2021/7/17 Ver.1.5.0
+複数対象カーソル個別表示をメニューにも対応。
+2021/7/14 Ver.1.4.1
+敵の対象選択時にエラーが出る問題を修正。
+カーソル選択中にモンスターが倒されるとエラーが出る問題を修正。
+2021/7/14 Ver.1.4.0
+全体カーソル表示時のウィンドウのカーソル表示対象指定を独自に定義できる機能を追加。
+2021/7/14 Ver.1.3.2
+味方に戦闘不能者がいるときに全体選択するとエラーが出る問題を修正。
+2021/7/10 Ver.1.3.1
+処理を一部変更。
+2021/7/8 Ver.1.3.0
+全体、ランダム攻撃対象選択を敵選択時のみ表示させる機能を追加。
+2021/7/7 Ver.1.2.0
+全体選択の時にカーソルを一つにまとめずに別々に表示する機能を追加。
+2021/7/6 Ver.1.1.0
+敵味方全体対象の時に味方にも点滅するように変更。
+対象選択の表示省略をアイテム、スキルごとに設定できる機能を追加。
+2021/7/5 Ver.1.0.2
+カーソル全体選択時の処理を修正。
+プラグインパラメータのパラメータが間違っていたので修正。
+2021/7/5 Ver.1.0.1
+味方が奇数の時にカーソル全選択時の表示が正常に表示されない問題を修正。
+2021/7/4 Ver.1.0.0
+初版
+
+@param EnemyOnrySelect
+@desc 全体、ランダム攻撃の対象選択を敵のみ表示にします。
+@text 全体、ランダム攻撃対象選択敵のみ表示
+@type boolean
+@default false
+
+@param ForUserSelect
+@desc 対象が使用者のみの時に選択画面を表示する。
+@text 対象使用者のみ選択表示
+@type boolean
+@default false
+
+@param MultiCursorMode
+@desc 複数対象選択の時にカーソルを個別に表示する。
+@text 複数対象カーソル個別表示
+@type boolean
+@default true
+
+@param UserSelectTasg
+@desc 全カーソル表示時に表示するカーソル表示対象設定。（複数対象カーソル個別表示がONの時に有効）
+@text 全カーソル表示時対象設定
+@type struct<UserSelectTasList>[]
+@default ["{\"UserTagName\":\"NotUserTarget\",\"UserTagEval\":\"members.filter(member => member.isAlive() && member !== subject)\"}","{\"UserTagName\":\"DeathTarget\",\"UserTagEval\":\"members\"}"]
+
+
+@param XPSelectSetting
+@text XPスタイル対象選択ウィンドウ設定(要XPスタイル対象選択ウィンドウ)
+@default ------------------------------
+
+@param TargetUser
+@desc 対象が使用者の時の表示名。
+@text 表示名
+@type string
+@default 使用者
+
+@param TargetEveryone
+@desc 対象が敵味方全体の時の表示名。
+@text 表示名
+@type string
+@default 敵味方全体
+
+@param TargetParty
+@desc 対象が味方全体の時の表示名。
+@text 表示名
+@type string
+@default 味方全体
+
+@param TargetTroop
+@desc 対象が敵全体の時の表示名。
+@text 表示名
+@type string
+@default 敵全体
+
+@param TargetTroopRandom
+@desc 対象が敵にランダムの時の表示名。
+@text 表示名
+@type string
+@default 敵ランダム %2回
+*/
+
+/*~struct~UserSelectTasList:ja
+
+@param UserTagName
+@desc 全カーソル表示で表示させる対象を指定するタグ名。
+@text タグ名
+@type string
+@default
+
+@param UserTagEval
+@desc 全カーソル表示で対象のカーソル表示を判定させる評価式。
+@text 評価式
+@type combo
+@option members.filter(member => member.isAlive() && member !== subject);
+@option members;
+@default
+
+@param TargetName
+@desc 対象選択時の表示名。(要XPスタイル対象選択ウィンドウ)
+@text 表示名(要XPスタイル対象選択ウィンドウ)
+@type string
+@default 
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_Scope_confirmation = true;
 

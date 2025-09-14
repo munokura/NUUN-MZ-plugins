@@ -8,44 +8,91 @@
  * 
  * 更新履歴
  * 2020/11/29 Ver 1.0.0
- */ 
+ */
+
 /*:
- * @target MZ
- * @plugindesc 敵グループの個別戦闘勝利敗北ME
- * @author NUUN
- * 
- * @help
- * 敵グループごとに戦闘勝利敗北MEを設定できます。
- * 
- * 敵グループのバトルイベントの１ページ目に注釈で記入してください。
- * 
- * 戦闘勝利時のME
- * <battleVictoryME:[name],[volume],[pitch],[pan],[eval]> [name]で指定したMEが再生られます。
- *  ※[eval]は省略できます。
- * 
- * 戦闘敗北時のME
- * <battleDefeatME:[name],[volume],[pitch],[pan],[eval]> [name]で指定したMEが再生られます。
- *  ※[eval]は省略できます。
- * 
- * [name]:MEファイル名（拡張子なし）
- * [volume]:音量
- * [pitch]:ピッチ
- * [pan]:位相
- * [eval]:再生条件（評価式）
- * 
- * 例
- * <battleVictoryME:Victory2, 90, 100, 50> 勝利時のMEがVictory2になります。
- * <battleDefeatME:Defeat2, 90, 100, 50> 敗北時のMEがDefeat2になります。
- * <battleVictoryME:Victory3, 90, 100, 50, $gameSwitches.value(3)> スイッチID３番がTrueの時、勝利時のMEがVictory3になります。
- * 
- * 条件付きのMEはなるべく優先度の高い順に上から記入してください。
- * 仕様上、一番最初に再生可能なMEが見つかったらそのMEが再生されます。
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 
- */ 
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Enemy group individual battle victory/defeat ME
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+You can set battle victory/defeat effects for each enemy group.
+
+Please enter these in the notes on the first page of the enemy group's battle
+event.
+
+Battle Victory Effects
+<battleVictoryME:[name],[volume],[pitch],[pan],[eval]> The effect specified in
+[name] will be played.
+*[eval] can be omitted.
+
+Battle Defeat Effects
+<battleDefeatME:[name],[volume],[pitch],[pan],[eval]> The effect specified in
+[name] will be played.
+*[eval] can be omitted.
+
+[name]: Effects file name (without extension)
+[volume]: Volume
+[pitch]: Pitch
+[pan]: Phase
+[eval]: Playback condition (evaluation formula)
+
+Example
+<battleVictoryME:Victory2, 90, 100, 50> The victory effect will be Victory2.
+<battleDefeatME:Defeat2, 90, 100, 50> The effect upon defeat will be Defeat2.
+<battleVictoryME:Victory3, 90, 100, 50, $gameSwitches.value(3)> When switch ID
+3 is True, the effect upon victory will be Victory3.
+
+For conditional effect modes, please list them in order of priority.
+By design, the first playable effect mode found will be played.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+*/
+
+/*:ja
+@target MZ
+@plugindesc 敵グループの個別戦闘勝利敗北ME
+@author NUUN
+
+@help
+敵グループごとに戦闘勝利敗北MEを設定できます。
+
+敵グループのバトルイベントの１ページ目に注釈で記入してください。
+
+戦闘勝利時のME
+<battleVictoryME:[name],[volume],[pitch],[pan],[eval]> [name]で指定したMEが再生られます。
+ ※[eval]は省略できます。
+
+戦闘敗北時のME
+<battleDefeatME:[name],[volume],[pitch],[pan],[eval]> [name]で指定したMEが再生られます。
+ ※[eval]は省略できます。
+
+[name]:MEファイル名（拡張子なし）
+[volume]:音量
+[pitch]:ピッチ
+[pan]:位相
+[eval]:再生条件（評価式）
+
+例
+<battleVictoryME:Victory2, 90, 100, 50> 勝利時のMEがVictory2になります。
+<battleDefeatME:Defeat2, 90, 100, 50> 敗北時のMEがDefeat2になります。
+<battleVictoryME:Victory3, 90, 100, 50, $gameSwitches.value(3)> スイッチID３番がTrueの時、勝利時のMEがVictory3になります。
+
+条件付きのMEはなるべく優先度の高い順に上から記入してください。
+仕様上、一番最初に再生可能なMEが見つかったらそのMEが再生されます。
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_BattleME = true;
 

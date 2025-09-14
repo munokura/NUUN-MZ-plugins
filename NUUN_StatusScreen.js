@@ -6,1628 +6,3282 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  */
+
 /*:
- * @target MZ
- * @plugindesc ステータス画面表示拡張
- * @author NUUN
- * @version 2.7.2
- * @base NUUN_Base
- * @orderAfter NUUN_Base
- * 
- * @help
- * ステータス画面を拡張します。
- * 各ページの表示するステータスの項目をカスタマイズできます。
- * 
- * 立ち絵の設定
- * このプラグインではアクターの立ち絵の表示ができます。
- * このプラグインは立ち絵、顔グラ表示EX対応です。
- * 立ち絵、顔グラ表示EXで設定した立ち絵の座標設定は立ち絵表示EX用画像設定で設定します。
- * なお設定をしなくても表示は可能です。
- * 立ち絵、顔グラ表示EXを使用しない場合は画像設定で立ち絵を設定してください。
- * 
- * ページの各項目の設定
- * 
- * 各ページの項目は「ページ項目設定」から設定します。
- * ステータスに表示するには「ページ設定」の「ページ項目設定」から表示させるリストを選択してください。
- * ゲージ、キャラチップは１ページに各ひとつずつしか表示できません。
- * 
- * 【名称の設定】
- * 能力値、追加能力値、特殊能力値、任意ステータス、装備、属性耐性、ステート耐性、名称のみ、記述欄、プロフィールで任意の名称を設定できます。
- * 
- * 【システム項目文字色の設定】
- * 名称及びシステム文字の文字色を指定します。
- * 
- * 【評価式or文字列の設定】
- * 評価式を記入します。オリジナルパラメータでは必ず記入してください。
- * 能力値、追加能力値、特殊能力値、任意ステータスで有効ですが無記入の場合は任意ステータス以外は自動的に参照されます。
- * actorclassは記述欄のみ指定します。
- * 
- * this._actorまたはactor 表示中のアクターのゲームデータ
- * dactor 表示中のアクターのデータベース
- * aclass 表示中のアクターの職業データ
- * 
- * ステート、属性耐性
- * rate:耐性率
- * 
- * レーダーチャート
- * レーダーチャートに表示する数値に適用されます。
- * value:パラメータ
- * 
- * 
- * 属性耐性、属性耐性
- * rate 単位付きの属性、ステート有効度
- * r:属性、ステート耐性値　全ての耐性値を乗算した数値 計算式で使用する場合はこちらを使用します。
- * 
- * 共通画像、個別画像
- * 評価式or文字列(javaScript)には表示条件をjavascriptで記入します。条件が一致しているときに表示されます。
- * 無記入の場合は常に表示されます。
- * actor:アクターゲームデータ
- * dactor:アクターシステムデータ
- * aclass 表示中のアクターの職業データ
- * 
- * ステート
- * 表示したいステートIDを,区切りで指定します。
- * 例 "1,5,11" 必ず''または""で囲む
- * "1-10" ステートID1～10番まで表示
- * "3-11,15"ステートID3～11,15番を表示
- * 
- * レーダーチャートを表示するにはNUUN_RadarChartBaseが必要です。
- * 
- * アクター、職業のメモ欄
- * 評価式or文字列でactorclassを選択することで職業のメモ欄から参照されます。指定しない場合はアクターのメモ欄から参照されます。
- * <[tag]:[text]> 記述欄のテキスト
- * [tag]:タグ名
- * [text]:表示するテキスト。
- * 改行すれば何行でも表示可能ですので、独自の項目を追加することも可能です。
- * <desc1:ああああ> desc1とタグ付けされた項目に「ああああ」が表示されます。
- * 文章を表示させる場合は<desc1:ああああ>と記入してください。
- * 
- * 
- * 
- * ステータスにアクターまたは職業別に画像を表示する。
- * アクター、職業のメモ欄
- * <[tag]:[Img]> 個別画像を表示します。
- * [tag]:タグ名
- * [text]:任意の個別画像。
- * 
- * 
- * 特定のアクター又は職業の表示させる装備を指定する。
- * アクター又は職業のメモ欄
- * <StatusShowEquips:[name],[name]...>
- * [name]:装備部位名
- * 指定した装備部位のみ表示されます。指定がない場合は全ての部位が表示されます。
- * アクターと職業両方に記入した場合はアクターの設定が優先されます。
- * 
- * 
- * キーボード操作
- * QWキー　キャラ切り替え
- * ←→キー　ページ切り替え(デフォルト設定)
- * 
- * タッチ操作
- * <>ボタン　キャラ切り替え
- * ΛVボタン　ページ切り替え
- * 
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2025/8/8 Ver.2.7.2
- * レーダーチャートのパラメータ名の表示方法の仕様を変更。
- * 2025/8/2 Ver.2.7.1
- * 属性、ステートの耐性率に耐性、弱点による文字色を変更できる機能を追加。(一覧表示、レーダーチャート)
- * 評価式or文字列(3)をレーダーチャートにも適用できるように修正。
- * 2025/7/20 Ver.2.7.0
- * ステータスのレーダーチャートを追加。
- * 属性のレーダーチャート数値座標設定が無かった問題を修正。
- * レーダーチャートの数値の修正。
- * 2025/6/5 Ver.2.6.14
- * レーダーチャートに数値を表示する機能実装による更新。
- * 2025/4/13 Ver.2.6.13
- * ゲージ画像化更新による処理の修正。
- * 2025/4/12 Ver.2.6.12
- * ゲージ画像化で経験値の数値を画像化できるように修正。(NUUN_GaugeImageVer.1.6.8以降)
- * 2025/3/21 Ver.2.6.11
- * 装備、属性、ステートでコンテンツ背景をOFFにしたときに、表示がずれる問題を修正。
- * 2024/5/25 Ver.2.6.10
- * 能力値、追加能力値、特殊能力値、オリジナルパラメータ、属性耐性、ステート耐性の単位にシステムカラーを適用できるように修正。
- * 2024/4/7 Ver.2.6.9
- * 小数点の桁数が正常に機能していない問題を修正。
- * 2024/4/6 Ver.2.6.8
- * 封印装備非表示をOFFにしても適用されてしまう問題を修正。
- * 現在の経験値、次のレベルまでを１行で表示させる機能を追加。
- * 2024/2/3 Ver.2.6.7
- * 特徴で封印されている装備を表示させない機能を追加。(一部プラグインの競合対策)
- * 2024/1/8 Ver.2.6.6
- * 競合対策。
- * 2023/11/23 Ver.2.6.5
- * 職業、二つ名に色を指定できるように対応。
- * 2023/6/30 Ver.2.6.4
- * 装備スロット名がなしまたはデータが存在しない場合は表示しないように修正。
- * 2023/5/21 Ver.2.6.3
- * 共通画像、個別画像に表示条件を指定できる機能を追加。
- * AvPort_dsWeaponMasteryと併用できるように対応。
- * 2023/5/4 Ver.2.6.2
- * 評価式に職業のデータを参照できるように修正。
- * 記述欄を職業から参照できるように修正。
- * 2023/3/15 Ver.2.6.1
- * String入力のエラー防止処理を追加。(NUUN_Base Ver.1.6.4以降)
- * 2023/3/14 Ver.2.6.0
- * 任意の画像を表示できる機能を追加。
- * ページ切り替えの処理を修正。
- * 2023/3/9 Ver.2.5.4
- * レーダーチャートの色設定が正常に適用されていなかった問題を修正。
- * システムカラー0番が指定できない問題を修正。
- * 2023/3/4 Ver.2.5.3
- * ページ切り替えのキー設定を指定できる機能を追加。(別途キー割り当てが出来るプラグインが必要です)
- * 2023/2/28 Ver.2.5.2
- * 特定の装備部位のみ表示させる機能を追加。
- * 2023/2/25 Ver.2.5.1
- * APNGに対応。
- * 2023/1/14 Ver.2.5.0
- * 各項目(一部を除く)にアイコンを指定できる機能を追加。
- * 各項目(一部を除く)に文字揃えを指定できる機能を追加。
- * サイドビューアクター表示に関する修正。
- * 次の経験値のY座標を修正。
- * 2022/12/15 Ver.2.4.6
- * カラー指定のプラグインパラメータのTypeをcolorに変更。(Ver.1.6.0以降)
- * アイコン指定のプラグインパラメータのTypeをiconに変更。(Ver.1.6.0以降)
- * 数値部分に数値フォントを指定できる機能を追加。
- * 2022/11/9 Ver.2.4.5
- * フォントサイズがおかしくなる問題を修正。
- * 2022/11/3 Ver.2.4.4
- * 特定の場面でエラーが出る問題を修正。
- * 2022/9/23 Ver.2.4.3
- * 一部プラグインの競合対策。
- * 2022/8/22 Ver.2.4.2
- * 制御文字でフォントサイズ変更をした後に、項目のフォントのサイズが変化してしまう問題を修正。
- * 2022/7/26 Ver.2.4.1
- * オリジナルパラメータの評価式が適用されていなかった問題を修正。
- * 2022/7/23 Ver.2.4.0
- * 評価式の仕様を変更。
- * ステートのアイコンを表示したいステートのみ表示する機能を追加。
- * バトルステータスに表示されるステートの表示をメニュー画面上に表示できる機能を追加。
- * 経験値の%表示時に小数点が指定した小数点数を無視して表示されてしまう問題を修正。
- * 2022/3/22 Ver.2.3.6
- * 属性、ステート耐性値の取得値を変更。
- * 2022/2/16 Ver.2.3.5
- * パラメータ評価式を属性耐性にも適用。
- * ステート耐性のアイコンをステータス用のアイコン画像にする機能を追加。
- * 2022/2/6 Ver.2.3.4
- * ステート無効化の有効度の色を指定できる機能を追加。
- * カラーコードに対応。要共通処理Ver.1.4.0以降（レーダーチャートを使用している場合はレーダーチャートベースを最新版にしてください）
- * 基本能力値に単位をつけられる機能を追加。
- * パラメータ評価式をステート耐性にも適用。
- * 2022/1/24 Ver.2.3.3
- * フォントサイズを指定できる機能を追加。
- * 評価式の仕様を変更。
- * 2022/1/9 Ver.2.3.2
- * 処理を一部修正。
- * 2021/12/11 Ver.2.3.1
- * 立ち絵、顔グラ表示EXで設定した勝利時の画像が戦闘終了後でも残ってしまう問題を修正。
- * 2021/12/11 Ver.2.3.0
- * 立ち絵表示EXに対応。
- * 2021/11/27 Ver.2.2.9
- * オリジナルパラメータにも小数点を指定できるように変更。
- * 2021/11/26 Ver.2.2.8
- * カラーコードに対応。
- * 一部の項目で名称が適用されない問題を修正。
- * 2021/11/7 Ver.2.2.7
- * 立ち絵の切り替え機能が機能していなかった問題を修正。
- * 2021/11/3 Ver.2.2.6
- * 最大HP、最大MPを表示できる機能を追加。
- * 2021/10/24 Ver.2.2.5
- * 最初に表示されるページを指定できる機能を追加。
- * 2021/9/19 Ver.2.2.4
- * コアスクリプトVer.1.3.3による修正。
- * 2021/8/24 Ver.2.2.3
- * 旧バージョンにプラグインパラメータの最大最小設定に関する修正。
- * 2021/8/11 Ver.2.2.2
- * パラメータの任意名称が取得できない問題を修正。
- * アクターのデータベースデータが記載のパラメータで取得出来ていなかった問題を修正。
- * 2021/8/7 Ver.2.2.1
- * ページ設定を初期設定のままステータス画面を開くとエラーが出る問題を修正。
- * 2021/8/4 Ver.2.2.0
- * 装備表示機能拡張。
- * 2021/7/19 Ver.2.1.1
- * レーダーチャートの座標調整でマイナス側に設定できなかった問題を修正。
- * 2021/7/19 Ver.2.1.0
- * 属性耐性、ステート耐性をレーダーチャートで表示する機能を追加。
- * ページ設定が正常に取得できていなかった問題を修正。
- * 2021/6/19 Ver.2.0.7
- * メンバーが一人の時にアクター切り替えのボタンを表示させないように修正。
- * 2021/6/5 Ver.2.0.6
- * サイドビューアクター画像で戦闘終了後にステータス画面を開くと戦闘勝利時のモーションが実行してしまう問題を修正。。
- * 2021/5/28 Ver.2.0.5
- * フロントビューでサイドビューアクターが表示されなかった問題を修正。
- * キャラを切り替えた時にモーションが反映されない問題を修正。
- * 2021/5/24 Ver.2.0.4
- * 小数点表示を能力値にも対応。
- * 2021/5/23 Ver.2.0.3
- * サイドビューアクターを表示させる機能を追加。
- * 2021/5/23 Ver.2.0.2
- * キャラチップを表示させる機能を追加。
- * 任意ステータスで単位が二つ表示される問題及び、単位を設定しないと表示されない問題を修正。
- * 2021/5/22 Ver.2.0.1
- * プラグインパラメータのページ設定の表示がおかしかった問題を修正。
- * 2021/5/20 Ver.2.0.0
- * 各項目を自由に設定、配置できるように変更。
- * アクター立ち絵を変更する機能を追加。
- * ウィンドウスキンを変更する機能を追加。
- * 2021/2/28 Ver.1.3.7
- * 「背景サイズをUIに合わせる」をfalseに設定時UIの左上基準に表示されてしまう問題を修正。
- * 2021/2/27 Ver.1.3.6
- * ステート有効度のステート無効化が反映されていなかった問題を修正。
- * 2021/2/23 Ver.1.3.5
- * プロフィール欄を表示させない機能を追加。
- * 2021/2/21 Ver.1.3.4
- * 追加パラメータ、特殊パラメータ、独自パラメータに任意の単位を付けられるように変更。
- * 2021/2/20 Ver.1.3.3
- * 追加パラメータ、特殊パラメータに任意のパラメータを追加できる機能を追加。
- * 2021/2/17 Ver.1.3.2
- * アクター立ち絵の拡大率が100以外の時に画像X座標がずれいてた問題を修正。
- * 2021/2/16 Ver.1.3.1
- * Scene_Base.prototype.isBottomButtonModeで設定を変更した際、ウィンドウがずれる問題を修正。
- * アクター立ち絵の拡大率が100以外の時に画像座標が下基準になっていなかったのを修正。
- * 2021/1/24 Ver.1.3.0
- * 独自パラメータを表示できる機能を追加。
- * 2021/1/9 Ver.1.2.0
- * 各項目の設定方法を変更。
- * 2020/12/28 Ver.1.1.2
- * 立ち絵の座標処理を修正。
- * 2020/12/8 Ver.1.1.1
- * 最大レベル時の次のレベルまでの経験値表示のゲージMAXで100％で表示するように修正。
- * 2020/12/7 Ver.1.1.0
- * 次のレベルまでの経験値表示を百分率表示に出来るよう対応。
- * 2020/11/26 Ver.1.0.7
- * 特殊パラメータでSparamIdを3に設定し、SparamNameを空欄の状態でステータス画面を開くと
- * 本来「薬の知識」が出るところ「回復効果率」と表示されてしまう問題を修正。
- * 2020/11/23 Ver.1.0.6
- * 立ち絵を表示位置を左、中央、右から選択し配置出来る機能を追加。
- * 2020/11/22 Ver.1.0.5
- * 背景画像を指定できる機能を追加。
- * 2020/11/19 Ver.1.0.4
- * 解像度とUIのサイズが違う場合に、ステータス詳細項目がウィンドウ外にずれる問題や、他のステータス項目と
- * 表示が被る問題を修正。
- * 2020/11/18 Ver.1.0.3
- * ステータス詳細項目が画面からはみ出た際、項目名が正常に表示されない問題を修正。
- * 一部処理を変更。
- * 2020/11/18 Ver.1.0.2
- * 表示外の少数点を四捨五入か切り捨てで丸める機能を追加。
- * 2020/11/17 Ver.1.0.1 
- * 追加能力値、特殊能力値、属性有効度、ステート有効度の表示できる小数点の桁数を指定できる機能を追加。
- * ページの切り替えをタッチ操作でも行えるように対応。
- * 2020/11/16 Ver.1.0.0
- * 初版
- * 
- * 
- * @command ChangeStartPage
- * @desc 表示させる開始ページを変更します。
- * @text 開始ページ変更
- * 
- * @arg StartPage
- * @type number
- * @default 0
- * @text 開始ページ
- * @desc 開始ページ。0でデフォルトになります。
- * 
- * @command ChangeStatusActorImg
- * @desc ステータス画面のアクター画像を変更します。
- * @text ステータス画面アクター画像変更
- * 
- * @arg actorId
- * @type actor
- * @default 0
- * @desc アクターを指定します。
- * @text アクターID
- * 
- * @arg ChangeActorImgId
- * @type number
- * @default 1
- * @min 1
- * @desc 変更する立ち絵のIDを指定します。立ち絵設定の画像設定のリスト番号を指定します。
- * @text 立ち絵ID
- * 
- * 
- * @param Setting
- * @text 共通設定
- * @default ------------------------------
- * 
- * @param DecimalMode
- * @text 端数処理四捨五入
- * @desc 表示外小数点を四捨五入で丸める。（falseで切り捨て）
- * @type boolean
- * @default true
- * @parent Setting
- * 
- * @param ExpPercent
- * @text 経験値百分率表示
- * @desc 経験値を百分率で表示
- * @type boolean
- * @default false
- * @parent Setting
- * 
- * @param HPGaugeWidth
- * @text HPゲージ横幅
- * @desc HPゲージの横幅を指定します。
- * @type number
- * @default 200
- * @parent Setting
- * 
- * @param HPGaugeHeight
- * @text HPゲージ縦幅
- * @desc HPゲージの横幅縦を指定します。
- * @type number
- * @default 12
- * @parent Setting
- * 
- * @param MPGaugeWidth
- * @text MPゲージ横幅
- * @desc MPゲージの横幅を指定します。
- * @type number
- * @default 200
- * @parent Setting
- * 
- * @param MPGaugeHeight
- * @text MPゲージ縦幅
- * @desc MPゲージの横幅縦を指定します。
- * @type number
- * @default 12
- * @parent Setting
- * 
- * @param TPGaugeWidth
- * @text TPゲージ横幅
- * @desc TPゲージの横幅を指定します。
- * @type number
- * @default 200
- * @parent Setting
- * 
- * @param TPGaugeHeight
- * @text TPゲージ縦幅
- * @desc TPゲージの横幅縦を指定します。
- * @type number
- * @default 12
- * @parent Setting
- * 
- * @param DefaultFontSize
- * @desc フォントサイズ（メインフォントからの差）
- * @text フォントサイズ
- * @type number
- * @default 0
- * @min -99
- * @parent Setting
- * 
- * @param FontMargin
- * @desc 項目の縦の文字の余白
- * @text 項目間縦余白
- * @type number
- * @default 10
- * @min 0
- * @parent Setting
- * 
- * @param ImgFolder
- * @desc 個別指定画像をフォルダ名を指定します。(img直下)
- * @text 個別指定画像フォルダ
- * @type string
- * @default pictures
- * @parent Setting
- * 
- * @param PageNextSymbol
- * @desc ページ送りのシンボル名(変更するには別途キー割り当てが出来るプラグインが必要です)
- * @text ページ送りシンボル名
- * @type combo
- * @option 
- * @option pageup2
- * @default 
- * @parent Setting
- * 
- * @param PagePreviousSymbol
- * @desc ページ戻りのシンボル名(変更するには別途キー割り当てが出来るプラグインが必要です)
- * @text ページ戻りシンボル名
- * @type combo
- * @option 
- * @option pagedown2
- * @default 
- * @parent Setting
- * 
- * @param ResistanceColor
- * @desc 耐性のパラメータの数値色。(属性、ステート) 
- * @text 耐性数値色
- * @type color
- * @default 0
- * @min 0
- * @parent Setting
- * 
- * @param WeaknessColor
- * @desc 弱点のパラメータの数値色。(属性、ステート)
- * @text 弱点数値色
- * @type color
- * @default 0
- * @min 0
- * @parent Setting
- * 
- * @param PageSetting
- * @text ページ設定
- * @default ------------------------------
- * 
- * @param PageList
- * @desc ページ項目設定
- * @text ページ項目設定
- * @type struct<PageListData>[]
- * @default ["{\"ParamLists\":\"1\"}","{\"ParamLists\":\"2\"}","{\"ParamLists\":\"3\"}"]
- * @parent PageSetting
- * 
- * @param ParamList_1Page
- * @desc 表示する項目。
- * @text 表示ページ項目１
- * @type struct<ParamListData>[]
- * @default ["{\"DateSelect\":\"1\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"3\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"192\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"2\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"432\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"100\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"24\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"4\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"120\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"5\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"3\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"10\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"11\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"24\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"19\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"48\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"40\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"41\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"1000\",\"NameColor\":\"0\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"6\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"12\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"13\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"14\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"9\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"15\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"10\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"16\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"11\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"17\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"12\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"62\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"7\",\"X_Coordinate\":\"300\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"474\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"1000\",\"NameColor\":\"0\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"13\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"90\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"14\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}"]
- * @parent PageSetting
- * 
- * @param ParamList_2Page
- * @desc 表示する項目。
- * @text 表示ページ項目２
- * @type struct<ParamListData>[]
- * @default ["{\"DateSelect\":\"1\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"3\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"192\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"2\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"432\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"100\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"24\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"4\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"120\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"5\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"3\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"10\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"11\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"24\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"19\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"48\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"40\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"41\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"1000\",\"NameColor\":\"0\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"6\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"20\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"21\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"8\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"22\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"9\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"23\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"9\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"24\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"10\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"25\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"10\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"26\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"11\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"27\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"11\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"28\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"12\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"29\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"12\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"30\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"31\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"8\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"32\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"9\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"33\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"9\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"34\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"10\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"35\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"10\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"36\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"11\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"37\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"11\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"38\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"12\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"39\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"12\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"51\",\"NameColor\":\"1\",\"ParamName\":\"追加ステータス\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'left'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"51\",\"NameColor\":\"1\",\"ParamName\":\"特殊ステータス\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'left'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}"]
- * @parent PageSetting
- * 
- * @param ParamList_3Page
- * @desc 表示する項目。
- * @text 表示ページ項目３
- * @type struct<ParamListData>[]
- * @default ["{\"DateSelect\":\"1\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"3\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"192\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"2\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"432\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"100\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"24\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"4\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"120\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"5\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"3\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"10\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"11\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"24\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"19\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"48\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"40\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"41\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"1000\",\"NameColor\":\"0\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"6\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"51\",\"NameColor\":\"2\",\"ParamName\":\"属性耐性\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'left'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"51\",\"NameColor\":\"2\",\"ParamName\":\"ステート耐性\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'left'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"60\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"368\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"61\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"368\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}"]
- * @parent PageSetting
- * 
- * @param ParamList_4Page
- * @desc 表示する項目。
- * @text 表示ページ項目４
- * @type struct<ParamListData>[]
- * @default []
- * @parent PageSetting
- * 
- * @param ParamList_5Page
- * @desc 表示する項目。
- * @text 表示ページ項目５
- * @type struct<ParamListData>[]
- * @default []
- * @parent PageSetting
- * 
- * @param StartPage
- * @text 開始表示ページ
- * @desc ステータスを開いたときに表示するページ。
- * @type number
- * @default 1
- * @min 1
- * @parent PageSetting
- * 
- * @param BackGroundSetting
- * @text 背景画像設定
- * @default ------------------------------
- * 
- * @param BackGroundImg
- * @desc 背景画像ファイル名を指定します。
- * @text 背景画像
- * @type file[]
- * @dir img/
- * @default 
- * @parent BackGroundSetting
- * 
- * @param BackUiWidth
- * @text 背景サイズをUIに合わせる
- * @desc 背景サイズをUIに合わせる。
- * @type boolean
- * @default true
- * @parent BackGroundSetting
- * 
- * @param StatusWindowsSkin
- * @desc ステータスウィンドウのウィンドウスキンを指定します。
- * @text ステータスウィンドウスキン
- * @type file
- * @dir img/system
- * @default 
- * @parent BackGroundSetting
- * 
- * @param ActorImgSetting
- * @text アクター設定
- * @default ------------------------------
- * 
- * @param ActorsImgList
- * @text 画像設定
- * @desc アクターの画像設定
- * @default []
- * @type struct<actorImgList>[]
- * @parent ActorImgSetting
- * 
- * @param ActorPictureData
- * @text 立ち絵表示EX用画像設定
- * @desc 立ち絵表示EXでのアクターの画像設定
- * @default []
- * @type struct<ActorPictureDataList>[]
- * @parent ActorImgSetting
- * 
- * @param ActorPictureEXApp
- * @text 立ち絵表示EX適用
- * @desc 立ち絵表示EXの画像変更を適用します。OFFにした場合はこのプラグインでの設定が適用されます。
- * @type boolean
- * @default true
- * @parent ActorImgSetting
- * 
- * @param actorPosition
- * @text 立ち絵表示位置
- * @desc 立ち絵の表示位置を指定します。
- * @type select
- * @option 左
- * @value 0
- * @option 中央
- * @value 1
- * @option 右
- * @value 2
- * @default 2
- * @parent ActorImgSetting
- * 
- * @param ActorCharacterAnimation
- * @text キャラチップ動作
- * @desc キャラチップを動作させます。
- * @type boolean
- * @default true
- * @parent ActorImgSetting
- * 
- * @param EquipSetting
- * @text 装備設定
- * @default ------------------------------
- * 
- * @param EquipNameVisible
- * @text 装備部位名表示
- * @desc 表示する装備部位名を指定します。
- * @type select
- * @option なし
- * @value 0
- * @option 部位のみ
- * @value 1
- * @option アイコンのみ
- * @value 2
- * @option アイコン、部位
- * @value 3
- * @default 1
- * @parent EquipSetting
- * 
- * @param EquipIcons
- * @type struct<EquipIconsData>[]
- * @text 装備アイコン
- * @desc 装備アイコンを設定します。IDは装備スロットの番号と同じです。
- * @default []
- * @parent EquipSetting
- * 
- * @param InvalidSlotHide
- * @text 封印装備非表示
- * @desc 特徴で封印されている装備を表示しません。
- * @type boolean
- * @default false
- * @parent EquipSetting
- * 
- * @param EXPSetting
- * @text 経験値設定
- * @default ------------------------------
- * 
- * @param NowEXPOneLine
- * @text 現在の経験値１行表示
- * @desc 現在の経験値を１行表示にします。
- * @type boolean
- * @default false
- * @parent EXPSetting
- * 
- * @param NextEXPOneLine
- * @text 次の経験値１行表示
- * @desc 次の経験値までを１行表示にします。
- * @type boolean
- * @default false
- * @parent EXPSetting
- * 
- * @param EXPGaugeVisible
- * @text 経験値ゲージ表示
- * @desc 経験値ゲージを表示する。
- * @type boolean
- * @default true
- * @parent EXPSetting
- * 
- * @param EXPGaugeColor1
- * @text 経験値ゲージ色１
- * @desc 経験値ゲージの色１
- * @type color
- * @default 17
- * @parent EXPSetting
- * 
- * @param EXPGaugeColor2
- * @text 経験値ゲージ色２
- * @desc 経験値ゲージの色２
- * @type color
- * @default 6
- * @parent EXPSetting
- * 
- * @param EXPGaugeX
- * @text EXPゲージX座標
- * @desc EXPゲージのX座標（相対）
- * @type number
- * @default 0
- * @parent EXPSetting
- * 
- * @param EXPGaugeY
- * @text EXPゲージY座標
- * @desc EXPゲージのY座標（相対）
- * @type number
- * @default 0
- * @parent EXPSetting
- * 
- * @param EXPGaugeWidth
- * @text EXPゲージ横幅
- * @desc EXPゲージの横幅を指定します。
- * @type number
- * @default 300
- * @parent EXPSetting
- * 
- * @param EXPGaugeHeight
- * @text EXPゲージ縦幅
- * @desc EXPゲージの横幅縦を指定します。
- * @type number
- * @default 12
- * @parent EXPSetting
- * 
- * @param EXPDecimal
- * @text 小数点桁数
- * @desc 表示出来る小数点桁数。
- * @type number
- * @default 2
- * @min 0
- * @max 99
- * @parent EXPSetting
- * 
- * @param ElementStateSetting
- * @text 属性設定
- * @default ------------------------------
- * 
- * @param ElementResist
- * @type struct<ElementData>[]
- * @text 属性耐性
- * @default ["{\"ElementNo\":\"1\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"2\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"3\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"4\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"5\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"6\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"7\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"8\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"9\",\"ElementIconId\":\"\"}"]
- * @parent ElementStateSetting
- * 
- * @param ElementResistText
- * @text 属性有効度名前表示
- * @desc 属性有効度の属性を名前で表示させます。
- * @type boolean
- * @default false
- * @parent ElementStateSetting
- * 
- * @param ElementResistCol
- * @text 属性有効度の表示列数
- * @desc 属性有効度の表示列数を設定します。
- * @type number
- * @default 2
- * @parent ElementStateSetting
- * 
- * @param StateStateSetting
- * @text ステート設定
- * @default ------------------------------
- * 
- * @param StateResist
- * @type struct<StateData>[]
- * @text 状態耐性
- * @default ["{\"StateNo\":\"4\"}","{\"StateNo\":\"5\"}","{\"StateNo\":\"6\"}","{\"StateNo\":\"7\"}","{\"StateNo\":\"8\"}","{\"StateNo\":\"9\"}","{\"StateNo\":\"10\"}","{\"StateNo\":\"12\"}","{\"StateNo\":\"13\"}"]
- * @parent StateStateSetting
- * 
- * @param StateResistText
- * @text ステート有効度名前表示
- * @desc ステート有効度のステートを名前で表示させます。
- * @type boolean
- * @default false
- * @parent StateStateSetting
- * 
- * @param StateResistCol
- * @text ステート有効度の表示列数
- * @desc ステート有効度の表示列数を設定します。
- * @type number
- * @default 2
- * @parent StateStateSetting
- * 
- * @param StateResistColor
- * @text ステート無効化時の色
- * @desc ステート無効化の時の色。（テキストタブでインデックスカラー指定可）
- * @type number
- * @default 0
- * @parent StateStateSetting
- * 
- * 
- * @param RadarChartSetting
- * @text レーダーチャート設定
- * @default 要NUUN_RadarChartBase
- * 
- * @param StatusRadarChart
- * @text ステータスレーダーチャート
- * @default ------------------------------
- * @parent RadarChartSetting
- * 
- * @param StatusRadarChartParamList
- * @desc 表示するステータス。
- * @text 表示ステータス
- * @type struct<RadarChartParamList>[]
- * @default 
- * @parent StatusRadarChart
- * 
- * @param DisplayNameModo
- * @desc レーダーチャートのパラメータ名表示を指定します。
- * @text パラメータ名表示
- * @type select
- * @option アイコンのみ
- * @value icon
- * @option パラメータ名のみ
- * @value param
- * @option アイコン及びパラメータ名
- * @value iconparams
- * @default param
- * @parent StatusRadarChart
- * 
- * @param StatusRadarChartRadius
- * @desc レーダチャートの半径。
- * @text レーダチャート半径
- * @type number
- * @default 100
- * @parent StatusRadarChart
- * 
- * @param StatusRadarChartFramecolor
- * @desc レーダチャートの枠の色を設定します。
- * @text レーダチャート枠色
- * @type color
- * @default 15
- * @parent StatusRadarChart
- * 
- * @param StatusRadarChartLineColor
- * @desc レーダチャートの線の色を設定します。
- * @text レーダチャート線色
- * @type color
- * @default 15
- * @parent StatusRadarChart
- * 
- * @param StatusRadarChartMainColor1
- * @desc レーダチャートの中心の背景色を設定します。
- * @text レーダチャート中心背景色
- * @type color
- * @default 3
- * @parent StatusRadarChart
- * 
- * @param StatusRadarChartMainColor2
- * @desc レーダチャートの外側背景色を設定します。
- * @text レーダチャート外側背景色
- * @type color
- * @default 3
- * @parent StatusRadarChart
- * 
- * @param StatusRadarChartX
- * @desc レーダチャートのX座標（相対）。
- * @text レーダチャートX座標
- * @type number
- * @min -9999
- * @max 9999
- * @default 48
- * @parent StatusRadarChart
- * 
- * @param StatusRadarChartY
- * @desc レーダチャートのY座標（相対）。
- * @text レーダチャートY座標
- * @type number
- * @min -9999
- * @max 9999
- * @default 48
- * @parent StatusRadarChart
- * 
- * @param StatusRadarChart_FontSize
- * @desc フォントサイズ。（メインフォントから）
- * @text フォントサイズ
- * @type number
- * @default -12
- * @min -9999
- * @max 9999
- * @parent StatusRadarChart
- * 
- * @param StatusRadarChart_IconSize
- * @desc アイコンサイズを指定します。0でデフォルトサイズ
- * @text アイコンサイズ
- * @type number
- * @default 0
- * @parent StatusRadarChart
- * 
- * @param StatusRadarChartValueData
- * @desc レーダーチャートに表示する数値設定。
- * @text 数値設定
- * @type struct<RadarChartValue>
- * @default
- * @parent StatusRadarChart
- * 
- * @param ElementRadarChart
- * @text 属性耐性レーダーチャート
- * @default ------------------------------
- * @parent RadarChartSetting
- * 
- * @param ElementDisplayNameModo
- * @desc レーダーチャートのパラメータ名表示を指定します。
- * @text パラメータ名表示
- * @type select
- * @option アイコンのみ
- * @value icon
- * @option パラメータ名のみ
- * @value param
- * @option アイコン及びパラメータ名
- * @value iconparam
- * @default icon
- * @parent ElementRadarChart
- * 
- * @param ElementRadarChartRadius
- * @desc レーダチャートの半径。
- * @text レーダチャート半径
- * @type number
- * @default 100
- * @parent ElementRadarChart
- * 
- * @param ElementRadarChartFramecolor
- * @desc レーダチャートの枠の色を設定します。
- * @text レーダチャート枠色
- * @type color
- * @default 15
- * @parent ElementRadarChart
- * 
- * @param ElementRadarChartLineColor
- * @desc レーダチャートの線の色を設定します。
- * @text レーダチャート線色
- * @type color
- * @default 15
- * @parent ElementRadarChart
- * 
- * @param ElementRadarChartMainColor1
- * @desc レーダチャートの中心の背景色を設定します。
- * @text レーダチャート中心背景色
- * @type color
- * @default 3
- * @parent ElementRadarChart
- * 
- * @param ElementRadarChartMainColor2
- * @desc レーダチャートの外側背景色を設定します。
- * @text レーダチャート外側背景色
- * @type color
- * @default 3
- * @parent ElementRadarChart
- * 
- * @param ElementRadarChartX
- * @desc レーダチャートのX座標（相対）。
- * @text レーダチャートX座標
- * @type number
- * @min -9999
- * @max 9999
- * @default 48
- * @parent ElementRadarChart
- * 
- * @param ElementRadarChartY
- * @desc レーダチャートのY座標（相対）。
- * @text レーダチャートY座標
- * @type number
- * @min -9999
- * @max 9999
- * @default 48
- * @parent ElementRadarChart
- * 
- * @param ElementRadarChart_FontSize
- * @desc フォントサイズ。（メインフォントから）
- * @text フォントサイズ
- * @type number
- * @default -12
- * @min -9999
- * @max 9999
- * @parent ElementRadarChart
- * 
- * @param ElementRadarChart_IconSize
- * @desc アイコンサイズを指定します。0でデフォルトサイズ
- * @text アイコンサイズ
- * @type number
- * @default 0
- * @parent ElementRadarChart
- * 
- * @param ElementRadarChartValueData
- * @desc レーダーチャートに表示する数値設定。
- * @text 数値設定
- * @type struct<RadarChartValue>
- * @default
- * @parent ElementRadarChart
- * 
- * @param StateRadarChart
- * @text ステート耐性レーダーチャート
- * @default ------------------------------
- * @parent RadarChartSetting
- * 
- * @param StateDisplayNameModo
- * @desc レーダーチャートのパラメータ名表示を指定します。
- * @text パラメータ名表示
- * @type select
- * @option アイコンのみ
- * @value icon
- * @option パラメータ名のみ
- * @value param
- * @option アイコン及びパラメータ名
- * @value iconparam
- * @default icon
- * @parent StateRadarChart
- * 
- * @param StateRadarChartRadius
- * @desc レーダチャートの半径。
- * @text レーダチャート半径
- * @type number
- * @default 100
- * @parent StateRadarChart
- * 
- * @param StateRadarChartFramecolor
- * @desc レーダチャートの枠の色を設定します。
- * @text レーダチャート枠色
- * @type color
- * @default 15
- * @parent StateRadarChart
- * 
- * @param StateRadarChartLineColor
- * @desc レーダチャートの線の色を設定します。
- * @text レーダチャート線色
- * @type color
- * @default 15
- * @parent StateRadarChart
- * 
- * @param StateRadarChartMainColor1
- * @desc レーダチャートの中心の背景色を設定します。
- * @text レーダチャート中心背景色
- * @type color
- * @default 3
- * @parent StateRadarChart
- * 
- * @param StateRadarChartMainColor2
- * @desc レーダチャートの外側背景色を設定します。
- * @text レーダチャート外側背景色
- * @type color
- * @default 3
- * @parent StateRadarChart
- * 
- * @param StateRadarChartX
- * @desc レーダチャートのX座標（相対）。
- * @text レーダチャートX座標
- * @type number
- * @min -9999
- * @default 48
- * @parent StateRadarChart
- * 
- * @param StateRadarChartY
- * @desc レーダチャートのY座標（相対）。
- * @text レーダチャートY座標
- * @type number
- * @min -9999
- * @default 48
- * @parent StateRadarChart
- * 
- * @param StateRadarChart_FontSize
- * @desc フォントサイズ。（メインフォントから）
- * @text フォントサイズ
- * @type number
- * @default -12
- * @min -9999
- * @parent StateRadarChart
- * 
- * @param StateRadarChart_IconSize
- * @desc アイコンサイズを指定します。0でデフォルトサイズ
- * @text アイコンサイズ
- * @type number
- * @default 0
- * @parent StateRadarChart
- * 
- * @param StateRadarChartValueData
- * @desc レーダーチャートに表示する数値設定。
- * @text 数値設定
- * @type struct<RadarChartValue>
- * @default
- * @parent StateRadarChart
- * 
- */
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Status screen display expansion
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Expands the status screen.
+You can customize the status items displayed on each page.
+
+Character Image Settings
+This plugin allows you to display actor character images.
+This plugin supports character images and Face Graphics Display EX.
+The coordinate settings for character images set in Character Image Display EX
+are set in the Character Image Display EX Image Settings.
+Display is possible without these settings.
+If you are not using Character Image Display EX, set the character image in
+the Image Settings.
+
+Page Item Settings
+
+Items for each page are set in "Page Item Settings."
+To display them in the status, select the list to display from "Page Item
+Settings" under "Page Settings."
+Only one gauge and one character chip can be displayed per page.
+
+[Name Settings]
+You can set custom names for stats, additional stats, special stats, optional
+stats, equipment, attribute resistance, state resistance, name only,
+description, and profile.
+
+[System Item Text Color Settings]
+Specify the text color for the name and system text.
+
+[Setting the Evaluation Formula or String]
+Enter the evaluation formula. Must be entered for original parameters.
+Valid for ability scores, additional ability scores, special ability scores,
+and optional stats. If left blank, all stats except optional stats will be
+automatically referenced.
+Only specify the actor class in the description field.
+
+this._actor or actor: Game data for the currently displayed actor.
+dactor: Database for the currently displayed actor.
+aclass: Job data for the currently displayed actor.
+
+State, attribute resistance
+rate: Resistance rate
+
+Radar chart
+Applies to the values displayed in the radar chart.
+value: Parameter
+
+Attribute resistance, attribute resistance
+rate: Attribute or state effectiveness with units
+r: Attribute or state resistance value: Numerical value obtained by
+multiplying all resistance values. Use this when using in a calculation
+formula.
+
+Common image, individual image
+Enter the display conditions in JavaScript for the evaluation formula or
+string (JavaScript). The display will be displayed when the conditions are
+met.
+If left blank, the display will always be displayed.
+actor: Actor game data
+actor: Actor system data
+aclass: The currently displayed actor's profession data
+
+State
+Specify the state IDs you want to display, separated by commas.
+Example: "1,5,11" (Be sure to enclose in quotation marks (') or "")
+"1-10": Displays state IDs 1 through 10
+"3-11,15": Displays state IDs 3 through 11, 15
+
+NUUN_RadarChartBase is required to display radar charts.
+
+Actor and profession memo field
+Selecting an actor class using an evaluation formula or string will reference
+it in the profession memo field. If not specified, it will reference it in the
+actor memo field.
+<[tag]:[text]> Description text
+[tag]: Tag name
+[text]: Text to display.
+You can display as many lines as you like by inserting line breaks, so you can
+add your own items.
+<desc1:ああああ> "ああああ" will appear in the item tagged with desc1.
+To display text, enter <desc1:ああああ>.
+
+Displays an image for each actor or class in the status bar.
+Actor and class memo field
+<[tag]:[Img]> Displays an individual image.
+[tag]: Tag name
+[text]: Optional individual image.
+
+Specifies equipment to display for a specific actor or class.
+Actor or class memo field
+<StatusShowEquips:[name],[name]...>
+[name]: Equipment part name
+Only the specified equipment part will be displayed. If no name is specified,
+all parts will be displayed.
+If both the actor and class are entered, the actor setting will take
+precedence.
+
+Keyboard Controls
+QW Key: Switch characters
+←→ Key: Switch pages (default setting)
+
+Touch Controls
+<> Button: Switch characters
+ΛV Button: Switch pages
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+2025/8/8 Ver.2.7.2
+Changed the display method for radar chart parameter names.
+August 2, 2025 Ver. 2.7.1
+Added the ability to change the text color for resistances and weaknesses to
+attribute and status resistance rates. (List view, radar chart)
+Fixed so that evaluation formula or string (3) can also be applied to radar
+charts.
+July 20, 2025 Ver. 2.7.0
+Added a radar chart for statuses.
+Fixed an issue where numerical coordinate settings were not available for
+attribute radar charts.
+Fixed radar chart values.
+June 5, 2025 Ver. 2.6.14
+Updated to include the ability to display numerical values on radar charts.
+April 13, 2025 Ver. 2.6.13
+Fixed processing for gauge visualization updates.
+April 12, 2025 Ver. 2.6.12
+Fixed so that experience value values can be visualized when using gauge
+visualization. (NUUN_GaugeImage Ver. 1.6.8 or later)
+March 21, 2025 Ver. 2.6.11
+Fixed an issue where the display would shift when the content background was
+turned off for equipment, attributes, or states.
+May 25, 2024 Ver. 2.6.10
+Fixed an issue where system colors could be applied to units of stats, bonus
+stats, special stats, original parameters, attribute resistance, and state
+resistance.
+April 7, 2024 Ver. 2.6.9
+Fixed an issue where the number of decimal points was not functioning
+properly.
+April 6, 2024 Ver. 2.6.8
+Fixed an issue where the hide sealed equipment setting was still applied even
+when it was turned off.
+Added a feature to display the current experience points and the next level on
+a single line.
+February 3, 2024 Ver. 2.6.7
+Added a feature to hide equipment sealed by features. (Fixed conflicts with
+some plugins.)
+January 8, 2024 Ver. 2.6.6
+Fixed conflicts.
+November 23, 2023 Ver. 2.6.5
+Added the ability to specify colors for jobs and nicknames.
+June 30, 2023 Ver. 2.6.4
+Fixed the issue of not displaying equipment slot names if they are missing or
+if no data exists.
+May 21, 2023 Ver. 2.6.3
+Added the ability to specify display conditions for common and individual
+images.
+Enabled use with AvPort_dsWeaponMastery.
+May 4, 2023 Ver. 2.6.2
+Fixed the ability to reference job data in the evaluation formula.
+Fixed the ability to reference the description field from the job.
+March 15, 2023 Ver. 2.6.1
+Added error prevention for string input. (NUUN_Base Ver. 1.6.4 and later)
+March 14, 2023 Ver. 2.6.0
+Added the ability to display custom images.
+Fixed page switching processing.
+March 9, 2023 Ver. 2.5.4
+Fixed an issue where radar chart color settings were not being applied
+correctly.
+Fixed an issue where system color 0 could not be specified.
+March 4, 2023 Ver. 2.5.3
+Added the ability to specify key settings for page switching. (Requires a
+separate plugin that allows key assignment.)
+February 28, 2023 Ver. 2.5.2
+Added the ability to display only specific equipment parts.
+February 25, 2023 Ver. 2.5.1
+Added support for APNG.
+January 14, 2023 Ver. 2.5.0
+Added the ability to specify icons for each item (with some exceptions).
+Added the ability to specify text alignment for each item (with some
+exceptions).
+Fixed a side view actor display issue.
+Fixed the Y coordinate for the next experience point.
+December 15, 2022 Ver. 2.4.6
+Changed the Type of the color specification plugin parameter to color. (Ver.
+1.6.0 and later)
+Changed the Type of the icon-specifying plugin parameter to "icon." (Ver.
+1.6.0 and later)
+Added the ability to specify a numeric font for the numeric portion.
+2022/11/9 Ver. 2.4.5
+Fixed an issue where font size was incorrect.
+2022/11/3 Ver. 2.4.4
+Fixed an issue where an error occurred in certain situations.
+2022/9/23 Ver. 2.4.3
+Fixed a conflict with some plugins.
+2022/8/22 Ver. 2.4.2
+Fixed an issue where the font size of an item would change after changing the
+font size with a control character.
+2022/7/26 Ver. 2.4.1
+Fixed an issue where the original parameter evaluation formula was not being
+applied.
+2022/7/23 Ver. 2.4.0
+Changed the evaluation formula specifications.
+Added a function to display only the states for which you want to display
+state icons.
+Added a function to display the states displayed in the battle status on the
+menu screen.
+Fixed an issue where the decimal point would be displayed ignoring the
+specified decimal point when displaying experience points as a percentage.
+March 22, 2022 Ver. 2.3.6
+Changed the acquired values for attribute and state resistances.
+February 16, 2022 Ver. 2.3.5
+Applies parameter evaluation formula to attribute resistances as well.
+Added a feature to change the state resistance icon to a status icon image.
+February 6, 2022 Ver. 2.3.4
+Added a feature to specify the color of state nullification effectiveness.
+Supports color coding. Requires common processing Ver. 1.4.0 or later (if
+using radar charts, please update to the latest radar chart base).
+Added a feature to assign units to basic ability values.
+Applies parameter evaluation formula to state resistances as well.
+January 24, 2022 Ver. 2.3.3
+Added the ability to specify font size.
+Changed the evaluation formula specifications.
+January 9, 2022 Ver. 2.3.2
+Made some processing corrections.
+December 11, 2021 Ver. 2.3.1
+Fixed an issue where the victory image set in Standing Portrait and Face
+Graphics Display EX would remain even after the battle ended.
+December 11, 2021 Ver. 2.3.0
+Supports Standing Portrait Display EX.
+November 27, 2021 Ver. 2.2.9
+Added the ability to specify decimal points for original parameters.
+November 26, 2021 Ver. 2.2.8
+Supports color codes.
+Fixed an issue where some item names were not being applied.
+November 7, 2021 Ver. 2.2.7
+Fixed an issue where the standing portrait switching function was not working.
+November 3, 2021 Ver. 2.2.6
+Added a feature to display maximum HP and maximum MP.
+October 24, 2021 Ver. 2.2.5
+Added a feature to specify the initial page to be displayed.
+September 19, 2021 Ver. 2.2.4
+Fixed by Core Script Ver. 1.3.3.
+August 24, 2021 Ver. 2.2.3
+Fixed a bug in the previous version regarding maximum and minimum plugin
+parameter settings.
+August 11, 2021 Ver. 2.2.2
+Fixed an issue where custom parameter names could not be obtained.
+Fixed an issue where actor database data could not be obtained with the
+specified parameters.
+August 7, 2021 Ver. 2.2.1
+Fixed an issue where an error would occur when opening the status screen with
+the default page settings.
+August 4, 2021 Ver. 2.2.0
+Expanded equipment display function.
+July 19, 2021 Ver. 2.1.1
+Fixed an issue where radar chart coordinate adjustments could not be set to
+the negative side.
+July 19, 2021 Ver. 2.1.0
+Added the ability to display elemental and state resistances on the radar
+chart.
+Fixed an issue where page settings were not being obtained correctly.
+June 19, 2021 Ver. 2.0.7
+Fixed an issue where the actor switching button would not appear when there
+was only one teammate.
+June 5, 2021 Ver. 2.0.6
+Fixed an issue where the victory animation would be executed when opening the
+status screen after a battle with a side-view actor image.
+May 28, 2021 Ver. 2.0.5
+Fixed an issue where the side-view actor would not appear in the front view.
+Fixed an issue where animations would not be reflected when switching
+characters.
+May 24, 2021 Ver. 2.0.4
+Added decimal point display to ability values.
+May 23, 2021 Ver. 2.0.3
+Added a feature to display the side-view actor.
+May 23, 2021 Ver. 2.0.2
+Added a feature to display character chips.
+Fixed an issue where two units were displayed for arbitrary statuses, and an
+issue where units would not be displayed unless they were set.
+May 22, 2021 Ver. 2.0.1
+Fixed an issue where the plugin parameter page settings were displayed
+incorrectly.
+May 20, 2021 Ver. 2.0.0
+Allows free configuration and placement of each parameter.
+Added the ability to change actor portraits.
+Added the ability to change window skins.
+February 28, 2021 Ver. 1.3.7
+Fixed an issue where background size was displayed relative to the top left of
+the UI when "Fit background size to UI" was set to false.
+February 27, 2021 Ver. 1.3.6
+Fixed an issue where disabled states were not reflected in the State Validity
+settings.
+February 23, 2021 Ver. 1.3.5
+Added the ability to hide the profile section.
+February 21, 2021 Ver. 1.3.4
+Allows custom units to be assigned to additional parameters, special
+parameters, and custom parameters.
+February 20, 2021 Ver. 1.3.3
+Added the ability to add custom parameters to additional parameters and
+special parameters.
+February 17, 2021 Ver. 1.3.2
+Fixed an issue where the image X coordinate was misaligned when the actor
+portrait magnification was set to a value other than 100.
+February 16, 2021 Ver. 1.3.1
+Fixed an issue where the window would shift when changing the setting in
+Scene_Base.prototype.isBottomButtonMode.
+Fixed an issue where the image coordinates were not based on the bottom when
+the actor portrait magnification was set to a value other than 100.
+January 24, 2021 Ver. 1.3.0
+Added the ability to display custom parameters.
+January 9, 2021 Ver. 1.2.0
+Changed the setting method for each item.
+December 28, 2020 Ver. 1.1.2
+Fixed the handling of character portrait coordinates.
+December 8, 2020 Ver. 1.1.1
+Fixed the EXP gauge for the next level to display 100% when it's at maximum
+level.
+December 7, 2020 Ver. 1.1.0
+Added the ability to display EXP as a percentage.
+November 26, 2020 Ver. 1.0.7
+Fixed an issue where, when opening the status screen with SparamId set to 3
+and SparamName left blank in the special parameters, it would display
+"Recovery Effect Rate" instead of "Medicine Knowledge."
+November 23, 2020 Ver. 1.0.6
+Added the ability to position character portraits by selecting left, center,
+or right.
+November 22, 2020 Ver. 1.0.5
+Added the ability to specify a background image.
+November 19, 2020 Ver. 1.0.4
+Fixed an issue where status details items would shift outside the window or
+overlap with other status items when the resolution and UI size were
+different.
+November 18, 2020 Ver. 1.0.3
+Fixed an issue where item names would not display correctly when status
+details items extended beyond the screen.
+Some processing changes were made.
+November 18, 2020 Ver. 1.0.2
+Added a feature to round off or truncate decimal points that are not
+displayed.
+November 17, 2020 Ver. 1.0.1
+Added a feature to specify the number of decimal points to display for
+additional ability scores, special ability scores, attribute effectiveness,
+and state effectiveness.
+Added support for switching pages via touch.
+November 16, 2020 Ver. 1.0.0
+First version
+
+@param Setting
+@text Common Settings
+@default ------------------------------
+
+@param DecimalMode
+@text Rounding off
+@desc Round off the decimal point outside the display (false to truncate).
+@type boolean
+@default true
+@parent Setting
+
+@param ExpPercent
+@text Experience percentage display
+@desc Experience points displayed as a percentage
+@type boolean
+@default false
+@parent Setting
+
+@param HPGaugeWidth
+@text HP gauge width
+@desc Specifies the width of the HP gauge.
+@type number
+@default 200
+@parent Setting
+
+@param HPGaugeHeight
+@text HP gauge vertical width
+@desc Specify the width and height of the HP gauge.
+@type number
+@default 12
+@parent Setting
+
+@param MPGaugeWidth
+@text MP gauge width
+@desc Specifies the width of the MP gauge.
+@type number
+@default 200
+@parent Setting
+
+@param MPGaugeHeight
+@text MP gauge vertical width
+@desc Specify the width and height of the MP gauge.
+@type number
+@default 12
+@parent Setting
+
+@param TPGaugeWidth
+@text TP gauge width
+@desc Specify the width of the TP gauge.
+@type number
+@default 200
+@parent Setting
+
+@param TPGaugeHeight
+@text TP gauge vertical width
+@desc Specify the width and height of the TP gauge.
+@type number
+@default 12
+@parent Setting
+
+@param DefaultFontSize
+@text Font size
+@desc Font size (difference from main font)
+@type number
+@default 0
+@min -99
+@parent Setting
+
+@param FontMargin
+@text Vertical margin between items
+@desc Vertical text margin of item
+@type number
+@default 10
+@min 0
+@parent Setting
+
+@param ImgFolder
+@text Individually specified image folder
+@desc Specify the folder name for the individual image (directly under img).
+@type string
+@default pictures
+@parent Setting
+
+@param PageNextSymbol
+@text Pagination symbol name
+@desc Pagination symbol name (to change it, a separate plug-in that allows key assignment is required)
+@type combo
+@option pageup2
+@parent Setting
+
+@param PagePreviousSymbol
+@text Page return symbol name
+@desc Page return symbol name (to change it, a separate plugin that allows key assignment is required)
+@type combo
+@option pagedown2
+@parent Setting
+
+@param ResistanceColor
+@text Resistance number color
+@desc Numeric color of resistance parameters (attributes, states)
+@type color
+@default 0
+@min 0
+@parent Setting
+
+@param WeaknessColor
+@text Weakness value color
+@desc Weakness parameter value color (attribute, state)
+@type color
+@default 0
+@min 0
+@parent Setting
+
+@param PageSetting
+@text Page Setup
+@default ------------------------------
+
+@param PageList
+@text Page Item Settings
+@desc Page Item Settings
+@type struct<PageListData>[]
+@default ["{\"ParamLists\":\"1\"}","{\"ParamLists\":\"2\"}","{\"ParamLists\":\"3\"}"]
+@parent PageSetting
+
+@param ParamList_1Page
+@text Display page item 1
+@desc The item to display.
+@type struct<ParamListData>[]
+@default ["{\"DateSelect\":\"1\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"3\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"192\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"2\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"432\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"100\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"24\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"4\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"120\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"5\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"3\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"10\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"11\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"24\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"19\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"48\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"40\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"41\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"1000\",\"NameColor\":\"0\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"6\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"12\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"13\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"14\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"9\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"15\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"10\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"16\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"11\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"17\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"12\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"62\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"7\",\"X_Coordinate\":\"300\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"474\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"1000\",\"NameColor\":\"0\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"13\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"90\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"14\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}"]
+@parent PageSetting
+
+@param ParamList_2Page
+@text Display page item 2
+@desc The item to display.
+@type struct<ParamListData>[]
+@default ["{\"DateSelect\":\"1\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"3\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"192\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"2\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"432\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"100\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"24\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"4\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"120\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"5\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"3\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"10\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"11\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"24\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"19\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"48\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"40\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"41\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"1000\",\"NameColor\":\"0\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"6\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"20\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"21\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"8\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"22\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"9\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"23\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"9\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"24\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"10\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"25\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"10\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"26\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"11\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"27\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"11\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"28\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"12\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"29\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"12\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"30\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"31\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"8\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"32\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"9\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"33\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"9\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"34\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"10\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"35\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"10\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"36\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"11\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"37\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"11\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"38\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"12\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"39\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"12\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"51\",\"NameColor\":\"1\",\"ParamName\":\"追加ステータス\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'left'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"51\",\"NameColor\":\"1\",\"ParamName\":\"特殊ステータス\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'left'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}"]
+@parent PageSetting
+
+@param ParamList_3Page
+@text Display page item 3
+@desc The item to display.
+@type struct<ParamListData>[]
+@default ["{\"DateSelect\":\"1\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"3\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"192\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"2\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"432\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"100\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"24\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"4\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"120\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"5\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"3\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"10\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"11\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"24\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"19\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"48\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"40\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"41\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"1000\",\"NameColor\":\"0\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"6\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"51\",\"NameColor\":\"2\",\"ParamName\":\"属性耐性\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'left'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"51\",\"NameColor\":\"2\",\"ParamName\":\"ステート耐性\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'left'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"60\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"368\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"61\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"368\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}"]
+@parent PageSetting
+
+@param ParamList_4Page
+@text Display page item 4
+@desc The item to display.
+@type struct<ParamListData>[]
+@default []
+@parent PageSetting
+
+@param ParamList_5Page
+@text Display page item 5
+@desc The item to display.
+@type struct<ParamListData>[]
+@default []
+@parent PageSetting
+
+@param StartPage
+@text Starting Display Page
+@desc The page to display when you open the status.
+@type number
+@default 1
+@min 1
+@parent PageSetting
+
+@param BackGroundSetting
+@text Background image settings
+@default ------------------------------
+
+@param BackGroundImg
+@text background image
+@desc Specifies the background image file name.
+@type file[]
+@dir img/
+@parent BackGroundSetting
+
+@param BackUiWidth
+@text Match background size to UI
+@desc Match the background size to the UI.
+@type boolean
+@default true
+@parent BackGroundSetting
+
+@param StatusWindowsSkin
+@text Status Window Skin
+@desc Specifies the window skin for the status window.
+@type file
+@dir img/system
+@parent BackGroundSetting
+
+@param ActorImgSetting
+@text Actor Settings
+@default ------------------------------
+
+@param ActorsImgList
+@text Image Settings
+@desc Actor Image Settings
+@type struct<actorImgList>[]
+@default []
+@parent ActorImgSetting
+
+@param ActorPictureData
+@text Standing character display EX image settings
+@desc Actor image settings for Standing Image Display EX
+@type struct<ActorPictureDataList>[]
+@default []
+@parent ActorImgSetting
+
+@param ActorPictureEXApp
+@text Standing picture display EX applied
+@desc Applies the image change of Standing Picture Display EX. If it is turned OFF, the settings of this plugin will be applied.
+@type boolean
+@default true
+@parent ActorImgSetting
+
+@param actorPosition
+@text Character image display position
+@desc Specifies the display position of the standing image.
+@type select
+@default 2
+@option left
+@value 0
+@option center
+@value 1
+@option right
+@value 2
+@parent ActorImgSetting
+
+@param ActorCharacterAnimation
+@text Character chip movement
+@desc Activate the character chip.
+@type boolean
+@default true
+@parent ActorImgSetting
+
+@param EquipSetting
+@text Equipment Settings
+@default ------------------------------
+
+@param EquipNameVisible
+@text Equipment part name display
+@desc Specify the equipment part name to display.
+@type select
+@default 1
+@option none
+@value 0
+@option Part only
+@value 1
+@option Icon only
+@value 2
+@option Icons, parts
+@value 3
+@parent EquipSetting
+
+@param EquipIcons
+@text Equipment Icon
+@desc Sets the equipment icon. The ID is the same as the equipment slot number.
+@type struct<EquipIconsData>[]
+@default []
+@parent EquipSetting
+
+@param InvalidSlotHide
+@text Sealed equipment not displayed
+@desc Equipment sealed with traits will not be displayed.
+@type boolean
+@default false
+@parent EquipSetting
+
+@param EXPSetting
+@text Experience Points Settings
+@default ------------------------------
+
+@param NowEXPOneLine
+@text Current experience value 1 line display
+@desc Displays the current experience value in one line.
+@type boolean
+@default false
+@parent EXPSetting
+
+@param NextEXPOneLine
+@text Display next experience value line
+@desc The next experience points will be displayed in one line.
+@type boolean
+@default false
+@parent EXPSetting
+
+@param EXPGaugeVisible
+@text Experience Gauge Display
+@desc Display the experience gauge.
+@type boolean
+@default true
+@parent EXPSetting
+
+@param EXPGaugeColor1
+@text Experience Gauge Color 1
+@desc Experience Gauge Color 1
+@type color
+@default 17
+@parent EXPSetting
+
+@param EXPGaugeColor2
+@text Experience Gauge Color 2
+@desc Experience Gauge Color 2
+@type color
+@default 6
+@parent EXPSetting
+
+@param EXPGaugeX
+@text EXP gauge X coordinate
+@desc EXP gauge X coordinate (relative)
+@type number
+@default 0
+@parent EXPSetting
+
+@param EXPGaugeY
+@text EXP gauge Y coordinate
+@desc EXP gauge Y coordinate (relative)
+@type number
+@default 0
+@parent EXPSetting
+
+@param EXPGaugeWidth
+@text EXP gauge width
+@desc Specifies the width of the EXP gauge.
+@type number
+@default 300
+@parent EXPSetting
+
+@param EXPGaugeHeight
+@text EXP gauge vertical width
+@desc Specify the width and height of the EXP gauge.
+@type number
+@default 12
+@parent EXPSetting
+
+@param EXPDecimal
+@text Decimal places
+@desc The number of decimal points that can be displayed.
+@type number
+@default 2
+@min 0
+@max 99
+@parent EXPSetting
+
+@param ElementStateSetting
+@text Attribute settings
+@default ------------------------------
+
+@param ElementResist
+@text Attribute resistance
+@type struct<ElementData>[]
+@default ["{\"ElementNo\":\"1\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"2\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"3\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"4\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"5\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"6\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"7\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"8\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"9\",\"ElementIconId\":\"\"}"]
+@parent ElementStateSetting
+
+@param ElementResistText
+@text Attribute validity name display
+@desc Displays attribute validity attributes by name.
+@type boolean
+@default false
+@parent ElementStateSetting
+
+@param ElementResistCol
+@text Number of columns for displaying attribute effectiveness
+@desc Sets the number of columns to display for attribute effectiveness.
+@type number
+@default 2
+@parent ElementStateSetting
+
+@param StateStateSetting
+@text State Settings
+@default ------------------------------
+
+@param StateResist
+@text Status Resistance
+@type struct<StateData>[]
+@default ["{\"StateNo\":\"4\"}","{\"StateNo\":\"5\"}","{\"StateNo\":\"6\"}","{\"StateNo\":\"7\"}","{\"StateNo\":\"8\"}","{\"StateNo\":\"9\"}","{\"StateNo\":\"10\"}","{\"StateNo\":\"12\"}","{\"StateNo\":\"13\"}"]
+@parent StateStateSetting
+
+@param StateResistText
+@text State validity name display
+@desc Shows the state availability states by name.
+@type boolean
+@default false
+@parent StateStateSetting
+
+@param StateResistCol
+@text Number of columns for displaying state validity
+@desc Sets the number of columns to display for state availability.
+@type number
+@default 2
+@parent StateStateSetting
+
+@param StateResistColor
+@text Color when state is disabled
+@desc Color when the state is disabled. (Index color can be specified in the Text tab.)
+@type number
+@default 0
+@parent StateStateSetting
+
+@param RadarChartSetting
+@text Radar Chart Settings
+@default 要NUUN_RadarChartBase
+
+@param StatusRadarChart
+@text Status Radar Chart
+@default ------------------------------
+@parent RadarChartSetting
+
+@param StatusRadarChartParamList
+@text Display Status
+@desc The status to display.
+@type struct<RadarChartParamList>[]
+@parent StatusRadarChart
+
+@param DisplayNameModo
+@text Parameter name display
+@desc Specifies the parameter name display for the radar chart.
+@type select
+@default param
+@option Icon only
+@value icon
+@option Parameter names only
+@value param
+@option Icon and parameter name
+@value iconparams
+@parent StatusRadarChart
+
+@param StatusRadarChartRadius
+@text Radar Chart Radius
+@desc The radius of the radar chart.
+@type number
+@default 100
+@parent StatusRadarChart
+
+@param StatusRadarChartFramecolor
+@text Radar chart frame color
+@desc Set the border color of the radar chart.
+@type color
+@default 15
+@parent StatusRadarChart
+
+@param StatusRadarChartLineColor
+@text Radar chart line color
+@desc Sets the color of the radar chart lines.
+@type color
+@default 15
+@parent StatusRadarChart
+
+@param StatusRadarChartMainColor1
+@text Radar chart center background color
+@desc Sets the background color for the center of the radar chart.
+@type color
+@default 3
+@parent StatusRadarChart
+
+@param StatusRadarChartMainColor2
+@text Radar chart outer background color
+@desc Sets the outer background color of the radar chart.
+@type color
+@default 3
+@parent StatusRadarChart
+
+@param StatusRadarChartX
+@text Radar chart X coordinate
+@desc X coordinate of the radar chart (relative).
+@type number
+@default 48
+@min -9999
+@max 9999
+@parent StatusRadarChart
+
+@param StatusRadarChartY
+@text Radar chart Y coordinate
+@desc The relative Y coordinate of the radar chart.
+@type number
+@default 48
+@min -9999
+@max 9999
+@parent StatusRadarChart
+
+@param StatusRadarChart_FontSize
+@text Font size
+@desc Font size (from the main font)
+@type number
+@default -12
+@min -9999
+@max 9999
+@parent StatusRadarChart
+
+@param StatusRadarChart_IconSize
+@text Icon Size
+@desc Specifies the icon size. 0 is the default size.
+@type number
+@default 0
+@parent StatusRadarChart
+
+@param StatusRadarChartValueData
+@text Numerical Settings
+@desc Numerical settings to be displayed on the radar chart.
+@type struct<RadarChartValue>
+@parent StatusRadarChart
+
+@param ElementRadarChart
+@text Elemental Resistance Radar Chart
+@default ------------------------------
+@parent RadarChartSetting
+
+@param ElementDisplayNameModo
+@text Parameter name display
+@desc Specifies the parameter name display for the radar chart.
+@type select
+@default icon
+@option Icon only
+@value icon
+@option Parameter names only
+@value param
+@option Icon and parameter name
+@value iconparam
+@parent ElementRadarChart
+
+@param ElementRadarChartRadius
+@text Radar Chart Radius
+@desc The radius of the radar chart.
+@type number
+@default 100
+@parent ElementRadarChart
+
+@param ElementRadarChartFramecolor
+@text Radar chart frame color
+@desc Set the border color of the radar chart.
+@type color
+@default 15
+@parent ElementRadarChart
+
+@param ElementRadarChartLineColor
+@text Radar chart line color
+@desc Sets the color of the radar chart lines.
+@type color
+@default 15
+@parent ElementRadarChart
+
+@param ElementRadarChartMainColor1
+@text Radar chart center background color
+@desc Sets the background color for the center of the radar chart.
+@type color
+@default 3
+@parent ElementRadarChart
+
+@param ElementRadarChartMainColor2
+@text Radar chart outer background color
+@desc Sets the outer background color of the radar chart.
+@type color
+@default 3
+@parent ElementRadarChart
+
+@param ElementRadarChartX
+@text Radar chart X coordinate
+@desc X coordinate of the radar chart (relative).
+@type number
+@default 48
+@min -9999
+@max 9999
+@parent ElementRadarChart
+
+@param ElementRadarChartY
+@text Radar chart Y coordinate
+@desc The relative Y coordinate of the radar chart.
+@type number
+@default 48
+@min -9999
+@max 9999
+@parent ElementRadarChart
+
+@param ElementRadarChart_FontSize
+@text Font size
+@desc Font size (from the main font)
+@type number
+@default -12
+@min -9999
+@max 9999
+@parent ElementRadarChart
+
+@param ElementRadarChart_IconSize
+@text Icon Size
+@desc Specifies the icon size. 0 is the default size.
+@type number
+@default 0
+@parent ElementRadarChart
+
+@param ElementRadarChartValueData
+@text Numerical Settings
+@desc Numerical settings to be displayed on the radar chart.
+@type struct<RadarChartValue>
+@parent ElementRadarChart
+
+@param StateRadarChart
+@text State Resistance Radar Chart
+@default ------------------------------
+@parent RadarChartSetting
+
+@param StateDisplayNameModo
+@text Parameter name display
+@desc Specifies the parameter name display for the radar chart.
+@type select
+@default icon
+@option Icon only
+@value icon
+@option Parameter names only
+@value param
+@option Icon and parameter name
+@value iconparam
+@parent StateRadarChart
+
+@param StateRadarChartRadius
+@text Radar Chart Radius
+@desc The radius of the radar chart.
+@type number
+@default 100
+@parent StateRadarChart
+
+@param StateRadarChartFramecolor
+@text Radar chart frame color
+@desc Set the border color of the radar chart.
+@type color
+@default 15
+@parent StateRadarChart
+
+@param StateRadarChartLineColor
+@text Radar chart line color
+@desc Sets the color of the radar chart lines.
+@type color
+@default 15
+@parent StateRadarChart
+
+@param StateRadarChartMainColor1
+@text Radar chart center background color
+@desc Sets the background color for the center of the radar chart.
+@type color
+@default 3
+@parent StateRadarChart
+
+@param StateRadarChartMainColor2
+@text Radar chart outer background color
+@desc Sets the outer background color of the radar chart.
+@type color
+@default 3
+@parent StateRadarChart
+
+@param StateRadarChartX
+@text Radar chart X coordinate
+@desc X coordinate of the radar chart (relative).
+@type number
+@default 48
+@min -9999
+@parent StateRadarChart
+
+@param StateRadarChartY
+@text Radar chart Y coordinate
+@desc The relative Y coordinate of the radar chart.
+@type number
+@default 48
+@min -9999
+@parent StateRadarChart
+
+@param StateRadarChart_FontSize
+@text Font size
+@desc Font size (from the main font)
+@type number
+@default -12
+@min -9999
+@parent StateRadarChart
+
+@param StateRadarChart_IconSize
+@text Icon Size
+@desc Specifies the icon size. 0 is the default size.
+@type number
+@default 0
+@parent StateRadarChart
+
+@param StateRadarChartValueData
+@text Numerical Settings
+@desc Numerical settings to be displayed on the radar chart.
+@type struct<RadarChartValue>
+@parent StateRadarChart
+
+@command ChangeStartPage
+@text Change start page
+@desc Change the start page you want to display.
+@arg StartPage
+@text Start Page
+@desc Starting page, 0 is the default.
+@type number
+@default 0
+
+@command ChangeStatusActorImg
+@text Status screen actor image change
+@desc Change the actor image on the status screen.
+@arg actorId
+@text Actor ID
+@desc Specify the actor.
+@type actor
+@default 0
+@arg ChangeActorImgId
+@text Character ID
+@desc Specify the ID of the character you want to change. Specify the list number of the character image settings.
+@type number
+@default 1
+@min 1
+*/
+
 /*~struct~RadarChartParamList:
- * 
- * @param Param
- * @desc レーダーチャートに表示する項目を指定します。
- * @text 表示する項目
- * @type select
- * @option 最大HP
- * @value 0
- * @option 最大MP
- * @value 1
- * @option 攻撃力
- * @value 2
- * @option 防御力
- * @value 3
- * @option 魔法力
- * @value 4
- * @option 魔法防御
- * @value 5
- * @option 敏捷性
- * @value 6
- * @option 運
- * @value 7
- * @default 0
- * 
- * @param RadarChartParamName
- * @desc 項目の名称を設定します。
- * @text 名称
- * @type string
- * @default
- * 
- * @param RadarChartIconIndex
- * @desc 項目のアイコンインデックス。
- * @text アイコンインデックス
- * @type icon
- * @default 0
- * @min 0
- * @max 99999
- * 
- * @param RadarChartShowValue
- * @text 数値の座標
- * @desc ----------------------------------
- * 
- * @param ValueX
- * @desc レーダーチャートの数値の個別X座標。
- * @text レーダーチャート数値個別X座標
- * @type number
- * @default 0
- * @min -9999
- * @parent RadarChartShowValue
- * 
- * @param ValueY
- * @desc レーダーチャートの数値の個別Y座標。
- * @text レーダーチャート数値個別Y座標
- * @type number
- * @default 0
- * @min -9999
- * @parent RadarChartShowValue
- *  
- */
+@param Param
+@text Items to display
+@desc Specify the items to be displayed on the radar chart.
+@type select
+@default 0
+@option Max HP
+@value 0
+@option Max MP
+@value 1
+@option Attack Power
+@value 2
+@option Defense power
+@value 3
+@option magic power
+@value 4
+@option magic defense
+@value 5
+@option agility
+@value 6
+@option luck
+@value 7
+
+@param RadarChartParamName
+@text name
+@desc Set the name of the item.
+@type string
+
+@param RadarChartIconIndex
+@text Icon Index
+@desc The icon index of the item.
+@type icon
+@default 0
+@min 0
+@max 99999
+
+@param RadarChartShowValue
+@text Numeric coordinates
+@desc ----------------------------------
+
+@param ValueX
+@text Radar chart numerical value individual X coordinate
+@desc The individual X coordinate of the radar chart value.
+@type number
+@default 0
+@min -9999
+@parent RadarChartShowValue
+
+@param ValueY
+@text Radar chart numeric value individual Y coordinate
+@desc The individual Y coordinate of the radar chart value.
+@type number
+@default 0
+@min -9999
+@parent RadarChartShowValue
+*/
+
 /*~struct~actorImgList:
- * 
- * @param actorId
- * @text アクター
- * @desc アクターを指定します。
- * @type actor
- * 
- * @param ActorImg
- * @text アクター画像
- * @desc アクターの画像を表示します。立ち絵を切り替える場合はリストに画像を設定してください。
- * @type file[]
- * @dir img/
- * @default 
- * 
- * @param Actor_X
- * @desc 画像の表示位置X座標。
- * @text 画像表示位置X座標
- * @type number
- * @default 0
- * @min -9999
- * @max 9999
- * 
- * @param Actor_Y
- * @desc 画像の表示位置Y座標。
- * @text 画像表示位置Y座標
- * @type number
- * @default 0
- * @min -9999
- * @max 9999
- * 
- * @param Actor_Scale
- * @desc 画像の拡大率。
- * @text 画像拡大率
- * @type number
- * @default 100
- * @min 0
- * @max 999
- * 
- * @param IsApng
- * @text Apng有効
- * @desc Apngを有効にします。(要ApngPicture)
- * @type boolean
- * @default false
- *  
- */
+@param actorId
+@text actor
+@desc Specify the actor.
+@type actor
+
+@param ActorImg
+@text Actor Image
+@desc Displays the actor's image. If you want to change the standing image, please set the image in the list.
+@type file[]
+@dir img/
+
+@param Actor_X
+@text Image display position X coordinate
+@desc The x-coordinate of the image display position.
+@type number
+@default 0
+@min -9999
+@max 9999
+
+@param Actor_Y
+@text Image display position Y coordinate
+@desc The Y coordinate of the image display position.
+@type number
+@default 0
+@min -9999
+@max 9999
+
+@param Actor_Scale
+@text Image magnification
+@desc Image magnification.
+@type number
+@default 100
+@min 0
+@max 999
+
+@param IsApng
+@text Apng enabled
+@desc Enable Apng (requires ApngPicture)
+@type boolean
+@default false
+*/
+
 /*~struct~ElementData:
- *
- * @param ElementNo
- * @text 属性ID
- * @desc 表示する属性番号を指定します。
- * @type number
- *
- * @param ElementIconId
- * @text アイコンID
- * @desc アイコンのIDを指定します。
- * @type icon
- * @min 0
- * @max 99999
- * @default 0
- * 
- * @param RadarChartShowValue
- * @text 数値の座標
- * @desc ----------------------------------
- * 
- * @param ValueX
- * @desc レーダーチャートの数値の個別X座標。
- * @text レーダーチャート数値個別X座標
- * @type number
- * @default 0
- * @min -9999
- * @parent RadarChartShowValue
- * 
- * @param ValueY
- * @desc レーダーチャートの数値の個別Y座標。
- * @text レーダーチャート数値個別Y座標
- * @type number
- * @default 0
- * @min -9999
- * @parent RadarChartShowValue
- * 
- */
+@param ElementNo
+@text Attribute ID
+@desc Specifies the attribute number to display.
+@type number
+
+@param ElementIconId
+@text Icon ID
+@desc Specifies the icon ID.
+@type icon
+@default 0
+@min 0
+@max 99999
+
+@param RadarChartShowValue
+@text Numeric coordinates
+@desc ----------------------------------
+
+@param ValueX
+@text Radar chart numerical value individual X coordinate
+@desc The individual X coordinate of the radar chart value.
+@type number
+@default 0
+@min -9999
+@parent RadarChartShowValue
+
+@param ValueY
+@text Radar chart numeric value individual Y coordinate
+@desc The individual Y coordinate of the radar chart value.
+@type number
+@default 0
+@min -9999
+@parent RadarChartShowValue
+*/
+
 /*~struct~StateData:
- *
- * @param StateNo
- * @text ステート
- * @desc 表示するステートを指定します。
- * @type state
- * @default 0
- * 
- * @param StateIconId
- * @text ステートアイコンID
- * @desc アイコンのIDを指定します。0の場合はデータベースのアイコンが表示されます。
- * @type icon
- * @default 0
- * 
- * @param RadarChartShowValue
- * @text 数値の座標
- * @desc ----------------------------------
- * 
- * @param ValueX
- * @desc レーダーチャートの数値の個別X座標。
- * @text レーダーチャート数値個別X座標
- * @type number
- * @default 0
- * @min -9999
- * @parent RadarChartShowValue
- * 
- * @param ValueY
- * @desc レーダーチャートの数値の個別Y座標。
- * @text レーダーチャート数値個別Y座標
- * @type number
- * @default 0
- * @min -9999
- * @parent RadarChartShowValue
- *
- */
+@param StateNo
+@text State
+@desc Specifies the state to display.
+@type state
+@default 0
+
+@param StateIconId
+@text State Icon ID
+@desc Specifies the icon ID. If set to 0, the database icon will be displayed.
+@type icon
+@default 0
+
+@param RadarChartShowValue
+@text Numeric coordinates
+@desc ----------------------------------
+
+@param ValueX
+@text Radar chart numerical value individual X coordinate
+@desc The individual X coordinate of the radar chart value.
+@type number
+@default 0
+@min -9999
+@parent RadarChartShowValue
+
+@param ValueY
+@text Radar chart numeric value individual Y coordinate
+@desc The individual Y coordinate of the radar chart value.
+@type number
+@default 0
+@min -9999
+@parent RadarChartShowValue
+*/
+
 /*~struct~EquipIconsData:
- *
- * @param EquipIconId
- * @text アイコンID
- * @desc 表示するステート装備アイコンを指定します。データベースの「タイプ」の「装備タイプ」のIDと同じリストIDのアイコンが表示されます。
- * @type icon
- * @min 0
- * @default 0
- *
- */
+@param EquipIconId
+@text Icon ID
+@desc Specify the state equipment icon to display. The icon with the same list ID as the "Equipment Type" ID of the "Type" in the database will be displayed.
+@type icon
+@default 0
+@min 0
+*/
+
 /*~struct~PageListData:
- * 
- * @param ParamLists
- * @desc 表示するページ。
- * @text 表示するページを指定します。
- * @type select
- * @option なし
- * @value 0
- * @option 表示ページ項目１
- * @value 1
- * @option 表示ページ項目２
- * @value 2
- * @option 表示ページ項目３
- * @value 3
- * @option 表示ページ項目４
- * @value 4
- * @option 表示ページ項目５
- * @value 5
- * @default 0
- *
- */
+@param ParamLists
+@text Specifies the page to display.
+@desc The page to display.
+@type select
+@default 0
+@option none
+@value 0
+@option Display page item 1
+@value 1
+@option Display page item 2
+@value 2
+@option Display page item 3
+@value 3
+@option Display page item 4
+@value 4
+@option Display page item 5
+@value 5
+*/
+
 /*~struct~ParamListData:
- *
- * @param DateSelect
- * @text 表示するステータス
- * @desc 表示するステータスを指定します。
- * @type select
- * @option なし
- * @value 0
- * @option アクター名(4)(5)(6)(7)(15)
- * @value 1
- * @option 二つ名(1)(4)(5)(6)(7)(15)
- * @value 2
- * @option 職業(1)(4)(5)(6)(7)(15)
- * @value 3
- * @option レベル(4)(5)(6)(7)(14)(15)(16)(17)(20)(21)
- * @value 4
- * @option ステート(3※1)(4)(5)(6)(7)(15)
- * @value 5
- * @option ステート(戦闘用と同じ表示)(4)(5)(6)(7)
- * @value 6
- * @option ＨＰ(4)(5)(6)(7)
- * @value 10
- * @option ＭＰ(4)(5)(6)(7)
- * @value 11
- * @option 攻撃力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
- * @value 12
- * @option 防御力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
- * @value 13
- * @option 魔法力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
- * @value 14
- * @option 魔法防御(1)(2)(3)(4)(5)(6)(7)(8)(9)(11)(10)(14)(15)(16)(17)(20)(21)
- * @value 15
- * @option 敏捷性(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
- * @value 16
- * @option 運(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(14)(11)(15)(16)(17)(20)(21)
- * @value 17
- * @option ＴＰ(4)(5)(6)(7)
- * @value 19
- * @option 最大ＨＰ(数値のみ)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
- * @value 42
- * @option 最大ＭＰ(数値のみ)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
- * @value 43
- * @option ＨＰ(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
- * @value 44
- * @option ＭＰ(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
- * @value 45
- * @option 命中率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 20
- * @option 回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 21
- * @option 会心率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 22
- * @option 会心回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 23
- * @option 魔法回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 24
- * @option 魔法反射率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 25
- * @option 反撃率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 26
- * @option HP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 27
- * @option MP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 28
- * @option TP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 29
- * @option 狙われ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 30
- * @option 防御効果率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 31
- * @option 回復効果率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 32
- * @option 薬の知識(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 33
- * @option MP消費率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 34
- * @option TPチャージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 35
- * @option 物理ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 36
- * @option 魔法ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 37
- * @option 床ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 38
- * @option 獲得経験値率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(15)(16)(17)(20)(21)
- * @value 39
- * @option 現在の経験値(1)(2)(4)(5)(6)(7)(8)(15)(16)(17)(20)(21)
- * @value 40
- * @option 次のレベルまでの経験値(1)(2)(4)(5)(6)(7)(8)(15)(16)(17)(20)(21)
- * @value 41
- * @option オリジナルパラメータ(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
- * @value 50
- * @option 名称のみ(1)(4)(5)(6)(7)(8)(10)(15)(16)(17)(21)
- * @value 51
- * @option 属性耐性(1)(3)(4)(5)(6)(7)(8)(9)(10)(12)(14)(15)(16)(17)(20)
- * @value 60
- * @option ステート耐性(1)(3)(4)(5)(6)(7)(8)(9)(10)(12)(14)(15)(16)(17)(20)
- * @value 61
- * @option 装備(1)(2)(4)(5)(6)(7)(8)(9)(10)(14)(15)(18)(16)(17)(19)
- * @value 62
- * @option 記述欄(1)(2)(3)(4)(5)(6)(7)(8)(10)(13)(15)(16)(17)
- * @value 70
- * @option プロフィール(1)(2)(4)(5)(6)(7)(8)(10)(16)(17)
- * @value 90
- * @option 顔グラフィック(4)(5)(6)(7)
- * @value 100
- * @option キャラチップ(4)(5)(6)(7)
- * @value 101
- * @option サイドビューアクター画像(4)(5)(6)(7)(8)(10)
- * @value 102
- * @option ステータスレーダーチャート(3)(4)(5)(6)(7)(8)(10)(15)
- * @value 200
- * @option 属性耐性レーダーチャート(3)(4)(5)(6)(7)(8)(10)(15)
- * @value 201
- * @option ステート耐性レーダーチャート(3)(4)(5)(6)(7)(8)(10)(15)
- * @value 202
- * @option 画像（共通画像）(3)(4)～(7)(22)
- * @value 300
- * @option 画像（個別指定画像）(3)(4)～(7)(13)
- * @value 301
- * @option 武器熟練度システム　要AvPort_dsWeaponMastery.js(4)～(7)
- * @value 900
- * @option ライン(1)(4)(5)(6)(7)(8)(10)
- * @value 1000
- * @default 0
- * 
- * @param NameColor
- * @desc システム項目の文字色。テキストタブでカラーコードを入力できます。
- * @text システム項目文字色(1)
- * @type color
- * @default 16
- * @min 0
- * 
- * @param ParamName
- * @desc 項目の名称を設定します。
- * @text 名称(2)
- * @type string
- * @default
- * 
- * @param DetaEval
- * @desc 評価式または文字列を記入します。
- * @text 評価式or文字列(3)
- * @type combo
- * @option '$gameVariables.value(0);//ゲーム変数'
- * @option "actor.isStateResist(stateId) ? '無効' : r;//ステート耐性"
- * @option 'actor.level'
- * @option "100 - r +' %';//耐性差分表示"
- * @option "this.expTotalValue();//現在の経験値"
- * @option "this.expNextValue();//次のレベルまで"
- * @option "actorclass"
- * @default 
- * 
- * @param X_Position
- * @text X表示列位置(4)
- * @desc X表示列位置
- * @type number
- * @default 1
- * @min 1
- * @max 3
- * 
- * @param Y_Position
- * @desc Y表示行位置
- * @text Y表示行位置(5)
- * @type number
- * @default 1
- * @min 1
- * @max 99
- * 
- * @param X_Coordinate
- * @text X座標（相対）(6)
- * @desc X座標（X表示列位置からの相対座標）
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * 
- * @param Y_Coordinate
- * @text Y座標（相対）(7)
- * @desc Y座標（Y表示列位置からの相対座標）
- * @type number
- * @default 0
- * @max 9999
- * @min -9999
- * 
- * @param ItemWidth
- * @desc 項目横幅（0でデフォルト幅）
- * @text 項目横幅(8)
- * @type number
- * @default 0
- * @min 0
- * 
- * @param SystemItemWidth
- * @desc システム項目の横幅（0でデフォルト幅）
- * @text システム項目横幅(9)
- * @type number
- * @default 0
- * @min 0
- * 
- * @param WideMode
- * @desc ワイド表示モード
- * @text ワイド表示モード(10)
- * @type boolean
- * @default false
- * 
- * @param paramUnit
- * @desc 単位を設定します。
- * @text 単位(11)
- * @type string
- * @default 
- * 
- * @param Decimal
- * @text 小数点桁数(12)
- * @desc 表示出来る小数点桁数。
- * @type number
- * @default 0
- * @min 0
- * @max 99
- * 
- * @param textMethod
- * @desc 記述欄、個別画像に紐づけするタグ名
- * @text タグ名(13)
- * @type string
- * @default 
- * 
- * @param Back
- * @text コンテンツ背景表示(14)
- * @desc コンテンツ背景を表示させます。
- * @type boolean
- * @default false
- * 
- * @param FontSize
- * @desc フォントサイズ（メインフォントからの差）
- * @text フォントサイズ(15)
- * @type number
- * @default 0
- * @min -99
- * 
- * @param ValueFontFace
- * @desc 数字のフォント適用(OFFでメインフォントのフォント)
- * @text 数字テキスト部の数字フォント適用(20)
- * @type boolean
- * @default false
- * @min -99
- * 
- * @param IconId
- * @text アイコンID(16)
- * @desc アイコンのIDを指定します。
- * @type icon
- * @default 0
- * 
- * @param IconY
- * @text アイコン補正Y値(17)
- * @desc アイコンの補正Y値を指定します。
- * @type number
- * @default 2
- * 
- * @param Align
- * @desc 文字揃え。
- * @text 文字揃え(21)
- * @type select
- * @option 左
- * @value 'left'
- * @option 右
- * @value 'right'
- * @option 中央
- * @value 'center'
- * @default 'right'
- * 
- * @param EquipSetting
- * @text 装備設定
- * @default ------------------------------
- * 
- * @param EquipStartIndex
- * @text 開始インデックス(18)
- * @desc 装備欄の開始インデックスを指定します。
- * @type number
- * @default 0
- * @min 0
- * @max 99999
- * @parent EquipSetting
- * 
- * @param EquipNum
- * @text 表示装備数(19)
- * @desc 装備欄の表示を指定します。(0で制限なし)
- * @type number
- * @default 0
- * @parent EquipSetting
- * 
- * @param ImgSetting
- * @text 画像設定
- * @default ------------------------------
- * 
- * @param ImgData
- * @desc 画像ファイル名を指定します。
- * @text 画像(22)
- * @type file
- * @dir img/
- * @default
- * @parent ImgSetting
- * 
- */
+@param DateSelect
+@text Status to display
+@desc Specifies the status to display.
+@type select
+@default 0
+@option none
+@value 0
+@option Actor Name(4)(5)(6)(7)(15)
+@value 1
+@option Nickname(1)(4)(5)(6)(7)(15)
+@value 2
+@option Occupation (1)(4)(5)(6)(7)(15)
+@value 3
+@option Level (4) (5) (6) (7) (14) (15) (16) (17) (20) (21)
+@value 4
+@option State (3*1) (4) (5) (6) (7) (15)
+@value 5
+@option State (same display as for battle) (4) (5) (6) (7)
+@value 6
+@option HP(4)(5)(6)(7)
+@value 10
+@option MP(4)(5)(6)(7)
+@value 11
+@option Attack Power (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
+@value 12
+@option Defense power (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
+@value 13
+@option Magic power (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
+@value 14
+@option Magic Defense (1)(2)(3)(4)(5)(6)(7)(8)(9)(11)(10)(14)(15)(16)(17)(20)(21)
+@value 15
+@option Agility (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
+@value 16
+@option Luck (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (14) (11) (15) (16) (17) (20) (21)
+@value 17
+@option TP(4)(5)(6)(7)
+@value 19
+@option Max HP (number only) (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (14) (15) (16) (17) (20) (21)
+@value 42
+@option Max MP (number only) (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (14) (15) (16) (17) (20) (21)
+@value 43
+@option HP(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
+@value 44
+@option MP(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
+@value 45
+@option Accuracy (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 20
+@option Evasion rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 21
+@option Attention rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 22
+@option Critical hit avoidance rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 23
+@option Magic evasion rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 24
+@option Magic reflectance (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 25
+@option Counterattack Rate (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (14) (15) (16) (17) (20) (21)
+@value 26
+@option HP regeneration rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 27
+@option MP playback rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 28
+@option TP playback rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 29
+@option Target Rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 30
+@option Defense Effectiveness Rate(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 31
+@option Recovery Rate (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (14) (15) (16) (17) (20) (21)
+@value 32
+@option Medicine Knowledge (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 33
+@option MP consumption rate (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 34
+@option TP Charge Rate (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (14) (15) (16) (17) (20) (21)
+@value 35
+@option Physical Damage Rate(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 36
+@option Magic Damage Rate (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (14) (15) (16) (17) (20) (21)
+@value 37
+@option Floor Damage Rate (1) (2) (3) (4) (5) (6) (7) (8) (9) (10) (11) (12) (14) (15) (16) (17) (20) (21)
+@value 38
+@option Experience Point Earning Rate(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(15)(16)(17)(20)(21)
+@value 39
+@option Current Experience Points (1)(2)(4)(5)(6)(7)(8)(15)(16)(17)(20)(21)
+@value 40
+@option Experience Points to Next Level(1)(2)(4)(5)(6)(7)(8)(15)(16)(17)(20)(21)
+@value 41
+@option Original parameters (1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 50
+@option Name only (1)(4)(5)(6)(7)(8)(10)(15)(16)(17)(21)
+@value 51
+@option Attribute resistance (1)(3)(4)(5)(6)(7)(8)(9)(10)(12)(14)(15)(16)(17)(20)
+@value 60
+@option Status Resistance(1)(3)(4)(5)(6)(7)(8)(9)(10)(12)(14)(15)(16)(17)(20)
+@value 61
+@option Equipment (1)(2)(4)(5)(6)(7)(8)(9)(10)(14)(15)(18)(16)(17)(19)
+@value 62
+@option Description column (1)(2)(3)(4)(5)(6)(7)(8)(10)(13)(15)(16)(17)
+@value 70
+@option Profile(1)(2)(4)(5)(6)(7)(8)(10)(16)(17)
+@value 90
+@option Face Graphics (4) (5) (6) (7)
+@value 100
+@option Character chips (4) (5) (6) (7)
+@value 101
+@option Side view actor images (4)(5)(6)(7)(8)(10)
+@value 102
+@option Status Radar Chart (3) (4) (5) (6) (7) (8) (10) (15)
+@value 200
+@option Attribute Resistance Radar Chart (3)(4)(5)(6)(7)(8)(10)(15)
+@value 201
+@option State Resistance Radar Chart (3)(4)(5)(6)(7)(8)(10)(15)
+@value 202
+@option Images (common images) (3) (4) to (7) (22)
+@value 300
+@option Images (individually specified images) (3) (4) to (7) (13)
+@value 301
+@option Weapon Mastery System Requires AvPort_dsWeaponMastery.js(4)-(7)
+@value 900
+@option Line (1) (4) (5) (6) (7) (8) (10)
+@value 1000
+
+@param NameColor
+@text System item text color (1)
+@desc Text color for system items. You can enter a color code in the Text tab.
+@type color
+@default 16
+@min 0
+
+@param ParamName
+@text Name(2)
+@desc Set the name of the item.
+@type string
+
+@param DetaEval
+@text Expression or String (3)
+@desc Enter an expression or a string.
+@type combo
+@option '$gameVariables.value(0); // Game Variables
+@option "actor.isStateResist(stateId) ? '無効' : r; // State Resistance"
+@option 'actor.level'
+@option "100 - r +' %'; // Resistance difference display"
+@option "this.expTotalValue(); // Current Experience Points
+@option "this.expNextValue(); // To the next level
+@option "actorclass"
+
+@param X_Position
+@text X display column position (4)
+@desc X display column position
+@type number
+@default 1
+@min 1
+@max 3
+
+@param Y_Position
+@text Y display line position (5)
+@desc Y display line position
+@type number
+@default 1
+@min 1
+@max 99
+
+@param X_Coordinate
+@text X coordinate (relative) (6)
+@desc X coordinate (relative to the X display column position)
+@type number
+@default 0
+@min -9999
+@max 9999
+
+@param Y_Coordinate
+@text Y coordinate (relative) (7)
+@desc Y coordinate (relative to the Y display column position)
+@type number
+@default 0
+@min -9999
+@max 9999
+
+@param ItemWidth
+@text Item width (8)
+@desc Item width (0 is default width)
+@type number
+@default 0
+@min 0
+
+@param SystemItemWidth
+@text System Item Width (9)
+@desc System item width (0 is default width)
+@type number
+@default 0
+@min 0
+
+@param WideMode
+@text Wide display mode (10)
+@desc Wide display mode
+@type boolean
+@default false
+
+@param paramUnit
+@text Units (11)
+@desc Set the units.
+@type string
+
+@param Decimal
+@text Decimal places (12)
+@desc The number of decimal points that can be displayed.
+@type number
+@default 0
+@min 0
+@max 99
+
+@param textMethod
+@text Tag name(13)
+@desc Description field, tag name to link to individual image
+@type string
+
+@param Back
+@text Content background display(14)
+@desc Shows the content background.
+@type boolean
+@default false
+
+@param FontSize
+@text Font size(15)
+@desc Font size (difference from main font)
+@type number
+@default 0
+@min -99
+
+@param ValueFontFace
+@text Apply number font to number text (20)
+@desc Apply number font (OFF: Main font)
+@type boolean
+@default false
+@min -99
+
+@param IconId
+@text Icon ID(16)
+@desc Specifies the icon ID.
+@type icon
+@default 0
+
+@param IconY
+@text Icon Correction Y Value (17)
+@desc Specifies the offset Y value for the icon.
+@type number
+@default 2
+
+@param Align
+@text Justification(21)
+@desc Character alignment.
+@type select
+@default 'right'
+@option left
+@value 'left'
+@option right
+@value 'right'
+@option center
+@value 'center'
+
+@param EquipSetting
+@text Equipment Settings
+@default ------------------------------
+
+@param EquipStartIndex
+@text Start index (18)
+@desc Specifies the starting index of the equipment column.
+@type number
+@default 0
+@min 0
+@max 99999
+@parent EquipSetting
+
+@param EquipNum
+@text Displayed equipment count (19)
+@desc Specifies the display of the equipment column. (0 means no limit)
+@type number
+@default 0
+@parent EquipSetting
+
+@param ImgSetting
+@text Image Settings
+@default ------------------------------
+
+@param ImgData
+@text Images (22)
+@desc Specify the image file name.
+@type file
+@dir img/
+@parent ImgSetting
+*/
+
 /*~struct~RadarChartValue:
- * 
- * @param ShowValue
- * @text 数値の表示
- * @desc 数値を表示します。
- * @type boolean
- * @default false
- * 
- * @param ChartInsideValueX
- * @desc レーダーチャートの数値のX座標。
- * @text レーダーチャート数値X座標
- * @type number
- * @default 0
- * @min -9999
- * @parent ShowValue
- * 
- * @param ChartInsideValueY
- * @desc レーダーチャートの数値のY座標。
- * @text レーダーチャート数値Y座標
- * @type number
- * @default 0
- * @min -9999
- * @parent ShowValue
- * 
- * @param UnitText
- * @text 単位
- * @desc 単位を記入します。
- * @type string
- * @default "%"
- * @parent ShowValue
- * 
- * @param SystemUnitColor
- * @text 単位色
- * @desc 単位を色を指定します。
- * @type color
- * @default 16
- * @parent ShowValue
- * 
- */
+@param ShowValue
+@text Numerical display
+@desc Displays a numeric value.
+@type boolean
+@default false
+
+@param ChartInsideValueX
+@text Radar chart numeric x-coordinate
+@desc The x-coordinate of the radar chart value.
+@type number
+@default 0
+@min -9999
+@parent ShowValue
+
+@param ChartInsideValueY
+@text Radar chart numeric Y coordinate
+@desc The Y coordinate of the radar chart value.
+@type number
+@default 0
+@min -9999
+@parent ShowValue
+
+@param UnitText
+@text unit
+@desc Enter the units.
+@type string
+@default "%"
+@parent ShowValue
+
+@param SystemUnitColor
+@text Unit Color
+@desc Specify the unit and color.
+@type color
+@default 16
+@parent ShowValue
+*/
+
 /*~struct~ActorPictureDataList:
- * 
- * @param actorId
- * @text アクター
- * @desc アクターを指定します。
- * @type actor
- * 
- * @param Actor_X
- * @desc 画像のX座標。
- * @text 画像X座標
- * @type number
- * @default 0
- * @min -9999
- * @max 9999
- * 
- * @param Actor_Y
- * @desc 画像のY座標。
- * @text 画像Y座標
- * @type number
- * @default 0
- * @min -9999
- * @max 9999
- * 
- * @param Img_SX
- * @desc 画像の表示開始座標X。
- * @text 画像表示開始座標X
- * @type number
- * @default 0
- * @min 0
- * @max 9999
- * 
- * @param Img_SY
- * @desc 画像の表示開始座標Y
- * @text 画像表示開始座標Y
- * @type number
- * @default 0
- * @min 0
- * @max 9999
- * 
- * @param Actor_Scale
- * @desc 画像の拡大率。
- * @text 画像拡大率
- * @type number
- * @default 100
- * @min 0
- * @max 999
- * 
- * @param IsApng
- * @text Apng有効
- * @desc Apngを有効にします。(要ApngPicture)
- * @type boolean
- * @default false
- * 
- */
+@param actorId
+@text actor
+@desc Specify the actor.
+@type actor
+
+@param Actor_X
+@text Image X coordinate
+@desc The X coordinate of the image.
+@type number
+@default 0
+@min -9999
+@max 9999
+
+@param Actor_Y
+@text Image Y coordinate
+@desc The Y coordinate of the image.
+@type number
+@default 0
+@min -9999
+@max 9999
+
+@param Img_SX
+@text Image display start coordinate X
+@desc The image display start coordinate X.
+@type number
+@default 0
+@min 0
+@max 9999
+
+@param Img_SY
+@text Image display start coordinate Y
+@desc Image display start coordinate Y
+@type number
+@default 0
+@min 0
+@max 9999
+
+@param Actor_Scale
+@text Image magnification
+@desc Image magnification.
+@type number
+@default 100
+@min 0
+@max 999
+
+@param IsApng
+@text Apng enabled
+@desc Enable Apng (requires ApngPicture)
+@type boolean
+@default false
+*/
+
+/*:ja
+@target MZ
+@plugindesc ステータス画面表示拡張
+@author NUUN
+@version 2.7.2
+@base NUUN_Base
+@orderAfter NUUN_Base
+
+@help
+ステータス画面を拡張します。
+各ページの表示するステータスの項目をカスタマイズできます。
+
+立ち絵の設定
+このプラグインではアクターの立ち絵の表示ができます。
+このプラグインは立ち絵、顔グラ表示EX対応です。
+立ち絵、顔グラ表示EXで設定した立ち絵の座標設定は立ち絵表示EX用画像設定で設定します。
+なお設定をしなくても表示は可能です。
+立ち絵、顔グラ表示EXを使用しない場合は画像設定で立ち絵を設定してください。
+
+ページの各項目の設定
+
+各ページの項目は「ページ項目設定」から設定します。
+ステータスに表示するには「ページ設定」の「ページ項目設定」から表示させるリストを選択してください。
+ゲージ、キャラチップは１ページに各ひとつずつしか表示できません。
+
+【名称の設定】
+能力値、追加能力値、特殊能力値、任意ステータス、装備、属性耐性、ステート耐性、名称のみ、記述欄、プロフィールで任意の名称を設定できます。
+
+【システム項目文字色の設定】
+名称及びシステム文字の文字色を指定します。
+
+【評価式or文字列の設定】
+評価式を記入します。オリジナルパラメータでは必ず記入してください。
+能力値、追加能力値、特殊能力値、任意ステータスで有効ですが無記入の場合は任意ステータス以外は自動的に参照されます。
+actorclassは記述欄のみ指定します。
+
+this._actorまたはactor 表示中のアクターのゲームデータ
+dactor 表示中のアクターのデータベース
+aclass 表示中のアクターの職業データ
+
+ステート、属性耐性
+rate:耐性率
+
+レーダーチャート
+レーダーチャートに表示する数値に適用されます。
+value:パラメータ
+
+
+属性耐性、属性耐性
+rate 単位付きの属性、ステート有効度
+r:属性、ステート耐性値　全ての耐性値を乗算した数値 計算式で使用する場合はこちらを使用します。
+
+共通画像、個別画像
+評価式or文字列(javaScript)には表示条件をjavascriptで記入します。条件が一致しているときに表示されます。
+無記入の場合は常に表示されます。
+actor:アクターゲームデータ
+dactor:アクターシステムデータ
+aclass 表示中のアクターの職業データ
+
+ステート
+表示したいステートIDを,区切りで指定します。
+例 "1,5,11" 必ず''または""で囲む
+"1-10" ステートID1～10番まで表示
+"3-11,15"ステートID3～11,15番を表示
+
+レーダーチャートを表示するにはNUUN_RadarChartBaseが必要です。
+
+アクター、職業のメモ欄
+評価式or文字列でactorclassを選択することで職業のメモ欄から参照されます。指定しない場合はアクターのメモ欄から参照されます。
+<[tag]:[text]> 記述欄のテキスト
+[tag]:タグ名
+[text]:表示するテキスト。
+改行すれば何行でも表示可能ですので、独自の項目を追加することも可能です。
+<desc1:ああああ> desc1とタグ付けされた項目に「ああああ」が表示されます。
+文章を表示させる場合は<desc1:ああああ>と記入してください。
+
+
+
+ステータスにアクターまたは職業別に画像を表示する。
+アクター、職業のメモ欄
+<[tag]:[Img]> 個別画像を表示します。
+[tag]:タグ名
+[text]:任意の個別画像。
+
+
+特定のアクター又は職業の表示させる装備を指定する。
+アクター又は職業のメモ欄
+<StatusShowEquips:[name],[name]...>
+[name]:装備部位名
+指定した装備部位のみ表示されます。指定がない場合は全ての部位が表示されます。
+アクターと職業両方に記入した場合はアクターの設定が優先されます。
+
+
+キーボード操作
+QWキー　キャラ切り替え
+←→キー　ページ切り替え(デフォルト設定)
+
+タッチ操作
+<>ボタン　キャラ切り替え
+ΛVボタン　ページ切り替え
+
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2025/8/8 Ver.2.7.2
+レーダーチャートのパラメータ名の表示方法の仕様を変更。
+2025/8/2 Ver.2.7.1
+属性、ステートの耐性率に耐性、弱点による文字色を変更できる機能を追加。(一覧表示、レーダーチャート)
+評価式or文字列(3)をレーダーチャートにも適用できるように修正。
+2025/7/20 Ver.2.7.0
+ステータスのレーダーチャートを追加。
+属性のレーダーチャート数値座標設定が無かった問題を修正。
+レーダーチャートの数値の修正。
+2025/6/5 Ver.2.6.14
+レーダーチャートに数値を表示する機能実装による更新。
+2025/4/13 Ver.2.6.13
+ゲージ画像化更新による処理の修正。
+2025/4/12 Ver.2.6.12
+ゲージ画像化で経験値の数値を画像化できるように修正。(NUUN_GaugeImageVer.1.6.8以降)
+2025/3/21 Ver.2.6.11
+装備、属性、ステートでコンテンツ背景をOFFにしたときに、表示がずれる問題を修正。
+2024/5/25 Ver.2.6.10
+能力値、追加能力値、特殊能力値、オリジナルパラメータ、属性耐性、ステート耐性の単位にシステムカラーを適用できるように修正。
+2024/4/7 Ver.2.6.9
+小数点の桁数が正常に機能していない問題を修正。
+2024/4/6 Ver.2.6.8
+封印装備非表示をOFFにしても適用されてしまう問題を修正。
+現在の経験値、次のレベルまでを１行で表示させる機能を追加。
+2024/2/3 Ver.2.6.7
+特徴で封印されている装備を表示させない機能を追加。(一部プラグインの競合対策)
+2024/1/8 Ver.2.6.6
+競合対策。
+2023/11/23 Ver.2.6.5
+職業、二つ名に色を指定できるように対応。
+2023/6/30 Ver.2.6.4
+装備スロット名がなしまたはデータが存在しない場合は表示しないように修正。
+2023/5/21 Ver.2.6.3
+共通画像、個別画像に表示条件を指定できる機能を追加。
+AvPort_dsWeaponMasteryと併用できるように対応。
+2023/5/4 Ver.2.6.2
+評価式に職業のデータを参照できるように修正。
+記述欄を職業から参照できるように修正。
+2023/3/15 Ver.2.6.1
+String入力のエラー防止処理を追加。(NUUN_Base Ver.1.6.4以降)
+2023/3/14 Ver.2.6.0
+任意の画像を表示できる機能を追加。
+ページ切り替えの処理を修正。
+2023/3/9 Ver.2.5.4
+レーダーチャートの色設定が正常に適用されていなかった問題を修正。
+システムカラー0番が指定できない問題を修正。
+2023/3/4 Ver.2.5.3
+ページ切り替えのキー設定を指定できる機能を追加。(別途キー割り当てが出来るプラグインが必要です)
+2023/2/28 Ver.2.5.2
+特定の装備部位のみ表示させる機能を追加。
+2023/2/25 Ver.2.5.1
+APNGに対応。
+2023/1/14 Ver.2.5.0
+各項目(一部を除く)にアイコンを指定できる機能を追加。
+各項目(一部を除く)に文字揃えを指定できる機能を追加。
+サイドビューアクター表示に関する修正。
+次の経験値のY座標を修正。
+2022/12/15 Ver.2.4.6
+カラー指定のプラグインパラメータのTypeをcolorに変更。(Ver.1.6.0以降)
+アイコン指定のプラグインパラメータのTypeをiconに変更。(Ver.1.6.0以降)
+数値部分に数値フォントを指定できる機能を追加。
+2022/11/9 Ver.2.4.5
+フォントサイズがおかしくなる問題を修正。
+2022/11/3 Ver.2.4.4
+特定の場面でエラーが出る問題を修正。
+2022/9/23 Ver.2.4.3
+一部プラグインの競合対策。
+2022/8/22 Ver.2.4.2
+制御文字でフォントサイズ変更をした後に、項目のフォントのサイズが変化してしまう問題を修正。
+2022/7/26 Ver.2.4.1
+オリジナルパラメータの評価式が適用されていなかった問題を修正。
+2022/7/23 Ver.2.4.0
+評価式の仕様を変更。
+ステートのアイコンを表示したいステートのみ表示する機能を追加。
+バトルステータスに表示されるステートの表示をメニュー画面上に表示できる機能を追加。
+経験値の%表示時に小数点が指定した小数点数を無視して表示されてしまう問題を修正。
+2022/3/22 Ver.2.3.6
+属性、ステート耐性値の取得値を変更。
+2022/2/16 Ver.2.3.5
+パラメータ評価式を属性耐性にも適用。
+ステート耐性のアイコンをステータス用のアイコン画像にする機能を追加。
+2022/2/6 Ver.2.3.4
+ステート無効化の有効度の色を指定できる機能を追加。
+カラーコードに対応。要共通処理Ver.1.4.0以降（レーダーチャートを使用している場合はレーダーチャートベースを最新版にしてください）
+基本能力値に単位をつけられる機能を追加。
+パラメータ評価式をステート耐性にも適用。
+2022/1/24 Ver.2.3.3
+フォントサイズを指定できる機能を追加。
+評価式の仕様を変更。
+2022/1/9 Ver.2.3.2
+処理を一部修正。
+2021/12/11 Ver.2.3.1
+立ち絵、顔グラ表示EXで設定した勝利時の画像が戦闘終了後でも残ってしまう問題を修正。
+2021/12/11 Ver.2.3.0
+立ち絵表示EXに対応。
+2021/11/27 Ver.2.2.9
+オリジナルパラメータにも小数点を指定できるように変更。
+2021/11/26 Ver.2.2.8
+カラーコードに対応。
+一部の項目で名称が適用されない問題を修正。
+2021/11/7 Ver.2.2.7
+立ち絵の切り替え機能が機能していなかった問題を修正。
+2021/11/3 Ver.2.2.6
+最大HP、最大MPを表示できる機能を追加。
+2021/10/24 Ver.2.2.5
+最初に表示されるページを指定できる機能を追加。
+2021/9/19 Ver.2.2.4
+コアスクリプトVer.1.3.3による修正。
+2021/8/24 Ver.2.2.3
+旧バージョンにプラグインパラメータの最大最小設定に関する修正。
+2021/8/11 Ver.2.2.2
+パラメータの任意名称が取得できない問題を修正。
+アクターのデータベースデータが記載のパラメータで取得出来ていなかった問題を修正。
+2021/8/7 Ver.2.2.1
+ページ設定を初期設定のままステータス画面を開くとエラーが出る問題を修正。
+2021/8/4 Ver.2.2.0
+装備表示機能拡張。
+2021/7/19 Ver.2.1.1
+レーダーチャートの座標調整でマイナス側に設定できなかった問題を修正。
+2021/7/19 Ver.2.1.0
+属性耐性、ステート耐性をレーダーチャートで表示する機能を追加。
+ページ設定が正常に取得できていなかった問題を修正。
+2021/6/19 Ver.2.0.7
+メンバーが一人の時にアクター切り替えのボタンを表示させないように修正。
+2021/6/5 Ver.2.0.6
+サイドビューアクター画像で戦闘終了後にステータス画面を開くと戦闘勝利時のモーションが実行してしまう問題を修正。。
+2021/5/28 Ver.2.0.5
+フロントビューでサイドビューアクターが表示されなかった問題を修正。
+キャラを切り替えた時にモーションが反映されない問題を修正。
+2021/5/24 Ver.2.0.4
+小数点表示を能力値にも対応。
+2021/5/23 Ver.2.0.3
+サイドビューアクターを表示させる機能を追加。
+2021/5/23 Ver.2.0.2
+キャラチップを表示させる機能を追加。
+任意ステータスで単位が二つ表示される問題及び、単位を設定しないと表示されない問題を修正。
+2021/5/22 Ver.2.0.1
+プラグインパラメータのページ設定の表示がおかしかった問題を修正。
+2021/5/20 Ver.2.0.0
+各項目を自由に設定、配置できるように変更。
+アクター立ち絵を変更する機能を追加。
+ウィンドウスキンを変更する機能を追加。
+2021/2/28 Ver.1.3.7
+「背景サイズをUIに合わせる」をfalseに設定時UIの左上基準に表示されてしまう問題を修正。
+2021/2/27 Ver.1.3.6
+ステート有効度のステート無効化が反映されていなかった問題を修正。
+2021/2/23 Ver.1.3.5
+プロフィール欄を表示させない機能を追加。
+2021/2/21 Ver.1.3.4
+追加パラメータ、特殊パラメータ、独自パラメータに任意の単位を付けられるように変更。
+2021/2/20 Ver.1.3.3
+追加パラメータ、特殊パラメータに任意のパラメータを追加できる機能を追加。
+2021/2/17 Ver.1.3.2
+アクター立ち絵の拡大率が100以外の時に画像X座標がずれいてた問題を修正。
+2021/2/16 Ver.1.3.1
+Scene_Base.prototype.isBottomButtonModeで設定を変更した際、ウィンドウがずれる問題を修正。
+アクター立ち絵の拡大率が100以外の時に画像座標が下基準になっていなかったのを修正。
+2021/1/24 Ver.1.3.0
+独自パラメータを表示できる機能を追加。
+2021/1/9 Ver.1.2.0
+各項目の設定方法を変更。
+2020/12/28 Ver.1.1.2
+立ち絵の座標処理を修正。
+2020/12/8 Ver.1.1.1
+最大レベル時の次のレベルまでの経験値表示のゲージMAXで100％で表示するように修正。
+2020/12/7 Ver.1.1.0
+次のレベルまでの経験値表示を百分率表示に出来るよう対応。
+2020/11/26 Ver.1.0.7
+特殊パラメータでSparamIdを3に設定し、SparamNameを空欄の状態でステータス画面を開くと
+本来「薬の知識」が出るところ「回復効果率」と表示されてしまう問題を修正。
+2020/11/23 Ver.1.0.6
+立ち絵を表示位置を左、中央、右から選択し配置出来る機能を追加。
+2020/11/22 Ver.1.0.5
+背景画像を指定できる機能を追加。
+2020/11/19 Ver.1.0.4
+解像度とUIのサイズが違う場合に、ステータス詳細項目がウィンドウ外にずれる問題や、他のステータス項目と
+表示が被る問題を修正。
+2020/11/18 Ver.1.0.3
+ステータス詳細項目が画面からはみ出た際、項目名が正常に表示されない問題を修正。
+一部処理を変更。
+2020/11/18 Ver.1.0.2
+表示外の少数点を四捨五入か切り捨てで丸める機能を追加。
+2020/11/17 Ver.1.0.1 
+追加能力値、特殊能力値、属性有効度、ステート有効度の表示できる小数点の桁数を指定できる機能を追加。
+ページの切り替えをタッチ操作でも行えるように対応。
+2020/11/16 Ver.1.0.0
+初版
+
+
+@command ChangeStartPage
+@desc 表示させる開始ページを変更します。
+@text 開始ページ変更
+
+@arg StartPage
+@type number
+@default 0
+@text 開始ページ
+@desc 開始ページ。0でデフォルトになります。
+
+@command ChangeStatusActorImg
+@desc ステータス画面のアクター画像を変更します。
+@text ステータス画面アクター画像変更
+
+@arg actorId
+@type actor
+@default 0
+@desc アクターを指定します。
+@text アクターID
+
+@arg ChangeActorImgId
+@type number
+@default 1
+@min 1
+@desc 変更する立ち絵のIDを指定します。立ち絵設定の画像設定のリスト番号を指定します。
+@text 立ち絵ID
+
+
+@param Setting
+@text 共通設定
+@default ------------------------------
+
+@param DecimalMode
+@text 端数処理四捨五入
+@desc 表示外小数点を四捨五入で丸める。（falseで切り捨て）
+@type boolean
+@default true
+@parent Setting
+
+@param ExpPercent
+@text 経験値百分率表示
+@desc 経験値を百分率で表示
+@type boolean
+@default false
+@parent Setting
+
+@param HPGaugeWidth
+@text HPゲージ横幅
+@desc HPゲージの横幅を指定します。
+@type number
+@default 200
+@parent Setting
+
+@param HPGaugeHeight
+@text HPゲージ縦幅
+@desc HPゲージの横幅縦を指定します。
+@type number
+@default 12
+@parent Setting
+
+@param MPGaugeWidth
+@text MPゲージ横幅
+@desc MPゲージの横幅を指定します。
+@type number
+@default 200
+@parent Setting
+
+@param MPGaugeHeight
+@text MPゲージ縦幅
+@desc MPゲージの横幅縦を指定します。
+@type number
+@default 12
+@parent Setting
+
+@param TPGaugeWidth
+@text TPゲージ横幅
+@desc TPゲージの横幅を指定します。
+@type number
+@default 200
+@parent Setting
+
+@param TPGaugeHeight
+@text TPゲージ縦幅
+@desc TPゲージの横幅縦を指定します。
+@type number
+@default 12
+@parent Setting
+
+@param DefaultFontSize
+@desc フォントサイズ（メインフォントからの差）
+@text フォントサイズ
+@type number
+@default 0
+@min -99
+@parent Setting
+
+@param FontMargin
+@desc 項目の縦の文字の余白
+@text 項目間縦余白
+@type number
+@default 10
+@min 0
+@parent Setting
+
+@param ImgFolder
+@desc 個別指定画像をフォルダ名を指定します。(img直下)
+@text 個別指定画像フォルダ
+@type string
+@default pictures
+@parent Setting
+
+@param PageNextSymbol
+@desc ページ送りのシンボル名(変更するには別途キー割り当てが出来るプラグインが必要です)
+@text ページ送りシンボル名
+@type combo
+@option 
+@option pageup2
+@default 
+@parent Setting
+
+@param PagePreviousSymbol
+@desc ページ戻りのシンボル名(変更するには別途キー割り当てが出来るプラグインが必要です)
+@text ページ戻りシンボル名
+@type combo
+@option 
+@option pagedown2
+@default 
+@parent Setting
+
+@param ResistanceColor
+@desc 耐性のパラメータの数値色。(属性、ステート) 
+@text 耐性数値色
+@type color
+@default 0
+@min 0
+@parent Setting
+
+@param WeaknessColor
+@desc 弱点のパラメータの数値色。(属性、ステート)
+@text 弱点数値色
+@type color
+@default 0
+@min 0
+@parent Setting
+
+@param PageSetting
+@text ページ設定
+@default ------------------------------
+
+@param PageList
+@desc ページ項目設定
+@text ページ項目設定
+@type struct<PageListData>[]
+@default ["{\"ParamLists\":\"1\"}","{\"ParamLists\":\"2\"}","{\"ParamLists\":\"3\"}"]
+@parent PageSetting
+
+@param ParamList_1Page
+@desc 表示する項目。
+@text 表示ページ項目１
+@type struct<ParamListData>[]
+@default ["{\"DateSelect\":\"1\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"3\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"192\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"2\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"432\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"100\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"24\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"4\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"120\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"5\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"3\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"10\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"11\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"24\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"19\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"48\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"40\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"41\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"1000\",\"NameColor\":\"0\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"6\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"12\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"13\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"14\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"9\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"15\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"10\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"16\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"11\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"17\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"12\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"260\",\"SystemItemWidth\":\"100\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"62\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"7\",\"X_Coordinate\":\"300\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"474\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"1000\",\"NameColor\":\"0\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"13\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"90\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"14\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}"]
+@parent PageSetting
+
+@param ParamList_2Page
+@desc 表示する項目。
+@text 表示ページ項目２
+@type struct<ParamListData>[]
+@default ["{\"DateSelect\":\"1\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"3\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"192\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"2\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"432\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"100\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"24\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"4\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"120\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"5\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"3\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"10\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"11\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"24\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"19\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"48\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"40\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"41\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"1000\",\"NameColor\":\"0\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"6\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"20\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"21\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"8\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"22\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"9\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"23\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"9\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"24\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"10\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"25\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"10\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"26\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"11\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"27\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"11\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"28\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"12\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"29\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"12\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"30\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"31\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"8\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"32\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"9\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"33\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"9\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"34\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"10\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"35\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"10\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"36\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"11\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"37\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"11\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"38\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"12\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"39\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"12\",\"X_Coordinate\":\"188\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"180\",\"SystemItemWidth\":\"80\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"51\",\"NameColor\":\"1\",\"ParamName\":\"追加ステータス\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'left'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"51\",\"NameColor\":\"1\",\"ParamName\":\"特殊ステータス\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'left'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}"]
+@parent PageSetting
+
+@param ParamList_3Page
+@desc 表示する項目。
+@text 表示ページ項目３
+@type struct<ParamListData>[]
+@default ["{\"DateSelect\":\"1\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"3\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"192\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"168\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"2\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"1\",\"X_Coordinate\":\"432\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"100\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"24\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"4\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"120\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"5\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"3\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"10\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"11\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"24\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"19\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"204\",\"Y_Coordinate\":\"48\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"40\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"2\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"41\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"4\",\"X_Coordinate\":\"456\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"270\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"1000\",\"NameColor\":\"0\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"6\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"true\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"51\",\"NameColor\":\"2\",\"ParamName\":\"属性耐性\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'left'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"51\",\"NameColor\":\"2\",\"ParamName\":\"ステート耐性\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"7\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"0\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"false\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'left'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"60\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"1\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"368\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}","{\"DateSelect\":\"61\",\"NameColor\":\"16\",\"ParamName\":\"\",\"DetaEval\":\"\",\"X_Position\":\"2\",\"Y_Position\":\"8\",\"X_Coordinate\":\"0\",\"Y_Coordinate\":\"0\",\"ItemWidth\":\"368\",\"SystemItemWidth\":\"0\",\"WideMode\":\"false\",\"paramUnit\":\"\",\"Decimal\":\"0\",\"textMethod\":\"\",\"Back\":\"true\",\"FontSize\":\"0\",\"ValueFontFace\":\"false\",\"IconId\":\"0\",\"IconY\":\"2\",\"Align\":\"'right'\",\"EquipSetting\":\"------------------------------\",\"EquipStartIndex\":\"0\",\"EquipNum\":\"0\"}"]
+@parent PageSetting
+
+@param ParamList_4Page
+@desc 表示する項目。
+@text 表示ページ項目４
+@type struct<ParamListData>[]
+@default []
+@parent PageSetting
+
+@param ParamList_5Page
+@desc 表示する項目。
+@text 表示ページ項目５
+@type struct<ParamListData>[]
+@default []
+@parent PageSetting
+
+@param StartPage
+@text 開始表示ページ
+@desc ステータスを開いたときに表示するページ。
+@type number
+@default 1
+@min 1
+@parent PageSetting
+
+@param BackGroundSetting
+@text 背景画像設定
+@default ------------------------------
+
+@param BackGroundImg
+@desc 背景画像ファイル名を指定します。
+@text 背景画像
+@type file[]
+@dir img/
+@default 
+@parent BackGroundSetting
+
+@param BackUiWidth
+@text 背景サイズをUIに合わせる
+@desc 背景サイズをUIに合わせる。
+@type boolean
+@default true
+@parent BackGroundSetting
+
+@param StatusWindowsSkin
+@desc ステータスウィンドウのウィンドウスキンを指定します。
+@text ステータスウィンドウスキン
+@type file
+@dir img/system
+@default 
+@parent BackGroundSetting
+
+@param ActorImgSetting
+@text アクター設定
+@default ------------------------------
+
+@param ActorsImgList
+@text 画像設定
+@desc アクターの画像設定
+@default []
+@type struct<actorImgList>[]
+@parent ActorImgSetting
+
+@param ActorPictureData
+@text 立ち絵表示EX用画像設定
+@desc 立ち絵表示EXでのアクターの画像設定
+@default []
+@type struct<ActorPictureDataList>[]
+@parent ActorImgSetting
+
+@param ActorPictureEXApp
+@text 立ち絵表示EX適用
+@desc 立ち絵表示EXの画像変更を適用します。OFFにした場合はこのプラグインでの設定が適用されます。
+@type boolean
+@default true
+@parent ActorImgSetting
+
+@param actorPosition
+@text 立ち絵表示位置
+@desc 立ち絵の表示位置を指定します。
+@type select
+@option 左
+@value 0
+@option 中央
+@value 1
+@option 右
+@value 2
+@default 2
+@parent ActorImgSetting
+
+@param ActorCharacterAnimation
+@text キャラチップ動作
+@desc キャラチップを動作させます。
+@type boolean
+@default true
+@parent ActorImgSetting
+
+@param EquipSetting
+@text 装備設定
+@default ------------------------------
+
+@param EquipNameVisible
+@text 装備部位名表示
+@desc 表示する装備部位名を指定します。
+@type select
+@option なし
+@value 0
+@option 部位のみ
+@value 1
+@option アイコンのみ
+@value 2
+@option アイコン、部位
+@value 3
+@default 1
+@parent EquipSetting
+
+@param EquipIcons
+@type struct<EquipIconsData>[]
+@text 装備アイコン
+@desc 装備アイコンを設定します。IDは装備スロットの番号と同じです。
+@default []
+@parent EquipSetting
+
+@param InvalidSlotHide
+@text 封印装備非表示
+@desc 特徴で封印されている装備を表示しません。
+@type boolean
+@default false
+@parent EquipSetting
+
+@param EXPSetting
+@text 経験値設定
+@default ------------------------------
+
+@param NowEXPOneLine
+@text 現在の経験値１行表示
+@desc 現在の経験値を１行表示にします。
+@type boolean
+@default false
+@parent EXPSetting
+
+@param NextEXPOneLine
+@text 次の経験値１行表示
+@desc 次の経験値までを１行表示にします。
+@type boolean
+@default false
+@parent EXPSetting
+
+@param EXPGaugeVisible
+@text 経験値ゲージ表示
+@desc 経験値ゲージを表示する。
+@type boolean
+@default true
+@parent EXPSetting
+
+@param EXPGaugeColor1
+@text 経験値ゲージ色１
+@desc 経験値ゲージの色１
+@type color
+@default 17
+@parent EXPSetting
+
+@param EXPGaugeColor2
+@text 経験値ゲージ色２
+@desc 経験値ゲージの色２
+@type color
+@default 6
+@parent EXPSetting
+
+@param EXPGaugeX
+@text EXPゲージX座標
+@desc EXPゲージのX座標（相対）
+@type number
+@default 0
+@parent EXPSetting
+
+@param EXPGaugeY
+@text EXPゲージY座標
+@desc EXPゲージのY座標（相対）
+@type number
+@default 0
+@parent EXPSetting
+
+@param EXPGaugeWidth
+@text EXPゲージ横幅
+@desc EXPゲージの横幅を指定します。
+@type number
+@default 300
+@parent EXPSetting
+
+@param EXPGaugeHeight
+@text EXPゲージ縦幅
+@desc EXPゲージの横幅縦を指定します。
+@type number
+@default 12
+@parent EXPSetting
+
+@param EXPDecimal
+@text 小数点桁数
+@desc 表示出来る小数点桁数。
+@type number
+@default 2
+@min 0
+@max 99
+@parent EXPSetting
+
+@param ElementStateSetting
+@text 属性設定
+@default ------------------------------
+
+@param ElementResist
+@type struct<ElementData>[]
+@text 属性耐性
+@default ["{\"ElementNo\":\"1\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"2\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"3\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"4\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"5\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"6\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"7\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"8\",\"ElementIconId\":\"\"}","{\"ElementNo\":\"9\",\"ElementIconId\":\"\"}"]
+@parent ElementStateSetting
+
+@param ElementResistText
+@text 属性有効度名前表示
+@desc 属性有効度の属性を名前で表示させます。
+@type boolean
+@default false
+@parent ElementStateSetting
+
+@param ElementResistCol
+@text 属性有効度の表示列数
+@desc 属性有効度の表示列数を設定します。
+@type number
+@default 2
+@parent ElementStateSetting
+
+@param StateStateSetting
+@text ステート設定
+@default ------------------------------
+
+@param StateResist
+@type struct<StateData>[]
+@text 状態耐性
+@default ["{\"StateNo\":\"4\"}","{\"StateNo\":\"5\"}","{\"StateNo\":\"6\"}","{\"StateNo\":\"7\"}","{\"StateNo\":\"8\"}","{\"StateNo\":\"9\"}","{\"StateNo\":\"10\"}","{\"StateNo\":\"12\"}","{\"StateNo\":\"13\"}"]
+@parent StateStateSetting
+
+@param StateResistText
+@text ステート有効度名前表示
+@desc ステート有効度のステートを名前で表示させます。
+@type boolean
+@default false
+@parent StateStateSetting
+
+@param StateResistCol
+@text ステート有効度の表示列数
+@desc ステート有効度の表示列数を設定します。
+@type number
+@default 2
+@parent StateStateSetting
+
+@param StateResistColor
+@text ステート無効化時の色
+@desc ステート無効化の時の色。（テキストタブでインデックスカラー指定可）
+@type number
+@default 0
+@parent StateStateSetting
+
+
+@param RadarChartSetting
+@text レーダーチャート設定
+@default 要NUUN_RadarChartBase
+
+@param StatusRadarChart
+@text ステータスレーダーチャート
+@default ------------------------------
+@parent RadarChartSetting
+
+@param StatusRadarChartParamList
+@desc 表示するステータス。
+@text 表示ステータス
+@type struct<RadarChartParamList>[]
+@default 
+@parent StatusRadarChart
+
+@param DisplayNameModo
+@desc レーダーチャートのパラメータ名表示を指定します。
+@text パラメータ名表示
+@type select
+@option アイコンのみ
+@value icon
+@option パラメータ名のみ
+@value param
+@option アイコン及びパラメータ名
+@value iconparams
+@default param
+@parent StatusRadarChart
+
+@param StatusRadarChartRadius
+@desc レーダチャートの半径。
+@text レーダチャート半径
+@type number
+@default 100
+@parent StatusRadarChart
+
+@param StatusRadarChartFramecolor
+@desc レーダチャートの枠の色を設定します。
+@text レーダチャート枠色
+@type color
+@default 15
+@parent StatusRadarChart
+
+@param StatusRadarChartLineColor
+@desc レーダチャートの線の色を設定します。
+@text レーダチャート線色
+@type color
+@default 15
+@parent StatusRadarChart
+
+@param StatusRadarChartMainColor1
+@desc レーダチャートの中心の背景色を設定します。
+@text レーダチャート中心背景色
+@type color
+@default 3
+@parent StatusRadarChart
+
+@param StatusRadarChartMainColor2
+@desc レーダチャートの外側背景色を設定します。
+@text レーダチャート外側背景色
+@type color
+@default 3
+@parent StatusRadarChart
+
+@param StatusRadarChartX
+@desc レーダチャートのX座標（相対）。
+@text レーダチャートX座標
+@type number
+@min -9999
+@max 9999
+@default 48
+@parent StatusRadarChart
+
+@param StatusRadarChartY
+@desc レーダチャートのY座標（相対）。
+@text レーダチャートY座標
+@type number
+@min -9999
+@max 9999
+@default 48
+@parent StatusRadarChart
+
+@param StatusRadarChart_FontSize
+@desc フォントサイズ。（メインフォントから）
+@text フォントサイズ
+@type number
+@default -12
+@min -9999
+@max 9999
+@parent StatusRadarChart
+
+@param StatusRadarChart_IconSize
+@desc アイコンサイズを指定します。0でデフォルトサイズ
+@text アイコンサイズ
+@type number
+@default 0
+@parent StatusRadarChart
+
+@param StatusRadarChartValueData
+@desc レーダーチャートに表示する数値設定。
+@text 数値設定
+@type struct<RadarChartValue>
+@default
+@parent StatusRadarChart
+
+@param ElementRadarChart
+@text 属性耐性レーダーチャート
+@default ------------------------------
+@parent RadarChartSetting
+
+@param ElementDisplayNameModo
+@desc レーダーチャートのパラメータ名表示を指定します。
+@text パラメータ名表示
+@type select
+@option アイコンのみ
+@value icon
+@option パラメータ名のみ
+@value param
+@option アイコン及びパラメータ名
+@value iconparam
+@default icon
+@parent ElementRadarChart
+
+@param ElementRadarChartRadius
+@desc レーダチャートの半径。
+@text レーダチャート半径
+@type number
+@default 100
+@parent ElementRadarChart
+
+@param ElementRadarChartFramecolor
+@desc レーダチャートの枠の色を設定します。
+@text レーダチャート枠色
+@type color
+@default 15
+@parent ElementRadarChart
+
+@param ElementRadarChartLineColor
+@desc レーダチャートの線の色を設定します。
+@text レーダチャート線色
+@type color
+@default 15
+@parent ElementRadarChart
+
+@param ElementRadarChartMainColor1
+@desc レーダチャートの中心の背景色を設定します。
+@text レーダチャート中心背景色
+@type color
+@default 3
+@parent ElementRadarChart
+
+@param ElementRadarChartMainColor2
+@desc レーダチャートの外側背景色を設定します。
+@text レーダチャート外側背景色
+@type color
+@default 3
+@parent ElementRadarChart
+
+@param ElementRadarChartX
+@desc レーダチャートのX座標（相対）。
+@text レーダチャートX座標
+@type number
+@min -9999
+@max 9999
+@default 48
+@parent ElementRadarChart
+
+@param ElementRadarChartY
+@desc レーダチャートのY座標（相対）。
+@text レーダチャートY座標
+@type number
+@min -9999
+@max 9999
+@default 48
+@parent ElementRadarChart
+
+@param ElementRadarChart_FontSize
+@desc フォントサイズ。（メインフォントから）
+@text フォントサイズ
+@type number
+@default -12
+@min -9999
+@max 9999
+@parent ElementRadarChart
+
+@param ElementRadarChart_IconSize
+@desc アイコンサイズを指定します。0でデフォルトサイズ
+@text アイコンサイズ
+@type number
+@default 0
+@parent ElementRadarChart
+
+@param ElementRadarChartValueData
+@desc レーダーチャートに表示する数値設定。
+@text 数値設定
+@type struct<RadarChartValue>
+@default
+@parent ElementRadarChart
+
+@param StateRadarChart
+@text ステート耐性レーダーチャート
+@default ------------------------------
+@parent RadarChartSetting
+
+@param StateDisplayNameModo
+@desc レーダーチャートのパラメータ名表示を指定します。
+@text パラメータ名表示
+@type select
+@option アイコンのみ
+@value icon
+@option パラメータ名のみ
+@value param
+@option アイコン及びパラメータ名
+@value iconparam
+@default icon
+@parent StateRadarChart
+
+@param StateRadarChartRadius
+@desc レーダチャートの半径。
+@text レーダチャート半径
+@type number
+@default 100
+@parent StateRadarChart
+
+@param StateRadarChartFramecolor
+@desc レーダチャートの枠の色を設定します。
+@text レーダチャート枠色
+@type color
+@default 15
+@parent StateRadarChart
+
+@param StateRadarChartLineColor
+@desc レーダチャートの線の色を設定します。
+@text レーダチャート線色
+@type color
+@default 15
+@parent StateRadarChart
+
+@param StateRadarChartMainColor1
+@desc レーダチャートの中心の背景色を設定します。
+@text レーダチャート中心背景色
+@type color
+@default 3
+@parent StateRadarChart
+
+@param StateRadarChartMainColor2
+@desc レーダチャートの外側背景色を設定します。
+@text レーダチャート外側背景色
+@type color
+@default 3
+@parent StateRadarChart
+
+@param StateRadarChartX
+@desc レーダチャートのX座標（相対）。
+@text レーダチャートX座標
+@type number
+@min -9999
+@default 48
+@parent StateRadarChart
+
+@param StateRadarChartY
+@desc レーダチャートのY座標（相対）。
+@text レーダチャートY座標
+@type number
+@min -9999
+@default 48
+@parent StateRadarChart
+
+@param StateRadarChart_FontSize
+@desc フォントサイズ。（メインフォントから）
+@text フォントサイズ
+@type number
+@default -12
+@min -9999
+@parent StateRadarChart
+
+@param StateRadarChart_IconSize
+@desc アイコンサイズを指定します。0でデフォルトサイズ
+@text アイコンサイズ
+@type number
+@default 0
+@parent StateRadarChart
+
+@param StateRadarChartValueData
+@desc レーダーチャートに表示する数値設定。
+@text 数値設定
+@type struct<RadarChartValue>
+@default
+@parent StateRadarChart
+*/
+
+/*~struct~RadarChartParamList:ja
+
+@param Param
+@desc レーダーチャートに表示する項目を指定します。
+@text 表示する項目
+@type select
+@option 最大HP
+@value 0
+@option 最大MP
+@value 1
+@option 攻撃力
+@value 2
+@option 防御力
+@value 3
+@option 魔法力
+@value 4
+@option 魔法防御
+@value 5
+@option 敏捷性
+@value 6
+@option 運
+@value 7
+@default 0
+
+@param RadarChartParamName
+@desc 項目の名称を設定します。
+@text 名称
+@type string
+@default
+
+@param RadarChartIconIndex
+@desc 項目のアイコンインデックス。
+@text アイコンインデックス
+@type icon
+@default 0
+@min 0
+@max 99999
+
+@param RadarChartShowValue
+@text 数値の座標
+@desc ----------------------------------
+
+@param ValueX
+@desc レーダーチャートの数値の個別X座標。
+@text レーダーチャート数値個別X座標
+@type number
+@default 0
+@min -9999
+@parent RadarChartShowValue
+
+@param ValueY
+@desc レーダーチャートの数値の個別Y座標。
+@text レーダーチャート数値個別Y座標
+@type number
+@default 0
+@min -9999
+@parent RadarChartShowValue
+*/
+
+/*~struct~actorImgList:ja
+
+@param actorId
+@text アクター
+@desc アクターを指定します。
+@type actor
+
+@param ActorImg
+@text アクター画像
+@desc アクターの画像を表示します。立ち絵を切り替える場合はリストに画像を設定してください。
+@type file[]
+@dir img/
+@default 
+
+@param Actor_X
+@desc 画像の表示位置X座標。
+@text 画像表示位置X座標
+@type number
+@default 0
+@min -9999
+@max 9999
+
+@param Actor_Y
+@desc 画像の表示位置Y座標。
+@text 画像表示位置Y座標
+@type number
+@default 0
+@min -9999
+@max 9999
+
+@param Actor_Scale
+@desc 画像の拡大率。
+@text 画像拡大率
+@type number
+@default 100
+@min 0
+@max 999
+
+@param IsApng
+@text Apng有効
+@desc Apngを有効にします。(要ApngPicture)
+@type boolean
+@default false
+*/
+
+/*~struct~ElementData:ja
+
+@param ElementNo
+@text 属性ID
+@desc 表示する属性番号を指定します。
+@type number
+
+@param ElementIconId
+@text アイコンID
+@desc アイコンのIDを指定します。
+@type icon
+@min 0
+@max 99999
+@default 0
+
+@param RadarChartShowValue
+@text 数値の座標
+@desc ----------------------------------
+
+@param ValueX
+@desc レーダーチャートの数値の個別X座標。
+@text レーダーチャート数値個別X座標
+@type number
+@default 0
+@min -9999
+@parent RadarChartShowValue
+
+@param ValueY
+@desc レーダーチャートの数値の個別Y座標。
+@text レーダーチャート数値個別Y座標
+@type number
+@default 0
+@min -9999
+@parent RadarChartShowValue
+*/
+
+/*~struct~StateData:ja
+
+@param StateNo
+@text ステート
+@desc 表示するステートを指定します。
+@type state
+@default 0
+
+@param StateIconId
+@text ステートアイコンID
+@desc アイコンのIDを指定します。0の場合はデータベースのアイコンが表示されます。
+@type icon
+@default 0
+
+@param RadarChartShowValue
+@text 数値の座標
+@desc ----------------------------------
+
+@param ValueX
+@desc レーダーチャートの数値の個別X座標。
+@text レーダーチャート数値個別X座標
+@type number
+@default 0
+@min -9999
+@parent RadarChartShowValue
+
+@param ValueY
+@desc レーダーチャートの数値の個別Y座標。
+@text レーダーチャート数値個別Y座標
+@type number
+@default 0
+@min -9999
+@parent RadarChartShowValue
+*/
+
+/*~struct~EquipIconsData:ja
+
+@param EquipIconId
+@text アイコンID
+@desc 表示するステート装備アイコンを指定します。データベースの「タイプ」の「装備タイプ」のIDと同じリストIDのアイコンが表示されます。
+@type icon
+@min 0
+@default 0
+*/
+
+/*~struct~PageListData:ja
+
+@param ParamLists
+@desc 表示するページ。
+@text 表示するページを指定します。
+@type select
+@option なし
+@value 0
+@option 表示ページ項目１
+@value 1
+@option 表示ページ項目２
+@value 2
+@option 表示ページ項目３
+@value 3
+@option 表示ページ項目４
+@value 4
+@option 表示ページ項目５
+@value 5
+@default 0
+*/
+
+/*~struct~ParamListData:ja
+
+@param DateSelect
+@text 表示するステータス
+@desc 表示するステータスを指定します。
+@type select
+@option なし
+@value 0
+@option アクター名(4)(5)(6)(7)(15)
+@value 1
+@option 二つ名(1)(4)(5)(6)(7)(15)
+@value 2
+@option 職業(1)(4)(5)(6)(7)(15)
+@value 3
+@option レベル(4)(5)(6)(7)(14)(15)(16)(17)(20)(21)
+@value 4
+@option ステート(3※1)(4)(5)(6)(7)(15)
+@value 5
+@option ステート(戦闘用と同じ表示)(4)(5)(6)(7)
+@value 6
+@option ＨＰ(4)(5)(6)(7)
+@value 10
+@option ＭＰ(4)(5)(6)(7)
+@value 11
+@option 攻撃力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
+@value 12
+@option 防御力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
+@value 13
+@option 魔法力(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
+@value 14
+@option 魔法防御(1)(2)(3)(4)(5)(6)(7)(8)(9)(11)(10)(14)(15)(16)(17)(20)(21)
+@value 15
+@option 敏捷性(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
+@value 16
+@option 運(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(14)(11)(15)(16)(17)(20)(21)
+@value 17
+@option ＴＰ(4)(5)(6)(7)
+@value 19
+@option 最大ＨＰ(数値のみ)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
+@value 42
+@option 最大ＭＰ(数値のみ)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
+@value 43
+@option ＨＰ(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
+@value 44
+@option ＭＰ(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(14)(15)(16)(17)(20)(21)
+@value 45
+@option 命中率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 20
+@option 回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 21
+@option 会心率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 22
+@option 会心回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 23
+@option 魔法回避率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 24
+@option 魔法反射率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 25
+@option 反撃率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 26
+@option HP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 27
+@option MP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 28
+@option TP再生率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 29
+@option 狙われ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 30
+@option 防御効果率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 31
+@option 回復効果率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 32
+@option 薬の知識(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 33
+@option MP消費率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 34
+@option TPチャージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 35
+@option 物理ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 36
+@option 魔法ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 37
+@option 床ダメージ率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 38
+@option 獲得経験値率(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(15)(16)(17)(20)(21)
+@value 39
+@option 現在の経験値(1)(2)(4)(5)(6)(7)(8)(15)(16)(17)(20)(21)
+@value 40
+@option 次のレベルまでの経験値(1)(2)(4)(5)(6)(7)(8)(15)(16)(17)(20)(21)
+@value 41
+@option オリジナルパラメータ(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(14)(15)(16)(17)(20)(21)
+@value 50
+@option 名称のみ(1)(4)(5)(6)(7)(8)(10)(15)(16)(17)(21)
+@value 51
+@option 属性耐性(1)(3)(4)(5)(6)(7)(8)(9)(10)(12)(14)(15)(16)(17)(20)
+@value 60
+@option ステート耐性(1)(3)(4)(5)(6)(7)(8)(9)(10)(12)(14)(15)(16)(17)(20)
+@value 61
+@option 装備(1)(2)(4)(5)(6)(7)(8)(9)(10)(14)(15)(18)(16)(17)(19)
+@value 62
+@option 記述欄(1)(2)(3)(4)(5)(6)(7)(8)(10)(13)(15)(16)(17)
+@value 70
+@option プロフィール(1)(2)(4)(5)(6)(7)(8)(10)(16)(17)
+@value 90
+@option 顔グラフィック(4)(5)(6)(7)
+@value 100
+@option キャラチップ(4)(5)(6)(7)
+@value 101
+@option サイドビューアクター画像(4)(5)(6)(7)(8)(10)
+@value 102
+@option ステータスレーダーチャート(3)(4)(5)(6)(7)(8)(10)(15)
+@value 200
+@option 属性耐性レーダーチャート(3)(4)(5)(6)(7)(8)(10)(15)
+@value 201
+@option ステート耐性レーダーチャート(3)(4)(5)(6)(7)(8)(10)(15)
+@value 202
+@option 画像（共通画像）(3)(4)～(7)(22)
+@value 300
+@option 画像（個別指定画像）(3)(4)～(7)(13)
+@value 301
+@option 武器熟練度システム　要AvPort_dsWeaponMastery.js(4)～(7)
+@value 900
+@option ライン(1)(4)(5)(6)(7)(8)(10)
+@value 1000
+@default 0
+
+@param NameColor
+@desc システム項目の文字色。テキストタブでカラーコードを入力できます。
+@text システム項目文字色(1)
+@type color
+@default 16
+@min 0
+
+@param ParamName
+@desc 項目の名称を設定します。
+@text 名称(2)
+@type string
+@default
+
+@param DetaEval
+@desc 評価式または文字列を記入します。
+@text 評価式or文字列(3)
+@type combo
+@option '$gameVariables.value(0);//ゲーム変数'
+@option "actor.isStateResist(stateId) ? '無効' : r;//ステート耐性"
+@option 'actor.level'
+@option "100 - r +' %';//耐性差分表示"
+@option "this.expTotalValue();//現在の経験値"
+@option "this.expNextValue();//次のレベルまで"
+@option "actorclass"
+@default 
+
+@param X_Position
+@text X表示列位置(4)
+@desc X表示列位置
+@type number
+@default 1
+@min 1
+@max 3
+
+@param Y_Position
+@desc Y表示行位置
+@text Y表示行位置(5)
+@type number
+@default 1
+@min 1
+@max 99
+
+@param X_Coordinate
+@text X座標（相対）(6)
+@desc X座標（X表示列位置からの相対座標）
+@type number
+@default 0
+@max 9999
+@min -9999
+
+@param Y_Coordinate
+@text Y座標（相対）(7)
+@desc Y座標（Y表示列位置からの相対座標）
+@type number
+@default 0
+@max 9999
+@min -9999
+
+@param ItemWidth
+@desc 項目横幅（0でデフォルト幅）
+@text 項目横幅(8)
+@type number
+@default 0
+@min 0
+
+@param SystemItemWidth
+@desc システム項目の横幅（0でデフォルト幅）
+@text システム項目横幅(9)
+@type number
+@default 0
+@min 0
+
+@param WideMode
+@desc ワイド表示モード
+@text ワイド表示モード(10)
+@type boolean
+@default false
+
+@param paramUnit
+@desc 単位を設定します。
+@text 単位(11)
+@type string
+@default 
+
+@param Decimal
+@text 小数点桁数(12)
+@desc 表示出来る小数点桁数。
+@type number
+@default 0
+@min 0
+@max 99
+
+@param textMethod
+@desc 記述欄、個別画像に紐づけするタグ名
+@text タグ名(13)
+@type string
+@default 
+
+@param Back
+@text コンテンツ背景表示(14)
+@desc コンテンツ背景を表示させます。
+@type boolean
+@default false
+
+@param FontSize
+@desc フォントサイズ（メインフォントからの差）
+@text フォントサイズ(15)
+@type number
+@default 0
+@min -99
+
+@param ValueFontFace
+@desc 数字のフォント適用(OFFでメインフォントのフォント)
+@text 数字テキスト部の数字フォント適用(20)
+@type boolean
+@default false
+@min -99
+
+@param IconId
+@text アイコンID(16)
+@desc アイコンのIDを指定します。
+@type icon
+@default 0
+
+@param IconY
+@text アイコン補正Y値(17)
+@desc アイコンの補正Y値を指定します。
+@type number
+@default 2
+
+@param Align
+@desc 文字揃え。
+@text 文字揃え(21)
+@type select
+@option 左
+@value 'left'
+@option 右
+@value 'right'
+@option 中央
+@value 'center'
+@default 'right'
+
+@param EquipSetting
+@text 装備設定
+@default ------------------------------
+
+@param EquipStartIndex
+@text 開始インデックス(18)
+@desc 装備欄の開始インデックスを指定します。
+@type number
+@default 0
+@min 0
+@max 99999
+@parent EquipSetting
+
+@param EquipNum
+@text 表示装備数(19)
+@desc 装備欄の表示を指定します。(0で制限なし)
+@type number
+@default 0
+@parent EquipSetting
+
+@param ImgSetting
+@text 画像設定
+@default ------------------------------
+
+@param ImgData
+@desc 画像ファイル名を指定します。
+@text 画像(22)
+@type file
+@dir img/
+@default
+@parent ImgSetting
+*/
+
+/*~struct~RadarChartValue:ja
+
+@param ShowValue
+@text 数値の表示
+@desc 数値を表示します。
+@type boolean
+@default false
+
+@param ChartInsideValueX
+@desc レーダーチャートの数値のX座標。
+@text レーダーチャート数値X座標
+@type number
+@default 0
+@min -9999
+@parent ShowValue
+
+@param ChartInsideValueY
+@desc レーダーチャートの数値のY座標。
+@text レーダーチャート数値Y座標
+@type number
+@default 0
+@min -9999
+@parent ShowValue
+
+@param UnitText
+@text 単位
+@desc 単位を記入します。
+@type string
+@default "%"
+@parent ShowValue
+
+@param SystemUnitColor
+@text 単位色
+@desc 単位を色を指定します。
+@type color
+@default 16
+@parent ShowValue
+*/
+
+/*~struct~ActorPictureDataList:ja
+
+@param actorId
+@text アクター
+@desc アクターを指定します。
+@type actor
+
+@param Actor_X
+@desc 画像のX座標。
+@text 画像X座標
+@type number
+@default 0
+@min -9999
+@max 9999
+
+@param Actor_Y
+@desc 画像のY座標。
+@text 画像Y座標
+@type number
+@default 0
+@min -9999
+@max 9999
+
+@param Img_SX
+@desc 画像の表示開始座標X。
+@text 画像表示開始座標X
+@type number
+@default 0
+@min 0
+@max 9999
+
+@param Img_SY
+@desc 画像の表示開始座標Y
+@text 画像表示開始座標Y
+@type number
+@default 0
+@min 0
+@max 9999
+
+@param Actor_Scale
+@desc 画像の拡大率。
+@text 画像拡大率
+@type number
+@default 100
+@min 0
+@max 999
+
+@param IsApng
+@text Apng有効
+@desc Apngを有効にします。(要ApngPicture)
+@type boolean
+@default false
+*/
 
 var Imported = Imported || {};
 Imported.NUUN_StatusScreen = true;

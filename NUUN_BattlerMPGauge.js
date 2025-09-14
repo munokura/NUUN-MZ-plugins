@@ -6,336 +6,684 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  * 
- */ 
-/*:
- * @target MZ
- * @plugindesc  バトラーMPゲージ
- * @author NUUN
- * @base NUUN_Base
- * @version 1.2.5
- * @orderAfter NUUN_Base
- * 
- * @help
- * 敵またはSVアクターのバトラー上にMPゲージを表示します。
- * 
- * 敵キャラまたはアクターのメモ欄
- * <MPGaugeX:[position]> MPゲージのX座標を調整します。（相対座標）
- * <MPGaugeY:[position]> MPゲージのY座標を調整します。（相対座標）
- * [position]:座標
- * 
- * 敵キャラのメモ欄
- * <NoMPGauge> MPゲージを表示しません。
- * <MPGaugeLength:[width], [height]> MPゲージの幅を指定します。
- * [width]:ゲージ横幅
- * [height]:ゲージ縦幅
- * 
- * バトルイベントの注釈
- * <MPGaugePosition:[Id],[x],[y]> 敵グループの[Id]番目のモンスターのゲージの位置を調整します。（相対座標）
- * [Id]：表示順番号
- * [x]：X座標
- * [y]：Y座標
- * [id]は敵グループ設定で配置した順番のIDで指定します。モンスター画像の左上に番号が表示されますのでその番号を記入します。
- * 
- * 特徴を有するメモ欄
- * <MPGaugeVisible> この特徴を持つアクターが存在すれば、敵のMPゲージが表示されます。
- * <EnemyMPGaugeVisible> この特徴を持つ敵はMPゲージが表示されます。
- * 敵のメモ欄
- * <MPGaugeMask:[eval]> 条件に一致しなければMP値の表示を？？？にします。
- * this 敵データ
- * this.enemy() 敵のデータベースデータ
- * 例　<MPGaugeMask:this.mp < this.mmp * 0.3>
- * 敵のMPが３０％未満の時にMP値を表示します。
- * 
- * 初期MPゲージ表示
- * <MPGaugeVisible>の特徴を持つアクターが戦闘メンバーにいるとき、または図鑑登録と連動している際に登録済みなら表示されます。
- * 上記の特徴を使用する場合は初期MPゲージ表示を非表示に設定してください。
- * 
- * このプラグインはNUUN_Base Ver.1.2.0以降が必要です。
- * 
- * 疑似３Dバトルを入れている場合はこのプラグインを疑似３Dバトルを下に配置してください。
- * ゲージ表示拡張プラグインで該当のゲージを設定している場合は、フォントサイズの設定はゲージ表示拡張プラグインで設定してください。
- * 
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2025/1/3 Ver.1.2.5
- * 変身後のモンスターのゲージが非表示に設定されている場合、ゲージが表示がされたままになる問題を修正。
- * 2023/8/3 Ver.1.2.4
- * 一部のプラグインにてNoMPGaugeが機能していなかった問題を修正。
- * 2023/7/7 Ver.1.2.3
- * 一部プラグインで表示した敵キャラにゲージを表示されるとエラーが出る問題を修正。
- * 2023/6/23 Ver.1.2.2
- * NoMPGaugeが機能していなかった問題を修正。
- * 2023/6/2 Ver.1.2.1
- * 不具合の修正。
- * 2023/6/2 Ver.1.2.0
- * SVアクターにゲージを表示する機能を追加。
- * 敵キャラ毎にHPゲージの横幅、縦幅を指定できる機能を追加。
- * 2023/5/7 Ver.1.1.1
- * MPゲージの表示をフェードアウト、フェードインさせるように修正。
- * 2022/5/14 Ver.1.1.0
- * バトラーの表示処理の定義大幅変更に関する定義変更。
- * 2022/1/10 Ver.1.0.2
- * 再修正。
- * 2022/1/10 Ver.1.0.1
- * ゲージがラベル表示でも座標0から表示されてしまう問題を修正。
- * 2022/1/12 Ver.1.0.0
- * 初版
- * 
- * @param EnemySetting
- * @text 敵設定
- * @default ------------------------------
- * 
- * @param EnemyVisibleSetting
- * @text 表示設定
- * @default ------------------------------
- * @parent EnemySetting
- * 
- * @param MPPosition
- * @desc 敵のMPゲージ位置
- * @text MPゲージ位置
- * @type select
- * @option 表示なし
- * @value -1
- * @option 敵画像の上
- * @value 0
- * @option 敵画像の下
- * @value 1
- * @option 敵画像の中心
- * @value 2
- * @default 0
- * @parent EnemyVisibleSetting
- * 
- * @param MPVisible
- * @desc MPゲージの表示タイミング
- * @text MPゲージ表示タイミング
- * @type select
- * @option 常に表示
- * @value 0
- * @option 選択時
- * @value 1
- * @option MP変動時
- * @value 2
- * @option 選択時、MP変動時
- * @value 3
- * @default 0
- * @parent EnemyVisibleSetting
- * 
- * @param GaugeSetting
- * @text ゲージ設定
- * @default ------------------------------
- * @parent EnemySetting
- * 
- * @param GaugeWidth
- * @desc ゲージの横幅を指定します。
- * @text ゲージ横幅
- * @type number
- * @default 128
- * @min 0
- * @parent GaugeSetting
- * 
- * @param GaugeHeight
- * @desc ゲージの縦幅を指定します。
- * @text ゲージ縦幅
- * @type number
- * @default 12
- * @min 0
- * @parent GaugeSetting
- * 
- * @param Gauge_X
- * @desc ゲージのX座標（相対座標）指定します。
- * @text ゲージX座標
- * @type number
- * @default 0
- * @min -9999
- * @parent GaugeSetting
- * 
- * @param Gauge_Y
- * @desc ゲージのY座標（相対座標）指定します。
- * @text ゲージY座標
- * @type number
- * @default 0
- * @min -9999
- * @parent GaugeSetting
- * 
- * @param MPLabelVisible
- * @text MPラベル表示
- * @desc MPラベルを表示する。
- * @type boolean
- * @default true
- * @parent GaugeSetting
- * 
- * @param MPValueVisible
- * @text MP数値表示
- * @desc MP数値を表示する。
- * @type boolean
- * @default true
- * @parent GaugeSetting
- * 
- * @param ValueFontSize
- * @desc 数値のフォントサイズ。（メインフォントサイズから）
- * @text 数値フォントサイズ
- * @type number
- * @default -6
- * @min -9999
- * @parent GaugeSetting
- * 
- * @param LabelFontSize
- * @desc ラベルのフォントサイズ。（メインフォントサイズから）
- * @text ラベルフォントサイズ
- * @type number
- * @default -2
- * @min -9999
- * @parent GaugeSetting
- * 
- * @param MaskValueName
- * @desc MPの数値を隠す時の文字。
- * @text MPの数値を隠す時の文字
- * @type string
- * @default ????
- * @parent GaugeSetting
- * 
- * @param SpecialSetting
- * @text 特殊設定
- * @default ------------------------------
- * @parent GaugeSetting
- * 
- * @param MPVisibleMode
- * @desc 初期状態でのMPゲージの表示。特徴によってやMPゲージの表示タイミングによって表示されるようになります。
- * @text MPゲージ表示
- * @type select
- * @option 表示
- * @value 0
- * @option 非表示
- * @value 1
- * @default 0
- * @parent SpecialSetting
- * 
- * @param EnemyBookSetting
- * @text 図鑑連動設定
- * @default ------------------------------
- * @parent GaugeSetting
- * 
- * @param MPEnemyBookVisible
- * @desc MPゲージの表示タイミング（モンスター図鑑）
- * @text MPゲージ表示タイミング（モンスター図鑑）
- * @type select
- * @option 指定なし
- * @value 0
- * @option 図鑑登録後に表示
- * @value 1
- * @option 図鑑情報登録後に表示
- * @value 2
- * @default 0
- * @parent EnemyBookSetting
- * 
- * @param ActorSetting
- * @text アクター設定
- * @default ------------------------------
- * 
- * @param ActorVisibleSetting
- * @text 表示設定
- * @default ------------------------------
- * @parent ActorSetting
- * 
- * @param ActorMPPosition
- * @desc アクターのMPゲージ位置
- * @text MPゲージ位置
- * @type select
- * @option 表示なし
- * @value -1
- * @option SV画像の上
- * @value 0
- * @option SV画像の下
- * @value 1
- * @default -1
- * @parent ActorVisibleSetting
- * 
- * @param ActorMPVisible
- * @desc MPゲージの表示タイミング
- * @text MPゲージ表示タイミング
- * @type select
- * @option 常に表示
- * @value 0
- * @option 選択時
- * @value 1
- * @option MP変動時
- * @value 2
- * @option 選択時、MP変動時
- * @value 3
- * @default 0
- * @parent ActorVisibleSetting
- * 
- * @param ActorGaugeSetting
- * @text アクターゲージ設定
- * @default ------------------------------
- * @parent ActorSetting
- * 
- * @param ActorGaugeWidth
- * @desc アクターのゲージの横幅を指定します。
- * @text ゲージ横幅
- * @type number
- * @default 128
- * @min 0
- * @parent ActorGaugeSetting
- * 
- * @param ActorGaugeHeight
- * @desc アクターのゲージの縦幅を指定します。
- * @text ゲージ縦幅
- * @type number
- * @default 12
- * @min 0
- * @parent ActorGaugeSetting
- * 
- * @param ActorGauge_X
- * @desc アクターのゲージのX座標（相対座標）指定します。
- * @text ゲージX座標
- * @type number
- * @default 0
- * @min -9999
- * @parent ActorGaugeSetting
- * 
- * @param ActorGauge_Y
- * @desc アクターのゲージのY座標（相対座標）指定します。
- * @text ゲージY座標
- * @type number
- * @default 0
- * @min -9999
- * @parent ActorGaugeSetting
- * 
- * @param ActorMPLabelVisible
- * @text MPラベル表示
- * @desc アクターのMPラベルを表示する。
- * @type boolean
- * @default true
- * @parent ActorGaugeSetting
- * 
- * @param ActorMPValueVisible
- * @text MP数値表示
- * @desc アクターのMP数値を表示する。
- * @type boolean
- * @default true
- * @parent ActorGaugeSetting
- * 
- * @param ActorValueFontSize
- * @desc アクターの数値のフォントサイズ。（メインフォントサイズから）
- * @text 数値フォントサイズ
- * @type number
- * @default -6
- * @min -9999
- * @parent ActorGaugeSetting
- * 
- * @param ActorLabelFontSize
- * @desc アクターの ラベルのフォントサイズ。（メインフォントサイズから）
- * @text ラベルフォントサイズ
- * @type number
- * @default -2
- * @min -9999
- * @parent ActorGaugeSetting
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Butler MP Gauge
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Displays the MP gauge on the enemy or SV actor battler.
+
+Enemy character or actor memo field
+<MPGaugeX:[position]> Adjusts the X coordinate of the MP gauge. (Relative
+coordinates)
+<MPGaugeY:[position]> Adjusts the Y coordinate of the MP gauge. (Relative
+coordinates)
+[position]: Coordinates
+
+Enemy character memo field
+<NoMPGauge> Does not display the MP gauge.
+<MPGaugeLength:[width], [height]> Specifies the width of the MP gauge.
+[width]: Gauge width
+[height]: Gauge height
+
+Battle event notes
+<MPGaugePosition:[Id],[x],[y]> Adjusts the gauge position of the [Id]th
+monster in the enemy group. (Relative coordinates)
+[Id]: Display order number
+[x]: X coordinate
+[y]: Y coordinate
+[id] specifies the ID of the monster placed in the enemy group settings. A
+number appears in the upper left corner of the monster image; enter that
+number here.
+
+Feature Memo Field
+<MPGaugeVisible> If an actor with this feature is present, the enemy's MP
+gauge will be displayed.
+<EnemyMPGaugeVisible> Enemies with this feature will have their MP gauge
+displayed.
+Enemy Memo Field
+<MPGaugeMask:[eval]> If the condition is not met, the MP value will be
+displayed as ???.
+this Enemy Data
+this.enemy() Enemy Database Data
+Example: <MPGaugeMask:this.mp < this.mmp * 0.3>
+Displays the MP value when the enemy's MP is below 30%.
+
+Initial MP Gauge Display
+Displays when an actor with the <MPGaugeVisible> feature is in the battle
+team, or if it is registered when linked to the Pokédex.
+If using the above feature, set the initial MP gauge display to hidden.
+
+This plugin requires NUUN_Base Ver. 1.2.0 or later.
+
+If you have installed Pseudo 3D Battle, place this plugin below Pseudo 3D
+Battle.
+If you are using the Gauge Display Extension Plugin to set the corresponding
+gauge, please use the Gauge Display Extension Plugin to set the font size.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+January 3, 2025 Ver. 1.2.5
+Fixed an issue where the transformed monster's gauge would remain displayed
+even if it was set to hidden.
+August 3, 2023 Ver. 1.2.4
+Fixed an issue where NoMPGauge was not working with some plugins.
+July 7, 2023 Ver. 1.2.3
+Fixed an issue where an error would occur when displaying a gauge on an enemy
+character displayed with some plugins.
+June 23, 2023 Ver. 1.2.2
+Fixed an issue where NoMPGauge was not working.
+June 2, 2023 Ver. 1.2.1
+Bug fixes.
+June 2, 2023 Ver. 1.2.0
+Added the ability to display gauges on SV actors.
+Added the ability to specify the width and height of the HP gauge for each
+enemy character.
+May 7, 2023 Ver. 1.1.1
+Fixed the MP gauge display to fade in and out.
+May 14, 2022 Ver. 1.1.0
+Changed the definition of the butler display process significantly.
+January 10, 2022 Ver. 1.0.2
+Further revision.
+January 10, 2022 Ver. 1.0.1
+Fixed an issue where the gauge would display from coordinate 0 even when
+displayed as a label.
+January 12, 2022 Ver. 1.0.0
+First release
+
+@param EnemySetting
+@text Enemy Settings
+@default ------------------------------
+
+@param EnemyVisibleSetting
+@text Display settings
+@default ------------------------------
+@parent EnemySetting
+
+@param MPPosition
+@text MP gauge position
+@desc Enemy MP gauge position
+@type select
+@default 0
+@option No display
+@value -1
+@option Above the enemy image
+@value 0
+@option Under the enemy image
+@value 1
+@option Center of enemy image
+@value 2
+@parent EnemyVisibleSetting
+
+@param MPVisible
+@text MP gauge display timing
+@desc MP gauge display timing
+@type select
+@default 0
+@option Always Show
+@value 0
+@option When selected
+@value 1
+@option When MP changes
+@value 2
+@option When selected, when MP changes
+@value 3
+@parent EnemyVisibleSetting
+
+@param GaugeSetting
+@text Gauge Settings
+@default ------------------------------
+@parent EnemySetting
+
+@param GaugeWidth
+@text Gauge width
+@desc Specifies the width of the gauge.
+@type number
+@default 128
+@min 0
+@parent GaugeSetting
+
+@param GaugeHeight
+@text Gauge vertical width
+@desc Specifies the vertical width of the gauge.
+@type number
+@default 12
+@min 0
+@parent GaugeSetting
+
+@param Gauge_X
+@text Gauge X coordinate
+@desc Specifies the X coordinate (relative coordinate) of the gauge.
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param Gauge_Y
+@text Gauge Y coordinate
+@desc Specifies the Y coordinate (relative coordinate) of the gauge.
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param MPLabelVisible
+@text MP label display
+@desc Show MP label.
+@type boolean
+@default true
+@parent GaugeSetting
+
+@param MPValueVisible
+@text MP value display
+@desc Displays the MP value.
+@type boolean
+@default true
+@parent GaugeSetting
+
+@param ValueFontSize
+@text Numeric Font Size
+@desc Number font size (from main font size)
+@type number
+@default -6
+@min -9999
+@parent GaugeSetting
+
+@param LabelFontSize
+@text Label Font Size
+@desc Label font size (from main font size).
+@type number
+@default -2
+@min -9999
+@parent GaugeSetting
+
+@param MaskValueName
+@text Characters used to hide MP values
+@desc Characters used to hide MP values.
+@type string
+@default ????
+@parent GaugeSetting
+
+@param SpecialSetting
+@text Special Settings
+@default ------------------------------
+@parent GaugeSetting
+
+@param MPVisibleMode
+@text MP gauge display
+@desc The MP gauge will be displayed in the initial state. It will be displayed depending on the feature and the timing of the MP gauge display.
+@type select
+@default 0
+@option display
+@value 0
+@option hidden
+@value 1
+@parent SpecialSetting
+
+@param EnemyBookSetting
+@text Pokédex linked settings
+@default ------------------------------
+@parent GaugeSetting
+
+@param MPEnemyBookVisible
+@text MP gauge display timing (Monster Encyclopedia)
+@desc MP gauge display timing (Monster Encyclopedia)
+@type select
+@default 0
+@option Not specified
+@value 0
+@option Displayed after encyclopedia registration
+@value 1
+@option Displayed after registering encyclopedia information
+@value 2
+@parent EnemyBookSetting
+
+@param ActorSetting
+@text Actor Settings
+@default ------------------------------
+
+@param ActorVisibleSetting
+@text Display settings
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorMPPosition
+@text MP gauge position
+@desc Actor's MP gauge position
+@type select
+@default -1
+@option No display
+@value -1
+@option Above the SV image
+@value 0
+@option Under the SV image
+@value 1
+@parent ActorVisibleSetting
+
+@param ActorMPVisible
+@text MP gauge display timing
+@desc MP gauge display timing
+@type select
+@default 0
+@option Always Show
+@value 0
+@option When selected
+@value 1
+@option When MP changes
+@value 2
+@option When selected, when MP changes
+@value 3
+@parent ActorVisibleSetting
+
+@param ActorGaugeSetting
+@text Actor Gauge Settings
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorGaugeWidth
+@text Gauge width
+@desc Specifies the width of the actor's gauge.
+@type number
+@default 128
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGaugeHeight
+@text Gauge vertical width
+@desc Specifies the vertical width of the actor's gauge.
+@type number
+@default 12
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGauge_X
+@text Gauge X coordinate
+@desc Specifies the X coordinate (relative coordinate) of the actor's gauge.
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorGauge_Y
+@text Gauge Y coordinate
+@desc Specifies the Y coordinate (relative coordinate) of the actor's gauge.
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorMPLabelVisible
+@text MP label display
+@desc Displays the actor's MP label.
+@type boolean
+@default true
+@parent ActorGaugeSetting
+
+@param ActorMPValueVisible
+@text MP value display
+@desc Displays the actor's MP value.
+@type boolean
+@default true
+@parent ActorGaugeSetting
+
+@param ActorValueFontSize
+@text Numeric Font Size
+@desc Actor number font size (from main font size)
+@type number
+@default -6
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorLabelFontSize
+@text Label Font Size
+@desc Actor label font size (from main font size).
+@type number
+@default -2
+@min -9999
+@parent ActorGaugeSetting
+*/
+
+/*:ja
+@target MZ
+@plugindesc  バトラーMPゲージ
+@author NUUN
+@base NUUN_Base
+@version 1.2.5
+@orderAfter NUUN_Base
+
+@help
+敵またはSVアクターのバトラー上にMPゲージを表示します。
+
+敵キャラまたはアクターのメモ欄
+<MPGaugeX:[position]> MPゲージのX座標を調整します。（相対座標）
+<MPGaugeY:[position]> MPゲージのY座標を調整します。（相対座標）
+[position]:座標
+
+敵キャラのメモ欄
+<NoMPGauge> MPゲージを表示しません。
+<MPGaugeLength:[width], [height]> MPゲージの幅を指定します。
+[width]:ゲージ横幅
+[height]:ゲージ縦幅
+
+バトルイベントの注釈
+<MPGaugePosition:[Id],[x],[y]> 敵グループの[Id]番目のモンスターのゲージの位置を調整します。（相対座標）
+[Id]：表示順番号
+[x]：X座標
+[y]：Y座標
+[id]は敵グループ設定で配置した順番のIDで指定します。モンスター画像の左上に番号が表示されますのでその番号を記入します。
+
+特徴を有するメモ欄
+<MPGaugeVisible> この特徴を持つアクターが存在すれば、敵のMPゲージが表示されます。
+<EnemyMPGaugeVisible> この特徴を持つ敵はMPゲージが表示されます。
+敵のメモ欄
+<MPGaugeMask:[eval]> 条件に一致しなければMP値の表示を？？？にします。
+this 敵データ
+this.enemy() 敵のデータベースデータ
+例　<MPGaugeMask:this.mp < this.mmp * 0.3>
+敵のMPが３０％未満の時にMP値を表示します。
+
+初期MPゲージ表示
+<MPGaugeVisible>の特徴を持つアクターが戦闘メンバーにいるとき、または図鑑登録と連動している際に登録済みなら表示されます。
+上記の特徴を使用する場合は初期MPゲージ表示を非表示に設定してください。
+
+このプラグインはNUUN_Base Ver.1.2.0以降が必要です。
+
+疑似３Dバトルを入れている場合はこのプラグインを疑似３Dバトルを下に配置してください。
+ゲージ表示拡張プラグインで該当のゲージを設定している場合は、フォントサイズの設定はゲージ表示拡張プラグインで設定してください。
+
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2025/1/3 Ver.1.2.5
+変身後のモンスターのゲージが非表示に設定されている場合、ゲージが表示がされたままになる問題を修正。
+2023/8/3 Ver.1.2.4
+一部のプラグインにてNoMPGaugeが機能していなかった問題を修正。
+2023/7/7 Ver.1.2.3
+一部プラグインで表示した敵キャラにゲージを表示されるとエラーが出る問題を修正。
+2023/6/23 Ver.1.2.2
+NoMPGaugeが機能していなかった問題を修正。
+2023/6/2 Ver.1.2.1
+不具合の修正。
+2023/6/2 Ver.1.2.0
+SVアクターにゲージを表示する機能を追加。
+敵キャラ毎にHPゲージの横幅、縦幅を指定できる機能を追加。
+2023/5/7 Ver.1.1.1
+MPゲージの表示をフェードアウト、フェードインさせるように修正。
+2022/5/14 Ver.1.1.0
+バトラーの表示処理の定義大幅変更に関する定義変更。
+2022/1/10 Ver.1.0.2
+再修正。
+2022/1/10 Ver.1.0.1
+ゲージがラベル表示でも座標0から表示されてしまう問題を修正。
+2022/1/12 Ver.1.0.0
+初版
+
+@param EnemySetting
+@text 敵設定
+@default ------------------------------
+
+@param EnemyVisibleSetting
+@text 表示設定
+@default ------------------------------
+@parent EnemySetting
+
+@param MPPosition
+@desc 敵のMPゲージ位置
+@text MPゲージ位置
+@type select
+@option 表示なし
+@value -1
+@option 敵画像の上
+@value 0
+@option 敵画像の下
+@value 1
+@option 敵画像の中心
+@value 2
+@default 0
+@parent EnemyVisibleSetting
+
+@param MPVisible
+@desc MPゲージの表示タイミング
+@text MPゲージ表示タイミング
+@type select
+@option 常に表示
+@value 0
+@option 選択時
+@value 1
+@option MP変動時
+@value 2
+@option 選択時、MP変動時
+@value 3
+@default 0
+@parent EnemyVisibleSetting
+
+@param GaugeSetting
+@text ゲージ設定
+@default ------------------------------
+@parent EnemySetting
+
+@param GaugeWidth
+@desc ゲージの横幅を指定します。
+@text ゲージ横幅
+@type number
+@default 128
+@min 0
+@parent GaugeSetting
+
+@param GaugeHeight
+@desc ゲージの縦幅を指定します。
+@text ゲージ縦幅
+@type number
+@default 12
+@min 0
+@parent GaugeSetting
+
+@param Gauge_X
+@desc ゲージのX座標（相対座標）指定します。
+@text ゲージX座標
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param Gauge_Y
+@desc ゲージのY座標（相対座標）指定します。
+@text ゲージY座標
+@type number
+@default 0
+@min -9999
+@parent GaugeSetting
+
+@param MPLabelVisible
+@text MPラベル表示
+@desc MPラベルを表示する。
+@type boolean
+@default true
+@parent GaugeSetting
+
+@param MPValueVisible
+@text MP数値表示
+@desc MP数値を表示する。
+@type boolean
+@default true
+@parent GaugeSetting
+
+@param ValueFontSize
+@desc 数値のフォントサイズ。（メインフォントサイズから）
+@text 数値フォントサイズ
+@type number
+@default -6
+@min -9999
+@parent GaugeSetting
+
+@param LabelFontSize
+@desc ラベルのフォントサイズ。（メインフォントサイズから）
+@text ラベルフォントサイズ
+@type number
+@default -2
+@min -9999
+@parent GaugeSetting
+
+@param MaskValueName
+@desc MPの数値を隠す時の文字。
+@text MPの数値を隠す時の文字
+@type string
+@default ????
+@parent GaugeSetting
+
+@param SpecialSetting
+@text 特殊設定
+@default ------------------------------
+@parent GaugeSetting
+
+@param MPVisibleMode
+@desc 初期状態でのMPゲージの表示。特徴によってやMPゲージの表示タイミングによって表示されるようになります。
+@text MPゲージ表示
+@type select
+@option 表示
+@value 0
+@option 非表示
+@value 1
+@default 0
+@parent SpecialSetting
+
+@param EnemyBookSetting
+@text 図鑑連動設定
+@default ------------------------------
+@parent GaugeSetting
+
+@param MPEnemyBookVisible
+@desc MPゲージの表示タイミング（モンスター図鑑）
+@text MPゲージ表示タイミング（モンスター図鑑）
+@type select
+@option 指定なし
+@value 0
+@option 図鑑登録後に表示
+@value 1
+@option 図鑑情報登録後に表示
+@value 2
+@default 0
+@parent EnemyBookSetting
+
+@param ActorSetting
+@text アクター設定
+@default ------------------------------
+
+@param ActorVisibleSetting
+@text 表示設定
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorMPPosition
+@desc アクターのMPゲージ位置
+@text MPゲージ位置
+@type select
+@option 表示なし
+@value -1
+@option SV画像の上
+@value 0
+@option SV画像の下
+@value 1
+@default -1
+@parent ActorVisibleSetting
+
+@param ActorMPVisible
+@desc MPゲージの表示タイミング
+@text MPゲージ表示タイミング
+@type select
+@option 常に表示
+@value 0
+@option 選択時
+@value 1
+@option MP変動時
+@value 2
+@option 選択時、MP変動時
+@value 3
+@default 0
+@parent ActorVisibleSetting
+
+@param ActorGaugeSetting
+@text アクターゲージ設定
+@default ------------------------------
+@parent ActorSetting
+
+@param ActorGaugeWidth
+@desc アクターのゲージの横幅を指定します。
+@text ゲージ横幅
+@type number
+@default 128
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGaugeHeight
+@desc アクターのゲージの縦幅を指定します。
+@text ゲージ縦幅
+@type number
+@default 12
+@min 0
+@parent ActorGaugeSetting
+
+@param ActorGauge_X
+@desc アクターのゲージのX座標（相対座標）指定します。
+@text ゲージX座標
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorGauge_Y
+@desc アクターのゲージのY座標（相対座標）指定します。
+@text ゲージY座標
+@type number
+@default 0
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorMPLabelVisible
+@text MPラベル表示
+@desc アクターのMPラベルを表示する。
+@type boolean
+@default true
+@parent ActorGaugeSetting
+
+@param ActorMPValueVisible
+@text MP数値表示
+@desc アクターのMP数値を表示する。
+@type boolean
+@default true
+@parent ActorGaugeSetting
+
+@param ActorValueFontSize
+@desc アクターの数値のフォントサイズ。（メインフォントサイズから）
+@text 数値フォントサイズ
+@type number
+@default -6
+@min -9999
+@parent ActorGaugeSetting
+
+@param ActorLabelFontSize
+@desc アクターの ラベルのフォントサイズ。（メインフォントサイズから）
+@text ラベルフォントサイズ
+@type number
+@default -2
+@min -9999
+@parent ActorGaugeSetting
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_BattlerMPGauge = true;
 

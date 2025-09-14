@@ -6,198 +6,381 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  */
+
 /*:
- * @target MZ
- * @plugindesc ウィンドウスキン個別設定
- * @author NUUN
- * @base NUUN_Base
- * @orderAfter NUUN_Base
- * @version 1.0.3
- * 
- * @help
- * ウィンドウスキンをウィンドウ毎に設定できます。
- * リストにないクラスは該当するクラスをテキストタブで直接記入してください。
- * 例:Window_Base
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2024/10/8 Ver.1.0.3
- * セーブ画面を開くとエラーが出る問題を修正。
- * 2023/4/29 Ver.1.0.2
- * ヘルプウィンドウを表示するシーンを表示する際に、エラーが出る問題を修正。
- * 2023/4/10 Ver.1.0.1
- * 識別名指定によるクラス指定の処理を追加。
- * 2022/6/15 Ver.1.0.0
- * 初版
- * 
- * @param WindowSkinIndividual
- * @text クラス毎ウィンドウスキン
- * @desc クラス毎のウィンドウスキンの設定をします。
- * @default []
- * @type struct<WindowSkinList>[]
- * 
- * 
- * @param StatusHelp
- * @text ステータスヘルプウィンドウスキン設定
- * @default ------------------------------
- * 
- * @param StatusHelpWindowSkin
- * @text ステータスヘルプウィンドウスキンを指定します。
- * @text ステータスヘルプウィンドウスキン画像
- * @default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
- * @type struct<HelpWindowSkinList>
- * @parent StatusHelp
- * 
- * @param SaveHelp
- * @text セーブヘルプウィンドウスキン設定
- * @default ------------------------------
- * 
- * @param SaveHelpWindowSkin
- * @text セーブヘルプウィンドウスキンを指定します。
- * @text セーブヘルプウィンドウスキン画像
- * @default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
- * @type struct<HelpWindowSkinList>
- * @parent SaveHelp
- * 
- * @param ItemHelp
- * @text アイテムヘルプウィンドウスキン設定
- * @default ------------------------------
- * 
- * @param ItemHelpWindowSkin
- * @text アイテムヘルプウィンドウスキンを指定します。
- * @text アイテムヘルプウィンドウスキン画像
- * @default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
- * @type struct<HelpWindowSkinList>
- * @parent ItemHelp
- * 
- * @param SkillHelp
- * @text スキルヘルプウィンドウスキン設定
- * @default ------------------------------
- * 
- * @param SkillHelpWindowSkin
- * @text スキルヘルプウィンドウスキンを指定します。
- * @text スキルヘルプウィンドウスキン画像
- * @default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
- * @type struct<HelpWindowSkinList>
- * @parent SkillHelp
- * 
- * @param EquipHelp
- * @text 装備ヘルプウィンドウスキン設定
- * @default ------------------------------
- * 
- * @param EquipHelpWindowSkin
- * @text 装備ヘルププウィンドウスキンを指定します。
- * @text 装備ヘルプウィンドウスキン画像
- * @default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
- * @type struct<HelpWindowSkinList>
- * @parent EquipHelp
- * 
- */
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Window Skin Individual Settings
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+You can set window skins for each window.
+If a class is not listed, enter it directly in the Text tab.
+Example: Window_Base
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+October 8, 2024 Ver. 1.0.3
+Fixed an error that occurred when opening the save screen.
+April 29, 2023 Ver. 1.0.2
+Fixed an error that occurred when displaying a scene that displays the help
+window.
+April 10, 2023 Ver. 1.0.1
+Added class specification processing using identifier names.
+June 15, 2022 Ver. 1.0.0
+First release
+
+@param WindowSkinIndividual
+@text Class-specific window skins
+@desc Sets the window skin for each class.
+@type struct<WindowSkinList>[]
+@default []
+
+@param StatusHelp
+@text Status Help Window Skin Settings
+@default ------------------------------
+
+@param StatusHelpWindowSkin
+@text Status help window skin image
+@type struct<HelpWindowSkinList>
+@default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
+@parent StatusHelp
+
+@param SaveHelp
+@text Save Help Window Skin Settings
+@default ------------------------------
+
+@param SaveHelpWindowSkin
+@text Save help window skin image
+@type struct<HelpWindowSkinList>
+@default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
+@parent SaveHelp
+
+@param ItemHelp
+@text Item Help Window Skin Settings
+@default ------------------------------
+
+@param ItemHelpWindowSkin
+@text Item help window skin image
+@type struct<HelpWindowSkinList>
+@default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
+@parent ItemHelp
+
+@param SkillHelp
+@text Skill Help Window Skin Settings
+@default ------------------------------
+
+@param SkillHelpWindowSkin
+@text Skill help window skin image
+@type struct<HelpWindowSkinList>
+@default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
+@parent SkillHelp
+
+@param EquipHelp
+@text Equipment Help Window Skin Settings
+@default ------------------------------
+
+@param EquipHelpWindowSkin
+@text Equipment help window skin image
+@type struct<HelpWindowSkinList>
+@default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
+@parent EquipHelp
+*/
+
 /*~struct~WindowSkinList:
- * 
- * @param ClassName
- * @text 変更ウィンドウ設定
- * @desc 変更するウィンドウクラス(識別名)を指定します。リストにないクラスは直接該当するクラスを記入してください。
- * @type combo
- * @option 'Window_TitleCommand'
- * @option 'Window_Options'
- * @option 'Window_Help'
- * @option 'Window_SavefileList'
- * @option 'Window_MapName'
- * @option 'Window_Message'
- * @option 'Window_ScrollText'
- * @option 'Window_Gold'
- * @option 'Window_NameBox'
- * @option 'Window_ChoiceList'
- * @option 'Window_NumberInput'
- * @option 'Window_EventItem'
- * @option 'Window_MenuCommand'
- * @option 'Window_MenuStatus'
- * @option 'Window_ItemCategory'
- * @option 'Window_ItemList'
- * @option 'Window_MenuActor'
- * @option 'Window_SkillType'
- * @option 'Window_SkillStatus'
- * @option 'Window_SkillList'
- * @option 'Window_MenuActor'
- * @option 'Window_EquipStatus'
- * @option 'Window_EquipCommand'
- * @option 'Window_EquipSlot'
- * @option 'Window_EquipItem'
- * @option 'Window_Status'
- * @option 'Window_StatusParams'
- * @option 'Window_StatusEquip'
- * @option 'Window_GameEnd'
- * @option 'Window_BattleStatus'
- * @option 'Window_PartyCommand'
- * @option 'Window_ActorCommand'
- * @option 'Window_BattleSkill'
- * @option 'Window_BattleItem'
- * @option 'Window_BattleActor'
- * @option 'Window_BattleEnemy'
- * @option 'Window_ShopBuy'
- * @option 'Window_ShopSell'
- * @default
- * 
- * @param WindowSkin
- * @desc ウィンドウスキンを指定します。
- * @text ウィンドウスキン画像
- * @type file
- * @dir img/system
- * @default 
- * 
- * @param WindowColor
- * @text ウィンドウカラー
- * @desc ウィンドウの色の設定をします。
- * @default {"red":"0","green":"0","bule":"0"}
- * @type struct<WindowTone>
- * 
- */
+@param ClassName
+@text Change Window Settings
+@desc Specify the window class (identification name) to be changed. If the class is not in the list, enter the corresponding class directly.
+@type combo
+@option 'Window_TitleCommand'
+@option 'Window_Options'
+@option 'Window_Help'
+@option 'Window_SavefileList'
+@option 'Window_MapName'
+@option 'Window_Message'
+@option 'Window_ScrollText'
+@option 'Window_Gold'
+@option 'Window_NameBox'
+@option 'Window_ChoiceList'
+@option 'Window_NumberInput'
+@option 'Window_EventItem'
+@option 'Window_MenuCommand'
+@option 'Window_MenuStatus'
+@option 'Window_ItemCategory'
+@option 'Window_ItemList'
+@option 'Window_MenuActor'
+@option 'Window_SkillType'
+@option 'Window_SkillStatus'
+@option 'Window_SkillList'
+@option 'Window_MenuActor'
+@option 'Window_EquipStatus'
+@option 'Window_EquipCommand'
+@option 'Window_EquipSlot'
+@option 'Window_EquipItem'
+@option 'Window_Status'
+@option 'Window_StatusParams'
+@option 'Window_StatusEquip'
+@option 'Window_GameEnd'
+@option 'Window_BattleStatus'
+@option 'Window_PartyCommand'
+@option 'Window_ActorCommand'
+@option 'Window_BattleSkill'
+@option 'Window_BattleItem'
+@option 'Window_BattleActor'
+@option 'Window_BattleEnemy'
+@option 'Window_ShopBuy'
+@option 'Window_ShopSell'
+
+@param WindowSkin
+@text Window Skin Image
+@desc Specifies the window skin.
+@type file
+@dir img/system
+
+@param WindowColor
+@text Window Color
+@desc Sets the window color.
+@type struct<WindowTone>
+@default {"red":"0","green":"0","bule":"0"}
+*/
+
 /*~struct~HelpWindowSkinList:
- * 
- * @param WindowSkin
- * @desc ウィンドウスキンを指定します。
- * @text ウィンドウスキン画像
- * @type file
- * @dir img/system
- * @default 
- * 
- * @param WindowColor
- * @text ウィンドウカラー
- * @desc ウィンドウの色の設定をします。
- * @default {"red":"0","green":"0","bule":"0"}
- * @type struct<WindowTone>
- * 
- */
+@param WindowSkin
+@text Window Skin Image
+@desc Specifies the window skin.
+@type file
+@dir img/system
+
+@param WindowColor
+@text Window Color
+@desc Sets the window color.
+@type struct<WindowTone>
+@default {"red":"0","green":"0","bule":"0"}
+*/
+
 /*~struct~WindowTone:
- * 
- * @param red
- * @desc 赤
- * @text 赤
- * @type number
- * @default 0
- * @max 255
- * @min -255
- * 
- * @param green
- * @text 緑
- * @desc 緑
- * @type number
- * @default 0
- * @max 255
- * @min -255
- * 
- * @param bule
- * @text 青
- * @desc 青
- * @type number
- * @default 0
- * @max 255
- * @min -255
- * 
- */
+@param red
+@desc red
+@type number
+@default 0
+@min -255
+@max 255
+
+@param green
+@desc green
+@type number
+@default 0
+@min -255
+@max 255
+
+@param bule
+@text blue
+@desc blue
+@type number
+@default 0
+@min -255
+@max 255
+*/
+
+/*:ja
+@target MZ
+@plugindesc ウィンドウスキン個別設定
+@author NUUN
+@base NUUN_Base
+@orderAfter NUUN_Base
+@version 1.0.3
+
+@help
+ウィンドウスキンをウィンドウ毎に設定できます。
+リストにないクラスは該当するクラスをテキストタブで直接記入してください。
+例:Window_Base
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2024/10/8 Ver.1.0.3
+セーブ画面を開くとエラーが出る問題を修正。
+2023/4/29 Ver.1.0.2
+ヘルプウィンドウを表示するシーンを表示する際に、エラーが出る問題を修正。
+2023/4/10 Ver.1.0.1
+識別名指定によるクラス指定の処理を追加。
+2022/6/15 Ver.1.0.0
+初版
+
+@param WindowSkinIndividual
+@text クラス毎ウィンドウスキン
+@desc クラス毎のウィンドウスキンの設定をします。
+@default []
+@type struct<WindowSkinList>[]
+
+
+@param StatusHelp
+@text ステータスヘルプウィンドウスキン設定
+@default ------------------------------
+
+@param StatusHelpWindowSkin
+@text ステータスヘルプウィンドウスキンを指定します。
+@text ステータスヘルプウィンドウスキン画像
+@default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
+@type struct<HelpWindowSkinList>
+@parent StatusHelp
+
+@param SaveHelp
+@text セーブヘルプウィンドウスキン設定
+@default ------------------------------
+
+@param SaveHelpWindowSkin
+@text セーブヘルプウィンドウスキンを指定します。
+@text セーブヘルプウィンドウスキン画像
+@default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
+@type struct<HelpWindowSkinList>
+@parent SaveHelp
+
+@param ItemHelp
+@text アイテムヘルプウィンドウスキン設定
+@default ------------------------------
+
+@param ItemHelpWindowSkin
+@text アイテムヘルプウィンドウスキンを指定します。
+@text アイテムヘルプウィンドウスキン画像
+@default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
+@type struct<HelpWindowSkinList>
+@parent ItemHelp
+
+@param SkillHelp
+@text スキルヘルプウィンドウスキン設定
+@default ------------------------------
+
+@param SkillHelpWindowSkin
+@text スキルヘルプウィンドウスキンを指定します。
+@text スキルヘルプウィンドウスキン画像
+@default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
+@type struct<HelpWindowSkinList>
+@parent SkillHelp
+
+@param EquipHelp
+@text 装備ヘルプウィンドウスキン設定
+@default ------------------------------
+
+@param EquipHelpWindowSkin
+@text 装備ヘルププウィンドウスキンを指定します。
+@text 装備ヘルプウィンドウスキン画像
+@default {"WindowSkin":"","WindowColor":"{\"red\":\"0\",\"green\":\"0\",\"bule\":\"0\"}"}
+@type struct<HelpWindowSkinList>
+@parent EquipHelp
+*/
+
+/*~struct~WindowSkinList:ja
+
+@param ClassName
+@text 変更ウィンドウ設定
+@desc 変更するウィンドウクラス(識別名)を指定します。リストにないクラスは直接該当するクラスを記入してください。
+@type combo
+@option 'Window_TitleCommand'
+@option 'Window_Options'
+@option 'Window_Help'
+@option 'Window_SavefileList'
+@option 'Window_MapName'
+@option 'Window_Message'
+@option 'Window_ScrollText'
+@option 'Window_Gold'
+@option 'Window_NameBox'
+@option 'Window_ChoiceList'
+@option 'Window_NumberInput'
+@option 'Window_EventItem'
+@option 'Window_MenuCommand'
+@option 'Window_MenuStatus'
+@option 'Window_ItemCategory'
+@option 'Window_ItemList'
+@option 'Window_MenuActor'
+@option 'Window_SkillType'
+@option 'Window_SkillStatus'
+@option 'Window_SkillList'
+@option 'Window_MenuActor'
+@option 'Window_EquipStatus'
+@option 'Window_EquipCommand'
+@option 'Window_EquipSlot'
+@option 'Window_EquipItem'
+@option 'Window_Status'
+@option 'Window_StatusParams'
+@option 'Window_StatusEquip'
+@option 'Window_GameEnd'
+@option 'Window_BattleStatus'
+@option 'Window_PartyCommand'
+@option 'Window_ActorCommand'
+@option 'Window_BattleSkill'
+@option 'Window_BattleItem'
+@option 'Window_BattleActor'
+@option 'Window_BattleEnemy'
+@option 'Window_ShopBuy'
+@option 'Window_ShopSell'
+@default
+
+@param WindowSkin
+@desc ウィンドウスキンを指定します。
+@text ウィンドウスキン画像
+@type file
+@dir img/system
+@default 
+
+@param WindowColor
+@text ウィンドウカラー
+@desc ウィンドウの色の設定をします。
+@default {"red":"0","green":"0","bule":"0"}
+@type struct<WindowTone>
+*/
+
+/*~struct~HelpWindowSkinList:ja
+
+@param WindowSkin
+@desc ウィンドウスキンを指定します。
+@text ウィンドウスキン画像
+@type file
+@dir img/system
+@default 
+
+@param WindowColor
+@text ウィンドウカラー
+@desc ウィンドウの色の設定をします。
+@default {"red":"0","green":"0","bule":"0"}
+@type struct<WindowTone>
+*/
+
+/*~struct~WindowTone:ja
+
+@param red
+@desc 赤
+@text 赤
+@type number
+@default 0
+@max 255
+@min -255
+
+@param green
+@text 緑
+@desc 緑
+@type number
+@default 0
+@max 255
+@min -255
+
+@param bule
+@text 青
+@desc 青
+@type number
+@default 0
+@max 255
+@min -255
+*/
 
 var Imported = Imported || {};
 Imported.NUUN_WindowSkinIndividual = true;

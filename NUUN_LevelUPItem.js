@@ -6,43 +6,83 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  * 
- */ 
-/*:
- * 
- * @target MZ
- * @plugindesc レベルアップアイテム、スキル
- * @author NUUN
- * @version 1.0.2
- * 
- * @help
- * 経験値を増減させるアイテムやスキルを作ることが出来ます。
- * 
- * アイテム、スキルのメモ欄に記入します。
- * <LevelUP:1> レベルが1アップします。
- * <LevelUP:5> レベルが5アップします。
- * <LevelUP:-1> レベルが1ダウンします。
- * <LevelUP:-10> レベルが10ダウンします。
- *               
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2021/6/5 Ver.1.0.2
- * スキル失敗時のメッセージが表示しなくなる問題を修正。
- * 2021/5/2 Ver.1.0.1
- * レベルをダウンさせると経験値のおかしくなる問題を修正。
- * 2021/4/29 Ver.1.0.0
- * 初版
- * 
- * @param MessageWindowShow
- * @text メッセージウィンドウ表示
- * @desc レベルアップ後メッセージウィンドウを表示する。
- * @type boolean
- * @default true
- * 
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Level-up items and skills
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+You can create items and skills that increase or decrease experience points.
+
+Enter this in the item or skill's memo field.
+<LevelUP:1> Increases level by 1.
+<LevelUP:5> Increases level by 5.
+<LevelUP:-1> Decrease level by 1.
+<LevelUP:-10> Decrease level by 10.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+June 5, 2021 Ver. 1.0.2
+Fixed an issue where the message would not be displayed when a skill failed.
+May 2, 2021 Ver. 1.0.1
+Fixed an issue where experience points would be incorrect when lowering a
+level.
+April 29, 2021 Ver. 1.0.0
+First version
+
+@param MessageWindowShow
+@text Message window display
+@desc Displays a message window after leveling up.
+@type boolean
+@default true
+*/
+
+/*:ja
+
+@target MZ
+@plugindesc レベルアップアイテム、スキル
+@author NUUN
+@version 1.0.2
+
+@help
+経験値を増減させるアイテムやスキルを作ることが出来ます。
+
+アイテム、スキルのメモ欄に記入します。
+<LevelUP:1> レベルが1アップします。
+<LevelUP:5> レベルが5アップします。
+<LevelUP:-1> レベルが1ダウンします。
+<LevelUP:-10> レベルが10ダウンします。
+              
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2021/6/5 Ver.1.0.2
+スキル失敗時のメッセージが表示しなくなる問題を修正。
+2021/5/2 Ver.1.0.1
+レベルをダウンさせると経験値のおかしくなる問題を修正。
+2021/4/29 Ver.1.0.0
+初版
+
+@param MessageWindowShow
+@text メッセージウィンドウ表示
+@desc レベルアップ後メッセージウィンドウを表示する。
+@type boolean
+@default true
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_LevelUPItem = true;
 

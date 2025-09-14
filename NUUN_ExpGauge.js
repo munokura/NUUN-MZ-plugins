@@ -6,91 +6,179 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  */
-/*:
- * @target MZ
- * @plugindesc 経験値ゲージ
- * @author NUUN
- * @version 1.0.1
- * @base NUUN_Base
- * @orderAfter NUUN_Base
- * 
- * @help
- * 外部プラグインで経験値ゲージを表示させるためのプラグインです。
- * 
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2022/7/18 Ver.1.0.1
- * ゲージ表示拡張で現在値の座標を調整できるように修正。
- * 2022/7/17 Ver.1.0.0
- * 初版
- * 
- * @param ExpName
- * @text 識別名
- * @desc 識別名(ゲージ画像化等で指定する場合は、このプラグインパラメータでのパラメータ名を指定してください)
- * @type string
- * @default exp
- * 
- * @param ExpPercent
- * @text 経験値百分率表示
- * @desc 経験値を百分率で表示
- * @type boolean
- * @default false
- * 
- * @param EXPGaugeColor1
- * @text 経験値ゲージ色１
- * @desc 経験値ゲージの色１(システムカラーまたはカラーインデックス(テキストタブ))
- * @type number
- * @default 17
- * 
- * @param EXPGaugeColor2
- * @text 経験値ゲージ色２
- * @desc 経験値ゲージの色２(システムカラーまたはカラーインデックス(テキストタブ))
- * @type number
- * @default 6
- * 
- * @param EXPGaugeX
- * @text EXPゲージX座標
- * @desc EXPゲージのX座標（相対）
- * @type number
- * @default 0
- * 
- * @param EXPGaugeY
- * @text EXPゲージY座標
- * @desc EXPゲージのY座標（相対）
- * @type number
- * @default 0
- * 
- * @param EXPGaugeWidth
- * @text EXPゲージ横幅
- * @desc EXPゲージの横幅を指定します。
- * @type number
- * @default 300
- * 
- * @param EXPGaugeHeight
- * @text EXPゲージ縦幅
- * @desc EXPゲージの横幅縦を指定します。
- * @type number
- * @default 12
- * 
- * @param DecimalMode
- * @text 端数処理四捨五入
- * @desc 表示外小数点を四捨五入で丸める。（falseで切り捨て）
- * @type boolean
- * @default true
- * 
- * @param EXPDecimal
- * @text 小数点桁数
- * @desc 表示出来る小数点桁数。
- * @type number
- * @default 2
- * @min 0
- * @max 99
- * 
- */
 
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Experience Gauge
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+This plugin allows you to display an experience gauge using an external
+plugin.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+July 18, 2022 Ver. 1.0.1
+Fixed the gauge display extension so that the current value coordinates can be
+adjusted.
+July 17, 2022 Ver. 1.0.0
+First release
+
+@param ExpName
+@text Distinguished Name
+@desc Identification name (When specifying for gauge visualization, etc., please specify the parameter name in this plugin parameter)
+@type string
+@default exp
+
+@param ExpPercent
+@text Experience percentage display
+@desc Experience points displayed as a percentage
+@type boolean
+@default false
+
+@param EXPGaugeColor1
+@text Experience Gauge Color 1
+@desc Experience Gauge Color 1 (System Color or Color Index (Text Tab))
+@type number
+@default 17
+
+@param EXPGaugeColor2
+@text Experience Gauge Color 2
+@desc Experience Gauge Color 2 (System Color or Color Index (Text Tab))
+@type number
+@default 6
+
+@param EXPGaugeX
+@text EXP gauge X coordinate
+@desc EXP gauge X coordinate (relative)
+@type number
+@default 0
+
+@param EXPGaugeY
+@text EXP gauge Y coordinate
+@desc EXP gauge Y coordinate (relative)
+@type number
+@default 0
+
+@param EXPGaugeWidth
+@text EXP gauge width
+@desc Specifies the width of the EXP gauge.
+@type number
+@default 300
+
+@param EXPGaugeHeight
+@text EXP gauge vertical width
+@desc Specify the width and height of the EXP gauge.
+@type number
+@default 12
+
+@param DecimalMode
+@text Rounding off
+@desc Round off the decimal point outside the display (false to truncate).
+@type boolean
+@default true
+
+@param EXPDecimal
+@text Decimal places
+@desc The number of decimal points that can be displayed.
+@type number
+@default 2
+@min 0
+@max 99
+*/
+
+/*:ja
+@target MZ
+@plugindesc 経験値ゲージ
+@author NUUN
+@version 1.0.1
+@base NUUN_Base
+@orderAfter NUUN_Base
+
+@help
+外部プラグインで経験値ゲージを表示させるためのプラグインです。
+
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2022/7/18 Ver.1.0.1
+ゲージ表示拡張で現在値の座標を調整できるように修正。
+2022/7/17 Ver.1.0.0
+初版
+
+@param ExpName
+@text 識別名
+@desc 識別名(ゲージ画像化等で指定する場合は、このプラグインパラメータでのパラメータ名を指定してください)
+@type string
+@default exp
+
+@param ExpPercent
+@text 経験値百分率表示
+@desc 経験値を百分率で表示
+@type boolean
+@default false
+
+@param EXPGaugeColor1
+@text 経験値ゲージ色１
+@desc 経験値ゲージの色１(システムカラーまたはカラーインデックス(テキストタブ))
+@type number
+@default 17
+
+@param EXPGaugeColor2
+@text 経験値ゲージ色２
+@desc 経験値ゲージの色２(システムカラーまたはカラーインデックス(テキストタブ))
+@type number
+@default 6
+
+@param EXPGaugeX
+@text EXPゲージX座標
+@desc EXPゲージのX座標（相対）
+@type number
+@default 0
+
+@param EXPGaugeY
+@text EXPゲージY座標
+@desc EXPゲージのY座標（相対）
+@type number
+@default 0
+
+@param EXPGaugeWidth
+@text EXPゲージ横幅
+@desc EXPゲージの横幅を指定します。
+@type number
+@default 300
+
+@param EXPGaugeHeight
+@text EXPゲージ縦幅
+@desc EXPゲージの横幅縦を指定します。
+@type number
+@default 12
+
+@param DecimalMode
+@text 端数処理四捨五入
+@desc 表示外小数点を四捨五入で丸める。（falseで切り捨て）
+@type boolean
+@default true
+
+@param EXPDecimal
+@text 小数点桁数
+@desc 表示出来る小数点桁数。
+@type number
+@default 2
+@min 0
+@max 99
+*/
 
 var Imported = Imported || {};
 Imported.NUUN_ExpGauge = true;

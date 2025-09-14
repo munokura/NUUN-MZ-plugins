@@ -6,28 +6,58 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  * 
- */ 
+ */
+
 /*:
- * @target MZ
- * @plugindesc バトルスタイル拡張疑似3Dバトル併用対応
- * @author NUUN
- * @version 1.1.0
- * 
- * @help
- * バトルスタイル拡張と疑似3Dバトルを併用する際の競合対策プラグインです。
- * このプラグインを疑似3Dバトルより下に配置してください。
- *  
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2021/6/19 Ver.1.1.0
- * 疑似3DプラグインVer.1.1以降に対応。
- * 2021/6/13 Ver.1.0.0
- * ポップアップ時にエラーが出る問題を修正。
- * アクターのダメージエフェクト、敵の画像が正常に動作しない問題を修正。
- * 
- */ 
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Battle style expansion: Supports pseudo 3D battles
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+This plugin prevents conflicts when using the Battle Style Extension and
+Pseudo 3D Battle together.
+Place this plugin below the Pseudo 3D Battle plugin.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+June 19, 2021 Ver. 1.1.0
+Compatible with Pseudo 3D Plugin Ver. 1.1 and later.
+June 13, 2021 Ver. 1.0.0
+Fixed an issue that caused an error to occur when popping up.
+Fixed an issue that prevented actor damage effects and enemy images from
+working properly.
+*/
+
+/*:ja
+@target MZ
+@plugindesc バトルスタイル拡張疑似3Dバトル併用対応
+@author NUUN
+@version 1.1.0
+
+@help
+バトルスタイル拡張と疑似3Dバトルを併用する際の競合対策プラグインです。
+このプラグインを疑似3Dバトルより下に配置してください。
+ 
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2021/6/19 Ver.1.1.0
+疑似3DプラグインVer.1.1以降に対応。
+2021/6/13 Ver.1.0.0
+ポップアップ時にエラーが出る問題を修正。
+アクターのダメージエフェクト、敵の画像が正常に動作しない問題を修正。
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_BattleStyleEXInMPP_Pseudo3DBattle = true;
 

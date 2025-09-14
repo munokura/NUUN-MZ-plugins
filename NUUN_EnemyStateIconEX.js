@@ -5,94 +5,195 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
- */ 
-/*:
- * @target MZ
- * @plugindesc 敵ステート表示拡張
- * @author NUUN
- * @version 1.1.4
- * @base NUUN_BattlerOverlayBase
- * @orderAfter NUUN_BattlerOverlayBase
- * 
- * @help
- * 敵のステートの表示を拡張、変更します。
- * 一部のプラグイン上で敵グラフィックの色調を変更したときにステートアイコンの色調も変わることを防ぎます。
- * またモンスターと重なっても表示が他のモンスターの背後に表示されることはありません。
- * 
- * このプラグインはNUUN_BattlerOverlayBase(バトラーオーバーレイベース)が必要です。
- * 
- * 敵キャラのメモ欄
- * <EnemyStateX:[position]> モンスターのステートアイコンのX座標を調整します。（相対座標）
- * <EnemyStateY:[position]> モンスターのステートアイコンのY座標を調整します。（相対座標）
- * 
- * バトルイベントの注釈
- * <EnemyStatePosition:[Id],[x],[y]> 敵グループの[Id]番目のモンスターのステートアイコンの位置を調整します。（相対座標）
- * [Id]:表示順番号
- * [x]:X座標
- * [y]:Y座標
- * [id]は敵グループ設定で配置した順番のIDで指定します。配置ビューのモンスター画像の左上に番号が表示されますのでその番号を記入します。
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2023/6/23 Ver.1.1.4
- * 一部のプラグインでステートアイコンが表示されなくなる問題を修正。
- * 2023/6/2 Ver.1.1.3
- * 処理の修正。
- * 2023/5/16 Ver.1.1.2
- * ステートアイコン表示位置の敵画像の下、敵画像の中心が機能していなかった問題を修正。
- * ステートアイコン表示タイミングを選択時に指定したときにアクターのステートアイコンが表示されない問題を修正。
- * 2023/5/6 Ver.1.1.1
- * ステートの表示をフェードアウト、フェードインさせるように修正。
- * 2022/5/10 Ver.1.1.0
- * バトラーの表示処理の定義大幅変更に関する定義変更。
- * 2022/3/27 Ver.1.0.1
- * ステートの表示をなしに設定してもアイコンが表示されてしまう問題を修正。
- * 戦闘開始時にエラーが起きる問題を修正。
- * 2021/12/12 Ver.1.0.0
- * 初版
- * 
- * 
- * @param EnemyStatePosition
- * @desc モンスターのステートアイコンの表示位置
- * @text ステートアイコン表示位置
- * @type select
- * @option 表示なし
- * @value -1
- * @option 敵画像の上
- * @value 0
- * @option 敵画像の下
- * @value 1
- * @option 敵画像の中心
- * @value 2
- * @default 0
- * 
- * @param StateVisible
- * @desc ステートアイコンの表示タイミング
- * @text ステートアイコン表示タイミング
- * @type select
- * @option 常に表示
- * @value 0
- * @option 選択時
- * @value 1
- * @default 0
- * 
- * @param State_X
- * @desc X座標（相対座標）指定します。
- * @text X座標
- * @type number
- * @default 0
- * @min -9999
- * 
- * @param State_Y
- * @desc Y座標（相対座標）指定します。
- * @text Y座標
- * @type number
- * @default 0
- * @min -9999
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Enemy state display expansion
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Expands and changes the display of enemy states.
+Prevents state icon colors from changing when the enemy graphics color is
+changed with some plugins.
+Also, monsters will not be displayed behind other monsters even if they
+overlap.
+
+This plugin requires NUUN_BattlerOverlayBase.
+
+Enemy Character Memo
+<EnemyStateX:[position]> Adjusts the X coordinate of the monster's state icon.
+(Relative coordinates)
+<EnemyStateY:[position]> Adjusts the Y coordinate of the monster's state icon.
+(Relative coordinates)
+
+Battle Event Notes
+<EnemyStatePosition:[Id],[x],[y]> Adjusts the position of the state icon for
+the [Id]th monster in the enemy group. (Relative coordinates)
+[Id]: Display order number
+[x]: X coordinate
+[y]: Y coordinate
+[id] is specified by the ID of the monster placed in the enemy group settings.
+A number appears in the upper left corner of the monster image in the
+placement view; enter that number here.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+June 23, 2023 Ver. 1.1.4
+Fixed an issue where state icons would not display in some plugins.
+June 2, 2023 Ver. 1.1.3
+Processing fix.
+May 16, 2023 Ver. 1.1.2
+Fixed an issue where the state icon display position below the enemy image or
+in the center of the enemy image was not functioning.
+Fixed an issue where actor state icons would not display when selecting a
+state icon display timing.
+May 6, 2023 Ver. 1.1.1
+Fixed state display to fade out and fade in.
+May 10, 2022 Ver. 1.1.0
+Major changes to the definition of the butler display process.
+March 27, 2022 Ver. 1.0.1
+Fixed an issue where icons would display even when state display was set to
+off.
+Fixed an issue where an error would occur at the start of battle.
+December 12, 2021 Ver. 1.0.0
+First edition
+
+@param EnemyStatePosition
+@text State icon display position
+@desc Monster state icon display position
+@type select
+@default 0
+@option No display
+@value -1
+@option Above the enemy image
+@value 0
+@option Under the enemy image
+@value 1
+@option Center of enemy image
+@value 2
+
+@param StateVisible
+@text State icon display timing
+@desc State icon display timing
+@type select
+@default 0
+@option Always Show
+@value 0
+@option When selected
+@value 1
+
+@param State_X
+@text X coordinate
+@desc Specify the X coordinate (relative coordinate).
+@type number
+@default 0
+@min -9999
+
+@param State_Y
+@text Y coordinate
+@desc Specify the Y coordinate (relative coordinate).
+@type number
+@default 0
+@min -9999
+*/
+
+/*:ja
+@target MZ
+@plugindesc 敵ステート表示拡張
+@author NUUN
+@version 1.1.4
+@base NUUN_BattlerOverlayBase
+@orderAfter NUUN_BattlerOverlayBase
+
+@help
+敵のステートの表示を拡張、変更します。
+一部のプラグイン上で敵グラフィックの色調を変更したときにステートアイコンの色調も変わることを防ぎます。
+またモンスターと重なっても表示が他のモンスターの背後に表示されることはありません。
+
+このプラグインはNUUN_BattlerOverlayBase(バトラーオーバーレイベース)が必要です。
+
+敵キャラのメモ欄
+<EnemyStateX:[position]> モンスターのステートアイコンのX座標を調整します。（相対座標）
+<EnemyStateY:[position]> モンスターのステートアイコンのY座標を調整します。（相対座標）
+
+バトルイベントの注釈
+<EnemyStatePosition:[Id],[x],[y]> 敵グループの[Id]番目のモンスターのステートアイコンの位置を調整します。（相対座標）
+[Id]:表示順番号
+[x]:X座標
+[y]:Y座標
+[id]は敵グループ設定で配置した順番のIDで指定します。配置ビューのモンスター画像の左上に番号が表示されますのでその番号を記入します。
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2023/6/23 Ver.1.1.4
+一部のプラグインでステートアイコンが表示されなくなる問題を修正。
+2023/6/2 Ver.1.1.3
+処理の修正。
+2023/5/16 Ver.1.1.2
+ステートアイコン表示位置の敵画像の下、敵画像の中心が機能していなかった問題を修正。
+ステートアイコン表示タイミングを選択時に指定したときにアクターのステートアイコンが表示されない問題を修正。
+2023/5/6 Ver.1.1.1
+ステートの表示をフェードアウト、フェードインさせるように修正。
+2022/5/10 Ver.1.1.0
+バトラーの表示処理の定義大幅変更に関する定義変更。
+2022/3/27 Ver.1.0.1
+ステートの表示をなしに設定してもアイコンが表示されてしまう問題を修正。
+戦闘開始時にエラーが起きる問題を修正。
+2021/12/12 Ver.1.0.0
+初版
+
+
+@param EnemyStatePosition
+@desc モンスターのステートアイコンの表示位置
+@text ステートアイコン表示位置
+@type select
+@option 表示なし
+@value -1
+@option 敵画像の上
+@value 0
+@option 敵画像の下
+@value 1
+@option 敵画像の中心
+@value 2
+@default 0
+
+@param StateVisible
+@desc ステートアイコンの表示タイミング
+@text ステートアイコン表示タイミング
+@type select
+@option 常に表示
+@value 0
+@option 選択時
+@value 1
+@default 0
+
+@param State_X
+@desc X座標（相対座標）指定します。
+@text X座標
+@type number
+@default 0
+@min -9999
+
+@param State_Y
+@desc Y座標（相対座標）指定します。
+@text Y座標
+@type number
+@default 0
+@min -9999
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_EnemyStateIconEX = true;
 

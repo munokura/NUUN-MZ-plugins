@@ -5,53 +5,100 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
- */ 
-/*:
- * @target MZ
- * @plugindesc セーブ上書き確認
- * @author NUUN
- * @version 1.0.0
- * @base NUUN_Base
- * 
- * @help
- * 
- * 仕様
- * セーブ時に上書き保存する場合に確認メッセージを表示します。
- * 
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2021/9/11 Ver.1.0.0
- * 初版
- * 
- * @param Width
- * @text 横幅
- * @desc 横幅
- * @type number
- * @default 450
- * 
- * @param SaveVerificationMessage
- * @desc セーブ確認画面のメッセージ文章。
- * @text セーブ確認画面のメッセージ
- * @type string[]
- * @default ["このファイルに上書きしても","よろしいですか？"]
- * 
- * @param SaveVerificationYesText
- * @desc セーブ確認画面のセーブするときの確認テキスト。
- * @text セーブ実行時確認テキスト
- * @type string
- * @default はい
- * 
- * @param SaveVerificationNoText
- * @desc セーブ確認画面のセーブしないときの確認テキスト。
- * @text セーブしない時確認テキスト
- * @type string
- * @default いいえ
- * 
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Save overwrite confirmation
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Specifications
+Displays a confirmation message when overwriting a saved file.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+September 11, 2021 Version 1.0.0
+First Edition
+
+@param Width
+@desc Width
+@type number
+@default 450
+
+@param SaveVerificationMessage
+@text Message on the save confirmation screen
+@desc Message text on the save confirmation screen.
+@type string[]
+@default ["このファイルに上書きしても","よろしいですか？"]
+
+@param SaveVerificationYesText
+@text Confirmation text when saving
+@desc Confirmation text when saving on the save confirmation screen.
+@type string
+@default はい
+
+@param SaveVerificationNoText
+@text Confirmation text when not saving
+@desc Confirmation text on the save confirmation screen when you do not want to save.
+@type string
+@default いいえ
+*/
+
+/*:ja
+@target MZ
+@plugindesc セーブ上書き確認
+@author NUUN
+@version 1.0.0
+@base NUUN_Base
+
+@help
+
+仕様
+セーブ時に上書き保存する場合に確認メッセージを表示します。
+
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2021/9/11 Ver.1.0.0
+初版
+
+@param Width
+@text 横幅
+@desc 横幅
+@type number
+@default 450
+
+@param SaveVerificationMessage
+@desc セーブ確認画面のメッセージ文章。
+@text セーブ確認画面のメッセージ
+@type string[]
+@default ["このファイルに上書きしても","よろしいですか？"]
+
+@param SaveVerificationYesText
+@desc セーブ確認画面のセーブするときの確認テキスト。
+@text セーブ実行時確認テキスト
+@type string
+@default はい
+
+@param SaveVerificationNoText
+@desc セーブ確認画面のセーブしないときの確認テキスト。
+@text セーブしない時確認テキスト
+@type string
+@default いいえ
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_SaveVerification = true;
 

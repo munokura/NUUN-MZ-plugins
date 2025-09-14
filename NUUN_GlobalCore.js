@@ -5,26 +5,52 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
- */ 
-/*:
- * @target MZ
- * @plugindesc グローバル情報ベース
- * @author NUUN
- * @version 1.0.1
- * 
- * @help
- * セーブ全体で共有するためのベースプラグインです。
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2022/5/4 Ver.1.0.1
- * 処理の修正。
- * 2022/4/2 Ver.1.0.0
- * 初版
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Global Information Base
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+This is a base plugin for sharing across saves.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+May 4, 2022 Ver. 1.0.1
+Processing fixes.
+April 2, 2022 Ver. 1.0.0
+First release
+*/
+
+/*:ja
+@target MZ
+@plugindesc グローバル情報ベース
+@author NUUN
+@version 1.0.1
+
+@help
+セーブ全体で共有するためのベースプラグインです。
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2022/5/4 Ver.1.0.1
+処理の修正。
+2022/4/2 Ver.1.0.0
+初版
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_GlobalCore = true;
 

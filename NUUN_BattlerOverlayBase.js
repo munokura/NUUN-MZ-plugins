@@ -5,67 +5,135 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
- */ 
-/*:
- * @target MZ
- * @plugindesc バトラーオーバーレイベース
- * @author NUUN
- * @version 1.0.7
- * @base NUUN_Base
- * @orderAfter NUUN_Base
- * 
- * @help
- * モンスター、サイドビューアクター上に画像を表示させるベースプラグイン。
- * モンスター、アクターのスプライトの子にスプライトを追加してしまうとゲージ、ステートアイコン等にまで影響を及ば差ないようにします。
- * （バトラーグラフィック表示拡張プラグインでバトラーの色調を変化させるとバトラーとともにゲージ、ステートアイコンの変色を防ぐ目的等）
- * 
- * 木星ペンギン氏の疑似３Dバトル、蒼竜氏のSVアクター適用エネミーと併用する場合、このプラグインをこれらのプラグインより
- * 下に配置する必要があります。
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2024/3/4 Ver.1.0.7
- * Ver.1.0.7で修正した処理方法の変更。
- * 2024/3/2 Ver.1.0.6
- * 出現前のモンスターにゲージ等が表示されてしまう問題を修正。
- * 2023/8/24 Ver.1.0.5
- * 一部のプラグインと併用するとエラーが出る問題を修正。
- * 2023/7/15 Ver.1.0.4
- * バトラー画像と同期させるときの座標のモードを指定できる機能を追加。
- * 2023/6/2 Ver.1.0.3
- * 処理の修正。
- * 2023/5/28 Ver.1.0.2
- * SVアクターのゲージ表示に関する処理の追加。
- * 2022/10/11 Ver.1.0.1
- * 微修正。
- * 2022/5/10 Ver.1.0.0
- * 初版
- * 
- * 
- * @param ConflictScale
- * @desc 敵画像の上設定時の拡大率の考慮
- * @text 拡大率の考慮
- * @type select
- * @option 元のサイズ基準
- * @value 'Default'
- * @option 画像のサイズ基準
- * @value 'Img'
- * @default 'Img'
- * 
- * @param CoordinateMode
- * @desc 座標の計算モード。
- * @text 座標計算モード
- * @type select
- * @option 元の座標値
- * @value 'Default'
- * @option 小数切り捨て
- * @value 'Floor'
- * @default 'Default'
- * 
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Butler Overlay Base
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+This is a base plugin that displays images on monsters and side-view actors.
+Adding sprites to children of monster and actor sprites prevents the effects
+on gauges, state icons, etc. (This prevents discoloration of the battler's
+gauge and state icons when changing the battler's color tone with the Butler
+Graphics Display Extension plugin.)
+
+When using this plugin in conjunction with Jupiter Penguin's pseudo-3D battles
+or Soryu's SV actor-based enemies, this plugin must be placed below those
+plugins.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+March 4, 2024 Ver. 1.0.7
+Changes made to the processing method fixed in Ver. 1.0.7.
+March 2, 2024 Ver. 1.0.6
+Fixed an issue where gauges and other items were displayed on monsters before
+they appeared.
+August 24, 2023 Ver. 1.0.5
+Fixed an error that occurred when using this plugin in conjunction with
+certain plugins.
+July 15, 2023 Ver. 1.0.4
+Added a feature to specify the coordinate mode when synchronizing with the
+butler image.
+June 2, 2023 Ver. 1.0.3
+Processing fixes.
+May 28, 2023 Ver. 1.0.2
+Added processing related to SV actor gauge display.
+October 11, 2022 Ver. 1.0.1
+Minor fixes.
+May 10, 2022 Ver. 1.0.0
+First version
+
+@param ConflictScale
+@text Considering the magnification ratio
+@desc Consideration of the magnification rate when setting the enemy image to the top
+@type select
+@default 'Img'
+@option Original size standard
+@value 'Default'
+@option Image size standards
+@value 'Img'
+
+@param CoordinateMode
+@text Coordinate calculation mode
+@desc Coordinate calculation mode.
+@type select
+@default 'Default'
+@option Original coordinate values
+@value 'Default'
+@option Decimal truncation
+@value 'Floor'
+*/
+
+/*:ja
+@target MZ
+@plugindesc バトラーオーバーレイベース
+@author NUUN
+@version 1.0.7
+@base NUUN_Base
+@orderAfter NUUN_Base
+
+@help
+モンスター、サイドビューアクター上に画像を表示させるベースプラグイン。
+モンスター、アクターのスプライトの子にスプライトを追加してしまうとゲージ、ステートアイコン等にまで影響を及ば差ないようにします。
+（バトラーグラフィック表示拡張プラグインでバトラーの色調を変化させるとバトラーとともにゲージ、ステートアイコンの変色を防ぐ目的等）
+
+木星ペンギン氏の疑似３Dバトル、蒼竜氏のSVアクター適用エネミーと併用する場合、このプラグインをこれらのプラグインより
+下に配置する必要があります。
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2024/3/4 Ver.1.0.7
+Ver.1.0.7で修正した処理方法の変更。
+2024/3/2 Ver.1.0.6
+出現前のモンスターにゲージ等が表示されてしまう問題を修正。
+2023/8/24 Ver.1.0.5
+一部のプラグインと併用するとエラーが出る問題を修正。
+2023/7/15 Ver.1.0.4
+バトラー画像と同期させるときの座標のモードを指定できる機能を追加。
+2023/6/2 Ver.1.0.3
+処理の修正。
+2023/5/28 Ver.1.0.2
+SVアクターのゲージ表示に関する処理の追加。
+2022/10/11 Ver.1.0.1
+微修正。
+2022/5/10 Ver.1.0.0
+初版
+
+
+@param ConflictScale
+@desc 敵画像の上設定時の拡大率の考慮
+@text 拡大率の考慮
+@type select
+@option 元のサイズ基準
+@value 'Default'
+@option 画像のサイズ基準
+@value 'Img'
+@default 'Img'
+
+@param CoordinateMode
+@desc 座標の計算モード。
+@text 座標計算モード
+@type select
+@option 元の座標値
+@value 'Default'
+@option 小数切り捨て
+@value 'Floor'
+@default 'Default'
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_BattlerOverlayBase = true;
 

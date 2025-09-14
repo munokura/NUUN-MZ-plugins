@@ -7,37 +7,76 @@
  * -------------------------------------------------------------------------------------
  * 
  */
+
 /*:
- * @target MZ
- * @plugindesc  アイテム使用回数
- * @author NUUN
- * @version 1.0.2
- * 
- * 
- * @help
- * アイテムに１回消費するまでの使用回数を設定できます。使用回数カウントが０になった時そのアイテムは消耗します。
- * アイテムを売却する際、全て売却した場合そのアイテムの通常売却額１つ分の売却額が使用回数に応じて減少します。
- * ※現在のバージョンではショップ画面で表示される売却額は使用回数を考慮していない売却額となっています。
- * 
- * アイテム消耗率と併用する場合は、順番によってはSE再生等の動作が異なります。
- * 
- * アイテムのメモ欄
- * <ItemUseCount:[Num]>使用回数を設定します。[Num]:使用回数
- * <ItemUseCountHide>アイテム欄に使用回数を表示させません。
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 更新履歴
- * 2021/5/2 Ver.1.0.2
- * 装備を外すときにエラーが出る問題を修正。
- * 2020/12/31 Ver.1.0.1
- * アイテム欄の使用回数を非表示に出来る機能を追加。
- * 2020/12/24 Ver.1.0.0
- * 初版
- * 
- * 
- */
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Item usage count
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+You can set the number of uses for an item before it is consumed. When the use
+count reaches 0, the item is consumed.
+When selling an item, if you sell the entire item, the normal selling price of
+that item will be reduced by one use count.
+*In the current version, the selling price displayed on the shop screen does
+not take the number of uses into account.
+
+When used in conjunction with the item consumption rate, the behavior of sound
+effects, etc. will differ depending on the order.
+
+Item Memo Field
+<ItemUseCount:[Num]> Sets the number of uses. [Num]: Number of uses
+<ItemUseCountHide> Does not display the number of uses in the item field.
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+2021/5/2 Ver.1.0.2
+Fixed an issue that caused an error when unequipping an item.
+2020/12/31 Ver.1.0.1
+Added a feature to hide the number of uses in the item field.
+2020/12/24 Ver.1.0.0
+First version
+*/
+
+/*:ja
+@target MZ
+@plugindesc  アイテム使用回数
+@author NUUN
+@version 1.0.2
+
+
+@help
+アイテムに１回消費するまでの使用回数を設定できます。使用回数カウントが０になった時そのアイテムは消耗します。
+アイテムを売却する際、全て売却した場合そのアイテムの通常売却額１つ分の売却額が使用回数に応じて減少します。
+※現在のバージョンではショップ画面で表示される売却額は使用回数を考慮していない売却額となっています。
+
+アイテム消耗率と併用する場合は、順番によってはSE再生等の動作が異なります。
+
+アイテムのメモ欄
+<ItemUseCount:[Num]>使用回数を設定します。[Num]:使用回数
+<ItemUseCountHide>アイテム欄に使用回数を表示させません。
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+更新履歴
+2021/5/2 Ver.1.0.2
+装備を外すときにエラーが出る問題を修正。
+2020/12/31 Ver.1.0.1
+アイテム欄の使用回数を非表示に出来る機能を追加。
+2020/12/24 Ver.1.0.0
+初版
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_ItemUseCount = true;
 

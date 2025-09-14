@@ -1,11 +1,66 @@
-﻿/*:-----------------------------------------------------------------------------------
- * NUUN_StealableItems.js
- * 
- * Copyright (C) 2020 NUUN
- * This software is released under the MIT License.
- * http://opensource.org/licenses/mit-license.php
- * -------------------------------------------------------------------------------------
- */ 
+﻿
+
+/*:
+@url https://github.com/nuun888/MZ
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+*/
+
+/*~struct~stolenItems:
+@param stolenItemId
+@text Stolen item ID
+@desc The item ID that can be stolen from the enemy.
+@type item
+
+@param weight
+@text Weight
+@desc Specifies the frequency of items being stolen. The higher the number, the more likely items are to be stolen.
+@type number
+@default 5
+
+@param stolenSwitch
+@text switch
+@desc Specifies the switch number for the item to be stolen.
+@type switch
+@default 0
+*/
+
+/*:ja
+-----------------------------------------------------------------------------------
+NUUN_StealableItems.js
+
+Copyright (C) 2020 NUUN
+This software is released under the MIT License.
+http://opensource.org/licenses/mit-license.php
+-------------------------------------------------------------------------------------
+*/
+
+/*~struct~stolenItems:ja
+
+@param stolenItemId
+@text 盗まれるアイテムID
+@desc 敵から盗まれるアイテムIDです。
+@type item
+
+@param weight
+@text 重み
+@desc 盗まれるアイテムの頻度を指定します。数値が高い程盗まれやすくなります。
+@type number
+@default 5
+
+@param stolenSwitch
+@text スイッチ
+@desc 盗まれるアイテム条件のスイッチ番号を指定します。
+@type switch
+@default 0
+*/
+
 /*:
  * @target MZ
  * @plugindesc 盗みスキル、アイテム
@@ -291,26 +346,7 @@
  * 
  * 
  */ 
-/*~struct~stolenItems:
- * 
- * @param stolenItemId
- * @text 盗まれるアイテムID
- * @desc 敵から盗まれるアイテムIDです。
- * @type item
- * 
- * @param weight
- * @text 重み
- * @desc 盗まれるアイテムの頻度を指定します。数値が高い程盗まれやすくなります。
- * @type number
- * @default 5
- * 
- * @param stolenSwitch
- * @text スイッチ
- * @desc 盗まれるアイテム条件のスイッチ番号を指定します。
- * @type switch
- * @default 0
- * 
- */
+
 
 var Imported = Imported || {};
 Imported.NUUN_StealableItems = true;

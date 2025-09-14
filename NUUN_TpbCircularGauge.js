@@ -6,91 +6,181 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  * 
- */ 
-/*:
- * @target MZ
- * @plugindesc TPB円形ゲージプラグイン
- * @author NUUN
- * @version 1.0.2
- * 
- * @help
- * TPBゲージを円形にします。
- * バトルスタイル拡張プラグインと併用する場合はこのプラグインを「NUUN_BattleStyleEX_Base」より下に配置してください。
- * 
- * 更新履歴
- * 2021/5/3 Ver.1.0.2
- * Y座標の変更が機能していなかった問題を修正。
- * 2021/5/1 Ver.1.0.1
- * ゲージの色を指定できる機能を追加。
- * LL_ExGaugeDrawingの一部機能に対応。
- * 2021/4/25 Ver.1.0.0
- * 初版
- * 
- * @param OnGaugePosition
- * @desc ゲージの座標変更を許可します。
- * @text ゲージ座標変更許可
- * @type select
- * @option 許可しない
- * @value 0
- * @option 許可する
- * @value 1
- * @option バトルスタイル拡張プラグインの設定を反映する。
- * @value 10
- * @default 0
- * 
- * @param GaugeColor
- * @desc ゲージの色を指定します。空白の場合はSprite_Gaugeの数値が設定されます。
- * @text ゲージ色
- * @type number
- * @default 26
- * @min 0
- * 
- * @param GaugeX
- * @desc ゲージのX座標を指定します。
- * @text ゲージX座標
- * @type number
- * @default 0
- * @min -999
- * 
- * @param GaugeY
- * @desc ゲージのY座標を指定します。
- * @text ゲージY座標
- * @type number
- * @default 0
- * @min -999
- * 
- * @param GaugeRadius
- * @desc ゲージの半径を指定します。
- * @text ゲージ半径
- * @type number
- * @default 25
- * @min 0
- * 
- * @param GaugeHeight
- * @desc ゲージの縦幅を指定します。
- * @text ゲージ縦幅
- * @type number
- * @default 10
- * @min 0
- * 
- * @param StartAngle
- * @desc ゲージの開始角度を指定します。
- * @text ゲージ開始角度
- * @type number
- * @default -90
- * @max 360
- * @min -360
- * 
- * @param EndAngle
- * @desc ゲージの終了角度を指定します。
- * @text ゲージ終了角度
- * @type number
- * @default 270
- * @max 360
- * @min -360
- *
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc TPB Circular Gauge Plugin
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+Makes the TPB gauge circular.
+When using this plugin in conjunction with the Battle Style Extension Plugin,
+place this plugin below "NUUN_BattleStyleEX_Base."
+
+Update History
+2021/5/3 Ver. 1.0.2
+Fixed an issue where changing the Y coordinate was not working.
+2021/5/1 Ver. 1.0.1
+Added the ability to specify the gauge color.
+Supports some of the LL_ExGaugeDrawing features.
+2021/4/25 Ver. 1.0.0
+First release
+
+@param OnGaugePosition
+@text Allow gauge coordinate changes
+@desc Allows changing the coordinates of the gauge.
+@type select
+@default 0
+@option Do not allow
+@value 0
+@option Allow
+@value 1
+@option Reflects the settings of the Battle Style Extension Plugin.
+@value 10
+
+@param GaugeColor
+@text Gauge Color
+@desc Specifies the color of the gauge. If blank, the value of Sprite_Gauge will be set.
+@type number
+@default 26
+@min 0
+
+@param GaugeX
+@text Gauge X coordinate
+@desc Specifies the X coordinate of the gauge.
+@type number
+@default 0
+@min -999
+
+@param GaugeY
+@text Gauge Y coordinate
+@desc Specifies the Y coordinate of the gauge.
+@type number
+@default 0
+@min -999
+
+@param GaugeRadius
+@text Gauge Radius
+@desc Specifies the radius of the gauge.
+@type number
+@default 25
+@min 0
+
+@param GaugeHeight
+@text Gauge vertical width
+@desc Specifies the vertical width of the gauge.
+@type number
+@default 10
+@min 0
+
+@param StartAngle
+@text Gauge Start Angle
+@desc Specifies the start angle of the gauge.
+@type number
+@default -90
+@min -360
+@max 360
+
+@param EndAngle
+@text Gauge End Angle
+@desc Specifies the end angle of the gauge.
+@type number
+@default 270
+@min -360
+@max 360
+*/
+
+/*:ja
+@target MZ
+@plugindesc TPB円形ゲージプラグイン
+@author NUUN
+@version 1.0.2
+
+@help
+TPBゲージを円形にします。
+バトルスタイル拡張プラグインと併用する場合はこのプラグインを「NUUN_BattleStyleEX_Base」より下に配置してください。
+
+更新履歴
+2021/5/3 Ver.1.0.2
+Y座標の変更が機能していなかった問題を修正。
+2021/5/1 Ver.1.0.1
+ゲージの色を指定できる機能を追加。
+LL_ExGaugeDrawingの一部機能に対応。
+2021/4/25 Ver.1.0.0
+初版
+
+@param OnGaugePosition
+@desc ゲージの座標変更を許可します。
+@text ゲージ座標変更許可
+@type select
+@option 許可しない
+@value 0
+@option 許可する
+@value 1
+@option バトルスタイル拡張プラグインの設定を反映する。
+@value 10
+@default 0
+
+@param GaugeColor
+@desc ゲージの色を指定します。空白の場合はSprite_Gaugeの数値が設定されます。
+@text ゲージ色
+@type number
+@default 26
+@min 0
+
+@param GaugeX
+@desc ゲージのX座標を指定します。
+@text ゲージX座標
+@type number
+@default 0
+@min -999
+
+@param GaugeY
+@desc ゲージのY座標を指定します。
+@text ゲージY座標
+@type number
+@default 0
+@min -999
+
+@param GaugeRadius
+@desc ゲージの半径を指定します。
+@text ゲージ半径
+@type number
+@default 25
+@min 0
+
+@param GaugeHeight
+@desc ゲージの縦幅を指定します。
+@text ゲージ縦幅
+@type number
+@default 10
+@min 0
+
+@param StartAngle
+@desc ゲージの開始角度を指定します。
+@text ゲージ開始角度
+@type number
+@default -90
+@max 360
+@min -360
+
+@param EndAngle
+@desc ゲージの終了角度を指定します。
+@text ゲージ終了角度
+@type number
+@default 270
+@max 360
+@min -360
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_TpbCircularGauge = true;
 

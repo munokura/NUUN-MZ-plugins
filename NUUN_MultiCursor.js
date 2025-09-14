@@ -6,27 +6,54 @@
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
  * 
- */ 
-/*:
- * @target MZ
- * @plugindesc マルチカーソル
- * @author NUUN
- * @version 1.0.0
- *            
- * @help  
- * アクターの対象選択時、複数対象のアイテム、スキルのカーソル表示を個別に表示させます。
- * なお、当プラグインとNUUN_Scope_confirmationとの併用はできません。(当プラグインはNUUN_Scope_confirmationの機能の一部に組み込まれています)
- * 
- * 利用規約
- * このプラグインはMITライセンスで配布しています。
- * 
- * 
- * 更新履歴
- * 2022/7/4 Ver.1.0.0
- * 初版
- * 
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc Multi-Cursor
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+When selecting an actor's target, the cursors for items and skills with
+multiple targets are displayed individually.
+Please note that this plugin cannot be used in conjunction with
+NUUN_Scope_confirmation. (This plugin is incorporated into some of the
+functionality of NUUN_Scope_confirmation.)
+
+Terms of Use
+This plugin is distributed under the MIT License.
+
+Update History
+July 4, 2022 Ver. 1.0.0
+First Edition
+*/
+
+/*:ja
+@target MZ
+@plugindesc マルチカーソル
+@author NUUN
+@version 1.0.0
+           
+@help  
+アクターの対象選択時、複数対象のアイテム、スキルのカーソル表示を個別に表示させます。
+なお、当プラグインとNUUN_Scope_confirmationとの併用はできません。(当プラグインはNUUN_Scope_confirmationの機能の一部に組み込まれています)
+
+利用規約
+このプラグインはMITライセンスで配布しています。
+
+
+更新履歴
+2022/7/4 Ver.1.0.0
+初版
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_MultiCursor = true;
 

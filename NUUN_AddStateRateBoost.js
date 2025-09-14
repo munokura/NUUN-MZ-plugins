@@ -5,27 +5,54 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  * -------------------------------------------------------------------------------------
- */ 
-/*:
- * @target MZ
- * @plugindesc ステート付与率増減特徴
- * @author NUUN
- * @version 1.0.0
- * 
- * @help
- * ステート付加率を増減する特徴を設定できます。
- * 特徴を持つメモ欄
- * <AddStateRate:[rate]> この特徴を持つ場合、ステートの付与率が[rate]%増減します。
- * <AddStateRate[stateId]:[rate]> この特徴を持ち[stateId]のステートが付加されるとき、付与率が[rate]%増減します。
- * [rate]:確率（百分率）　複数存在する場合は加算されます。
- * [stateId]:ステートID
- * 
- * 更新履歴
- * 2022/1/16 Ver.1.0.0
- * 初版
- * 
- * 
  */
+
+/*:
+@target MZ
+@url https://github.com/nuun888/MZ
+@plugindesc State grant rate increase/decrease characteristics
+@author NUUN
+@license MIT License
+
+@help
+English Help Translator: munokura
+Please check the URL below for the latest version of the plugin.
+URL https://github.com/nuun888/MZ
+-----
+
+You can set a feature to increase or decrease the state addition rate.
+Feature-related memo field
+<AddStateRate:[rate]> When this feature is present, the state addition rate
+increases or decreases by [rate]%.
+<AddStateRate[stateId]:[rate]> When this feature is present and the state
+[stateId] is added, the addition rate increases or decreases by [rate]%.
+[rate]: Probability (percentage). Multiple states are added together.
+[stateId]: State ID
+
+Update History
+2022/1/16 Ver. 1.0.0
+First Edition
+*/
+
+/*:ja
+@target MZ
+@plugindesc ステート付与率増減特徴
+@author NUUN
+@version 1.0.0
+
+@help
+ステート付加率を増減する特徴を設定できます。
+特徴を持つメモ欄
+<AddStateRate:[rate]> この特徴を持つ場合、ステートの付与率が[rate]%増減します。
+<AddStateRate[stateId]:[rate]> この特徴を持ち[stateId]のステートが付加されるとき、付与率が[rate]%増減します。
+[rate]:確率（百分率）　複数存在する場合は加算されます。
+[stateId]:ステートID
+
+更新履歴
+2022/1/16 Ver.1.0.0
+初版
+*/
+
 var Imported = Imported || {};
 Imported.NUUN_AddStateRateBoost = true;
 
