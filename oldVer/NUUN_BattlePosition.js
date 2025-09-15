@@ -1,4 +1,4 @@
-﻿/*:-----------------------------------------------------------------------------------
+/*:-----------------------------------------------------------------------------------
  * NUUN_BattlePosition.js
  * 
  * Copyright (C) 2020 NUUN
@@ -29,8 +29,11 @@
 
 @help
 English Help Translator: munokura
-Please check the URL below for the latest version of the plugin.
-URL https://github.com/nuun888/MZ
+This is an unofficial English translation of the plugin help,
+created to support global RPG Maker users.
+Original plugin by NUUN.
+Please check the latest official version at:
+https://github.com/nuun888/MZ
 -----
 
 Fixed an issue where enemy and actor display coordinates would be displayed

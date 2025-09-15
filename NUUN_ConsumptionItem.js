@@ -17,8 +17,11 @@
 
 @help
 English Help Translator: munokura
-Please check the URL below for the latest version of the plugin.
-URL https://github.com/nuun888/MZ
+This is an unofficial English translation of the plugin help,
+created to support global RPG Maker users.
+Original plugin by NUUN.
+Please check the latest official version at:
+https://github.com/nuun888/MZ
 -----
 
 You can create items that have a certain probability of being consumed.
