@@ -21,6 +21,8 @@
 English Help Translator: munokura
 This is an unofficial English translation of the plugin help,
 created to support global RPG Maker users.
+Feedback is welcome to improve translation quality
+(see: https://github.com/munokura/NUUN-MZ-plugins ).
 Original plugin by NUUN.
 Please check the latest official version at:
 https://github.com/nuun888/MZ
